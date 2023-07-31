@@ -13,7 +13,7 @@ exports.registrationEmployer = async (req, res) => {
     var user = await User.findOne({ mobile: mobile, userType: "employer" })
 
     if (!user) {
-      req.body.otp = OTP.generateOTP()
+      // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
       req.body.userType = "employer"
@@ -28,7 +28,7 @@ exports.registrationEmployer = async (req, res) => {
 
       let obj = {
         id: userCreate._id,
-        otp: userCreate.otp,
+        // otp: userCreate.otp,
         mobile: userCreate.mobile,
       };
 

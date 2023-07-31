@@ -7,6 +7,7 @@ router.use("/employer",require("./employerRoutes"))
 router.use("/city",require("./selectcity"))
 router.use("/statee",require("./state"))
 router.use("/category",require("./categoryROute"))
+router.use("/bookingByEmployerr",require("./bookingByEmployer"))
 
 
 module.exports = router;

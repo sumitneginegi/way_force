@@ -49,7 +49,6 @@ exports.registrationManpower = async (req, res) => {
 }
 
 
-
 exports.signupManpower = async (req, res) => {
   try {
     const { mobile } = req.body;
@@ -79,6 +78,7 @@ exports.signupManpower = async (req, res) => {
   }
 };
 
+
 exports.verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -103,63 +103,6 @@ exports.verifyOtp = async (req, res) => {
     return createResponse(res, 500, "Internal server error");
   }
 };
-
-// exports.detailSignup = async (req, res) => {
-//   try {
-//     const id = req.params.id;
-//     const {
-//       name,
-//       address,
-//       education,
-//       age,
-//       gender,
-//       dob,
-//       language,
-//       bio,
-//       experience,
-//       minSalary,
-//       maxSalary,
-//       skills,
-//       jobType,
-//       serviceLocation,
-//       documents,
-//     } = req.body;
-
-//     // Check if the user exists
-//     const manPower = await User.findById(id);
-//     if (!manPower) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     // Update the user's details
-//     manPower.name = name;
-//     manPower.address = address;
-//     manPower.education = education;
-//     manPower.age = age;
-//     manPower.gender = gender;
-//     manPower.dob = dob;
-//     manPower.language = language;
-//     manPower.bio = bio;
-//     manPower.experience = experience;
-//     manPower.minSalary = minSalary;
-//     manPower.maxSalary = maxSalary;
-//     manPower.skills = skills;
-//     manPower.jobType = jobType;
-//     manPower.serviceLocation = serviceLocation;
-//     manPower.documents = documents;
-//     manPower.otp = OTP.generateOTP()
-
-//     await manPower.save();
-
-//     res
-//       .status(200)
-//       .json({ message: "Details filled successfully", data: manPower });
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).json({ error: "Something went wrong" });
-//   }
-// };
-
 
 
 exports.detailSignup = async (req, res) => {
@@ -217,7 +160,6 @@ exports.detailSignup = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 };
-
 
 
 exports.workDetails = async (req, res) => {
@@ -314,6 +256,7 @@ exports.workDetails = async (req, res) => {
   }
 };
 
+
 exports.manpowerDocument = async (req, res) => {
     try {
       // let profile = req.files["profile"];
@@ -343,6 +286,7 @@ exports.manpowerDocument = async (req, res) => {
       return res.status(500).json({ error: "Internal server error" });
     }
 };
+
 
 exports.loginManpower = async (req, res) => {
   try {
@@ -378,6 +322,7 @@ exports.loginManpower = async (req, res) => {
   }
 };
 
+
 exports.YourProfileUpdate = async (req, res) => {
   try {
     let ProfileUpdate = req.files["profile"];
@@ -403,6 +348,7 @@ exports.YourProfileUpdate = async (req, res) => {
   }
 };
 
+
 exports.getAllManpower = async (req, res) => {
   try {
     const users = await User.find().lean();
@@ -412,6 +358,7 @@ exports.getAllManpower = async (req, res) => {
     res.status(500).json({error:err.message});
   }
 };
+
 
 exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
@@ -431,6 +378,7 @@ exports.getManpower = async (req, res) => {
     return res.status(500).json({ error:err.message });
   }
 };
+
 
 exports.DeleteManpower = async (req, res) => {
   const { manpowerId } = req.params;
