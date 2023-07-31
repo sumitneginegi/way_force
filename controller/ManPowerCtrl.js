@@ -15,7 +15,7 @@ exports.registrationManpower = async (req, res) => {
     var user = await User.findOne({ mobile: mobile, userType: "manpower" })
 
     if (!user) {
-      req.body.otp = OTP.generateOTP()
+      // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
       req.body.userType = "manpower"
@@ -30,7 +30,7 @@ exports.registrationManpower = async (req, res) => {
 
       let obj = {
         id: userCreate._id,
-        otp: userCreate.otp,
+        // otp: userCreate.otp,
         mobile: userCreate.mobile,
       };
 
@@ -82,7 +82,7 @@ exports.signupManpower = async (req, res) => {
 exports.verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
-    const user = await ManPower.findOne({ _id: req.params.id });
+    const user = await User.findOne({ _id: req.params.id });
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -103,6 +103,64 @@ exports.verifyOtp = async (req, res) => {
     return createResponse(res, 500, "Internal server error");
   }
 };
+
+// exports.detailSignup = async (req, res) => {
+//   try {
+//     const id = req.params.id;
+//     const {
+//       name,
+//       address,
+//       education,
+//       age,
+//       gender,
+//       dob,
+//       language,
+//       bio,
+//       experience,
+//       minSalary,
+//       maxSalary,
+//       skills,
+//       jobType,
+//       serviceLocation,
+//       documents,
+//     } = req.body;
+
+//     // Check if the user exists
+//     const manPower = await User.findById(id);
+//     if (!manPower) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // Update the user's details
+//     manPower.name = name;
+//     manPower.address = address;
+//     manPower.education = education;
+//     manPower.age = age;
+//     manPower.gender = gender;
+//     manPower.dob = dob;
+//     manPower.language = language;
+//     manPower.bio = bio;
+//     manPower.experience = experience;
+//     manPower.minSalary = minSalary;
+//     manPower.maxSalary = maxSalary;
+//     manPower.skills = skills;
+//     manPower.jobType = jobType;
+//     manPower.serviceLocation = serviceLocation;
+//     manPower.documents = documents;
+//     manPower.otp = OTP.generateOTP()
+
+//     await manPower.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "Details filled successfully", data: manPower });
+//   } catch (error) {
+//     console.log(error)
+//     res.status(500).json({ error: "Something went wrong" });
+//   }
+// };
+
+
 
 exports.detailSignup = async (req, res) => {
   try {
@@ -126,7 +184,7 @@ exports.detailSignup = async (req, res) => {
     } = req.body;
 
     // Check if the user exists
-    const manPower = await ManPower.findById(id);
+    const manPower = await User.findById(id);
     if (!manPower) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -141,12 +199,13 @@ exports.detailSignup = async (req, res) => {
     manPower.language = language;
     manPower.bio = bio;
     manPower.experience = experience;
-    manPower.minSalary = minSalary;
+    manPower.miniSalary = minSalary;
     manPower.maxSalary = maxSalary;
     manPower.skills = skills;
     manPower.jobType = jobType;
     manPower.serviceLocation = serviceLocation;
     manPower.documents = documents;
+    manPower.otp = OTP.generateOTP();
 
     await manPower.save();
 
@@ -154,10 +213,12 @@ exports.detailSignup = async (req, res) => {
       .status(200)
       .json({ message: "Details filled successfully", data: manPower });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+
 
 exports.workDetails = async (req, res) => {
   try {
@@ -174,7 +235,7 @@ exports.workDetails = async (req, res) => {
     } = req.body;
 
     // Check if manpower with the given ID exists
-    const manpower = await ManPower.findById(manpowerId);
+    const manpower = await User.findById(manpowerId);
 
     if (!manpower) {
       return res.status(404).json({ error: "Manpower not found" });
@@ -262,7 +323,7 @@ exports.manpowerDocument = async (req, res) => {
       req.body.AadharCard = Aadhar[0].path;
       req.body.uploadPanCard = panCard[0].path;
 
-      const manpower = await ManPower.findOneAndUpdate(
+      const manpower = await User.findOneAndUpdate(
         { _id: req.params.id },
         {
           $set: {
@@ -293,7 +354,7 @@ exports.loginManpower = async (req, res) => {
         .json({ error: "Mobile number and OTP are required" });
     }
 
-    const manpower = await ManPower.findOne({ mobile });
+    const manpower = await User.findOne({ mobile });
     if (!manpower) {
       return res.status(404).json({ error: "Manpower not found" });
     }
@@ -321,7 +382,7 @@ exports.YourProfileUpdate = async (req, res) => {
   try {
     let ProfileUpdate = req.files["profile"];
     req.body.pro = ProfileUpdate[0].path;
-    const user = await ManPower.findOneAndUpdate(
+    const user = await User.findOneAndUpdate(
       { _id: req.params.id },
       {
         $set: {
@@ -344,7 +405,7 @@ exports.YourProfileUpdate = async (req, res) => {
 
 exports.getAllManpower = async (req, res) => {
   try {
-    const users = await ManPower.find().lean();
+    const users = await User.find().lean();
     res.status(200).json({message:"users fetched successfully", data:users});
   } catch (err) {
     console.error(err);
@@ -357,7 +418,7 @@ exports.getManpower = async (req, res) => {
 
   try {
     // Check if a user with the given userId exists in the database
-    const user = await ManPower.findById(manpowerId).lean();
+    const user = await User.findById(manpowerId).lean();
 
     if (!user) {
       res.status(404).json({ message: "User not found" });
@@ -374,7 +435,7 @@ exports.getManpower = async (req, res) => {
 exports.DeleteManpower = async (req, res) => {
   const { manpowerId } = req.params;
   try {
-    const user = await ManPower.findByIdAndDelete(manpowerId);
+    const user = await User.findByIdAndDelete(manpowerId);
     if (!user) {
       res.status(404).json({ message: "Manpower not found" });
     }

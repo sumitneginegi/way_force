@@ -108,7 +108,15 @@ const UserSchema = new mongoose.Schema(
             type: String
         },
         address: {
-            type: String
+            state: String,
+            city: String,
+            country: String,
+            pinCode: Number,
+            landmark: String,
+            postOffice: String,
+            address: String,
+            village: String,
+            block: String,
         },
         village: {
             type: String
