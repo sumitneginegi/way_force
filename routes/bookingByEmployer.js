@@ -1,13 +1,13 @@
 const express = require('express')
 
-const { createBookingByEmployer,getbookingsbyadmin,updatebook,getbookingbyid,deletebookingbyadmin,changeStatusbyIdBooking,getbookingbyidbycustomerbyAdmin,getbookingbyidbyHeroIdbyAdmin,changeStatusbyidByAdmin} = require('../controller/bookingByEmployer')
+const { createBookingByEmployer,getBookingByEmployer,getBookingByManpower,getbookingbyid,deletebookingbyadmin,changeStatusbyIdBooking,getbookingbyidbycustomerbyAdmin,getbookingbyidbyHeroIdbyAdmin,changeStatusbyidByAdmin} = require('../controller/bookingByEmployer')
 
 const bookingRouter = express.Router()
 
 // //CUSTOMER
 bookingRouter.post('/', /*Auth*/  createBookingByEmployer)
-// bookingRouter.get('/getbookingsbycustomer', /*Auth*/  getbookingsbycustomer)
-// bookingRouter.get('/getbookingbyidbycustomer/:id', /*Auth*/  getbookingbyidbycustomer)
+bookingRouter.get('/getBookingByEmployer/:employerId', /*Auth*/  getBookingByEmployer)
+bookingRouter.get('/getBookingByManpower/:manpowerId', /*Auth*/  getBookingByManpower)
 // bookingRouter.get('/getbookingbyidbyHeroId/:id', /*Auth*/  getbookingbyidbyHeroId)
 // bookingRouter.get('/getbookingsbyId/:id', /*Auth*/  getbookingsbyId)
 // // bookingRouter.get('/timer', /*Auth*/  timer)
