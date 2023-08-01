@@ -290,22 +290,23 @@ exports.manpowerDocument = async (req, res) => {
 
 exports.loginManpower = async (req, res) => {
   try {
-    const { mobile, otp } = req.body;
+    const { mobile } = req.body;
 
-    if (!mobile || !otp) {
+    if (!mobile ) {
       return res
         .status(400)
-        .json({ error: "Mobile number and OTP are required" });
+        .json({ error: "Mobile number required" });
     }
+    let otp = OTP.generateOTP()
 
     const manpower = await User.findOne({ mobile });
     if (!manpower) {
       return res.status(404).json({ error: "Manpower not found" });
     }
 
-    if (manpower.otp !== otp) {
-      return res.status(401).json({ error: "Invalid OTP" });
-    }
+    manpower.otp = otp
+    manpower.save()
+
 
     const token = jwt.sign({ manpowerId: manpower.id }, process.env.JWT_SECRET);
 

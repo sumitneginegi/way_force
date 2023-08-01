@@ -5,7 +5,9 @@ const paymentRouter = express();
 
 //customer
 paymentRouter.post('/employer', payment.CreatePaymentOrder),
-// paymentRouter.get('/payment/:id', customer.GetPaymentsByUserId)
+paymentRouter.get('/Get/AllPayment', payment.GetAllPayments)
+paymentRouter.get('/Get/PaymentsById/:id', payment.GetAllPaymentsById)
+paymentRouter.get('/Get/GetAllPaymentsByEmployerId/:id', payment.GetAllPaymentsByEmployerId)
 
 
 // //admin

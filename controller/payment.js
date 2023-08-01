@@ -91,6 +91,12 @@ exports.CreatePaymentOrder = async (req, res) => {
 exports.GetAllPayments = async (req, res) => {
   try {
     const Data = await paymentModel.find()
+
+    if (!Data || Data.length==0) {
+      return res.status(500).json({
+        message: "payment data not present",
+      });
+    }
     return res.status(200).json({ details: Data });
   } catch (err) {
     return res.status(400).json({ message: err.message });
@@ -98,9 +104,47 @@ exports.GetAllPayments = async (req, res) => {
 };
 
 
+exports.GetAllPaymentsById = async (req, res) => {
+  try {
+    const Data = await paymentModel.findById({_id:req.params.id})
+    if (!Data || Data.length==0) {
+      return res.status(500).json({
+        message: "payment data not present",
+      });
+    }
+    return res.status(200).json({ details: Data })
+  } catch (err) {
+    return res.status(400).json({ message: err.message });
+  }
+};
 
 
+exports.GetAllPaymentsByEmployerId = async (req, res) => {
+  try {
+    const employerId = req.params.id
 
+    // Use .populate() to replace bookingId reference with actual data from bookingByEmployer model
+    const payments = await paymentModel.find({ employerId })
+      .populate({
+        path: "bookingId",
+        populate: {
+          path: "employerId",
+          model: "User", // Make sure this references the correct model name for employer users
+        },
+      });
+
+    if (!payments || payments.length === 0) {
+      return res.status(404).json({
+        message: "No payments found for the specified employer ID",
+      });
+    }
+
+    return res.status(200).json({ details: payments });
+  } catch (err) {
+    console.log(err);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+}
 
 
 
