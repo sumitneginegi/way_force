@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { createBookingByEmployer,getBookingByEmployer,getBookingByManpower,deleteBooking,deletebookingbyadmin,changeStatusbyIdBooking,getbookingbyidbycustomerbyAdmin,getbookingbyidbyHeroIdbyAdmin,changeStatusbyidByAdmin} = require('../controller/bookingByEmployer')
+const { createBookingByEmployer,getBookingByEmployer,getBookingByManpower,deleteBooking,calculateTimeDifferenceController,changeStatusbyIdBooking,getbookingbyidbycustomerbyAdmin,getbookingbyidbyHeroIdbyAdmin,changeStatusbyidByAdmin} = require('../controller/bookingByEmployer')
 
 const bookingRouter = express.Router()
 
@@ -9,7 +9,7 @@ bookingRouter.post('/', /*Auth*/  createBookingByEmployer)
 bookingRouter.get('/getBookingByEmployer/:employerId', /*Auth*/  getBookingByEmployer)
 bookingRouter.get('/getBookingByManpower/:manpowerId', /*Auth*/  getBookingByManpower)
 bookingRouter.delete('/delete/deleteBooking/:Bookingg', /*Auth*/  deleteBooking)
-// bookingRouter.get('/getbookingbyidbyHeroId/:id', /*Auth*/  getbookingbyidbyHeroId)
+ bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)
 // bookingRouter.get('/getbookingsbyId/:id', /*Auth*/  getbookingsbyId)
 // // bookingRouter.get('/timer', /*Auth*/  timer)
 

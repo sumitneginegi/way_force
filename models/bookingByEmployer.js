@@ -9,40 +9,49 @@ const bookingSchema = mongoose.Schema(
       default: "pending",
     },
     amount_per_hour: { type: Number, default: 0 },
+    startTime: {
+      type: String
+    },
+    endTime: {
+      type: String
+    },
+    diff:{
+      type:String
+    },
     payment: {
       type: String,
       enum: ["online", "cash"],
       default: "online",
     },
-    workDetails:{
-      tyep:String
+    workDetails: {
+      type: String
     },
-    workDurationInYear:{
-      type:String
+    workDurationInYear: {
+      type: String
     },
-    date:{
-      type:String
+    date: {
+      type: String
     },
-    workLocation:{
-      address:{
-        type:String
+    workLocation: {
+      address: {
+        type: String
       },
-      landmark:{
-        type:String
+      landmark: {
+        type: String
       },
-      village:{
-        type:String
+      village: {
+        type: String
       },
-      street_Number:{
-        type:String
+      street_Number: {
+        type: String
       }
     },
-    acceptOrDecline:{
-      type:String,
-      default:"false"
+    acceptOrDecline: {
+      type: String,
+      default: "false"
     },
-    startDate:{
-      type:String
+    startDate: {
+      type: String
     }
 
     // start_time: { type: String },
@@ -55,6 +64,6 @@ const bookingSchema = mongoose.Schema(
   {
     timestamps: true,
   }
-);
+)
 
 module.exports = mongoose.model("bookingByEmployer", bookingSchema);

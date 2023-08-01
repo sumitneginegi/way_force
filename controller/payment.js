@@ -12,7 +12,6 @@ const userModel = require("../models/user");
 // });
 
 
-
 const reffralCode = async () => {
   var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let OTP = "";
@@ -44,7 +43,7 @@ exports.CreatePaymentOrder = async (req, res) => {
           });
         }
     
-    let orderId = await reffralCode();
+    let orderId = await reffralCode()
     
     // You can add validation for the input data if required
     // For example, check if required fields are present, validate the amount, etc.
@@ -85,7 +84,6 @@ exports.CreatePaymentOrder = async (req, res) => {
     res.status(500).json({ error: "Failed to create payment" });
   }
 }
-
 
 
 exports.GetAllPayments = async (req, res) => {

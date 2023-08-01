@@ -80,6 +80,36 @@ exports.createBookingByEmployer = async (req, res) => {
 };
 
 
+exports.calculateTimeDifference = (startTime, endTime) => {
+  // const start = new Date(startTime);
+  // const end = new Date(endTime);
+  console.log(start);
+  const timeDifferenceInMs = endTime - startTime;
+  const hours = Math.floor(timeDifferenceInMs / (1000 * 60 * 60));
+  const minutes = Math.floor((timeDifferenceInMs % (1000 * 60 * 60)) / (1000 * 60));
+
+  return { hours, minutes };
+};
+
+exports.calculateTimeDifferenceController = async (req, res) => {
+  try {
+    const { startTime, endTime } = req.body;
+
+    if (!startTime || !endTime) {
+      return res.status(400).json({ error: "Both startTime and endTime are required" });
+    }
+
+    const timeDifference = exports.calculateTimeDifference(startTime, endTime);
+
+    return res.status(200).json({ timeDifference });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
 exports.getBookingByEmployer = async (req, res) => {
   try {
     const employerId = req.params.employerId;

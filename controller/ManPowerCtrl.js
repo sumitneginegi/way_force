@@ -10,9 +10,8 @@ const User = require("../models/user")
 
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
-const authToken = "25372d212f557f4c11bdabf3554dd336";
+const authToken = "9d20fa9d3a465dc7de999b0b3de610e0";
 const twilioPhoneNumber = "+14708354405";
-
 const client = twilio(accountSid, authToken);
 
 
@@ -56,15 +55,14 @@ exports.registrationManpower = async (req, res) => {
   }
 }
 
-
-
 exports.sendotp = async (req, res) => {
+  console.log("hi");
   try {
     const { phoneNumber } = req.body;
 
     // Generate a random 6-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
-
+    
     // Create and send the SMS with the OTP
     await client.messages.create({
       to: phoneNumber,
@@ -78,9 +76,6 @@ exports.sendotp = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
-
-
 
 exports.signupManpower = async (req, res) => {
   try {
@@ -111,7 +106,6 @@ exports.signupManpower = async (req, res) => {
   }
 };
 
-
 exports.verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -136,7 +130,6 @@ exports.verifyOtp = async (req, res) => {
     return createResponse(res, 500, "Internal server error");
   }
 };
-
 
 exports.detailSignup = async (req, res) => {
   try {
@@ -193,7 +186,6 @@ exports.detailSignup = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 };
-
 
 exports.workDetails = async (req, res) => {
   try {
@@ -289,7 +281,6 @@ exports.workDetails = async (req, res) => {
   }
 };
 
-
 exports.manpowerDocument = async (req, res) => {
     try {
       // let profile = req.files["profile"];
@@ -319,7 +310,6 @@ exports.manpowerDocument = async (req, res) => {
       return res.status(500).json({ error: "Internal server error" });
     }
 };
-
 
 exports.loginManpower = async (req, res) => {
   try {
@@ -356,7 +346,6 @@ exports.loginManpower = async (req, res) => {
   }
 };
 
-
 exports.YourProfileUpdate = async (req, res) => {
   try {
     let ProfileUpdate = req.files["profile"];
@@ -382,7 +371,6 @@ exports.YourProfileUpdate = async (req, res) => {
   }
 };
 
-
 exports.getAllManpower = async (req, res) => {
   try {
     const users = await User.find().lean();
@@ -392,7 +380,6 @@ exports.getAllManpower = async (req, res) => {
     res.status(500).json({error:err.message});
   }
 };
-
 
 exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
@@ -412,7 +399,6 @@ exports.getManpower = async (req, res) => {
     return res.status(500).json({ error:err.message });
   }
 };
-
 
 exports.DeleteManpower = async (req, res) => {
   const { manpowerId } = req.params;
