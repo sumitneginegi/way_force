@@ -15,7 +15,7 @@ exports.registrationManpower = async (req, res) => {
     var user = await User.findOne({ mobile: mobile, userType: "manpower" })
 
     if (!user) {
-      // req.body.otp = OTP.generateOTP()
+      req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
       req.body.userType = "manpower"
@@ -30,7 +30,7 @@ exports.registrationManpower = async (req, res) => {
 
       let obj = {
         id: userCreate._id,
-        // otp: userCreate.otp,
+        otp: userCreate.otp,
         mobile: userCreate.mobile,
       };
 
@@ -148,7 +148,7 @@ exports.detailSignup = async (req, res) => {
     manPower.jobType = jobType;
     manPower.serviceLocation = serviceLocation;
     manPower.documents = documents;
-    manPower.otp = OTP.generateOTP();
+    // manPower.otp = OTP.generateOTP();
 
     await manPower.save();
 
