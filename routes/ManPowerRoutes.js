@@ -10,7 +10,8 @@ const {
   getAllManpower,
   getManpower,
   DeleteManpower,
-  registrationManpower
+  registrationManpower,
+  sendotp
 } = require("../controller/ManPowerCtrl");
 const router = express.Router();
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -36,6 +37,7 @@ cloudinary.config({
 
 
 router.post("/registration/Manpower", registrationManpower);
+router.post("/sendotp", sendotp);
 router.post("/signup", signupManpower);
 router.post("/login", loginManpower);
 router.post("/verify/otp/:id", verifyOtp);

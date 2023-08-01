@@ -109,4 +109,76 @@ exports.getBookingByManpower = async (req, res) => {
 }
 
 
+exports.updateBookingByEmployer = async (req, res) => {
+  try {
+    const {
+      EmployerId,
+      manpowerId,
+      amount_per_hour,
+      payment,
+      workDetails,
+      workDurationInYear,
+      date,
+      workLocation,
+      startDate,
+    } = req.body 
+
+    const existingBooking = await BookingByEmployer.findOne({
+      $and: [
+        { EmployerId: EmployerId },
+        { manpowerId: manpowerId }
+      ]
+    });
+
+    if (!existingBooking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // Check if work duration in years has been completed from the start date
+    const today = new Date();
+    const startDateObj = new Date(startDate);
+    const diffInYears = Math.floor((today - startDateObj) / (365 * 24 * 60 * 60 * 1000));
+
+    if (diffInYears >= workDurationInYear) {
+      // If work duration in years has been completed, update the booking with the provided data
+      existingBooking.amount_per_hour = amount_per_hour;
+      existingBooking.payment = payment;
+      existingBooking.workDetails = workDetails;
+      existingBooking.workDurationInYear = workDurationInYear;
+      existingBooking.date = date;
+      existingBooking.workLocation = workLocation;
+      existingBooking.startDate = startDate;
+
+      const savedBooking = await existingBooking.save();
+      return res.status(200).json({ message: 'Booking updated successfully', data: savedBooking });
+    } else {
+      return res.status(409).json({ error: 'Work duration not completed yet' });
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
+
+
+
+
+exports.deleteBooking = async (req, res) => {
+  try {
+    const { Bookingg } = req.params
+
+    const deletedBookingg = await BookingByEmployer.findByIdAndRemove(Bookingg);
+
+    if (!deletedBookingg) {
+      return res.status(404).json({ error: 'Bookingg not found.' });
+    }
+
+    res.json({ message: 'Booking deleted successfully.' })
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+    res.status(500).json({ error: 'An error occurred while deleting the Payment.' });
+  }
+}
+
 

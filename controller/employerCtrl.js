@@ -47,7 +47,6 @@ exports.registrationEmployer = async (req, res) => {
 }
 
 
-
 exports.signupEmployer = async (req, res) => {
   try {
     const { mobile } = req.body;

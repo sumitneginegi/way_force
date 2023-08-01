@@ -4,18 +4,25 @@ const Employerr = require("../models/employerModel")
 const Manpowerr = require("../models/ManPowerModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
-// const authConfig = require("../configs/auth.config");
+const twilio = require("twilio");
 // var newOTP = require("otp-generators");
 const User = require("../models/user")
 
 
+const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
+const authToken = "25372d212f557f4c11bdabf3554dd336";
+const twilioPhoneNumber = "+14708354405";
+
+const client = twilio(accountSid, authToken);
+
+
 exports.registrationManpower = async (req, res) => {
   try {
-    var { mobile } = req.body
+    var { mobile ,otp } = req.body
     var user = await User.findOne({ mobile: mobile, userType: "manpower" })
 
     if (!user) {
-      req.body.otp = OTP.generateOTP()
+      // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
       req.body.userType = "manpower"
@@ -24,6 +31,7 @@ exports.registrationManpower = async (req, res) => {
 
       const userCreate = await User.create({
         mobile,
+        otp,
         // referalCodeUnique,
         ...req.body
       })
@@ -47,6 +55,31 @@ exports.registrationManpower = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 }
+
+
+
+exports.sendotp = async (req, res) => {
+  try {
+    const { phoneNumber } = req.body;
+
+    // Generate a random 6-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
+
+    // Create and send the SMS with the OTP
+    await client.messages.create({
+      to: phoneNumber,
+      from: twilioPhoneNumber,
+      body: `Your OTP is: ${otp}`,
+    });
+
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+}
+
+
 
 
 exports.signupManpower = async (req, res) => {
