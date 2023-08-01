@@ -6,10 +6,10 @@ const paymentSchema = mongoose.Schema({
     type: objectid,
     ref: "bookingByEmployer",
   },
-//   employerId:{
-//     type:objectid,
-//     ref:"User"
-//   },
+  employerId:{
+    type:objectid,
+    ref:"User"
+  },
   status: {
     type: String,
     default: "pending",

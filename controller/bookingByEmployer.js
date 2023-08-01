@@ -1,7 +1,5 @@
 const BookingByEmployer = require('../models/bookingByEmployer');
 
-
-
 exports.createBookingByEmployer = async (req, res) => {
   try {
     const {

@@ -8,6 +8,7 @@ paymentRouter.post('/employer', payment.CreatePaymentOrder),
 paymentRouter.get('/Get/AllPayment', payment.GetAllPayments)
 paymentRouter.get('/Get/PaymentsById/:id', payment.GetAllPaymentsById)
 paymentRouter.get('/Get/GetAllPaymentsByEmployerId/:id', payment.GetAllPaymentsByEmployerId)
+paymentRouter.delete('/delete/deletePayment/:id', payment.deletePayment)
 
 
 // //admin
