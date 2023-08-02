@@ -11,7 +11,8 @@ const {
     loginWithPhone,
     verifyOtpByManpower,
     manpowerDocument,
-    registrationEmployer
+    registrationEmployer,
+    sendotpEmployer
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -28,6 +29,7 @@ cloudinary.config({
 });
 
 router.post("/registration/Employer", registrationEmployer);
+router.post("/sendotp/Employer", sendotpEmployer);
 router.post("/signup", signupEmployer);
 router.post("/login", loginWithPhone);
 router.post("/verify/otp/:id", verifyOtpEmployer);

@@ -5,11 +5,20 @@ const User = require("../models/user")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 
+const twilio = require("twilio");
+// var newOTP = require("otp-generators");
+
+
+
+const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
+const authToken = "9d20fa9d3a465dc7de999b0b3de610e0";
+const twilioPhoneNumber = "+14708354405";
+const client = twilio(accountSid, authToken);
 
 
 exports.registrationEmployer = async (req, res) => {
   try {
-    var { mobile } = req.body
+    var { mobile,otp } = req.body
     var user = await User.findOne({ mobile: mobile, userType: "employer" })
 
     if (!user) {
@@ -22,13 +31,14 @@ exports.registrationEmployer = async (req, res) => {
 
       const userCreate = await User.create({
         mobile,
+        otp,
         // referalCodeUnique,
         ...req.body
       })
 
       let obj = {
         id: userCreate._id,
-        // otp: userCreate.otp,
+        otp: userCreate.otp,
         mobile: userCreate.mobile,
       };
 
@@ -43,6 +53,28 @@ exports.registrationEmployer = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
+  }
+}
+
+exports.sendotpEmployer = async (req, res) => {
+  console.log("hi");
+  try {
+    const { phoneNumber } = req.body;
+
+    // Generate a random 6-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    
+    // Create and send the SMS with the OTP
+    await client.messages.create({
+      to: phoneNumber,
+      from: twilioPhoneNumber,
+      body: `Your OTP is: ${otp}`,
+    });
+
+    res.status(200).json({ message: "OTP sent successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
   }
 }
 
@@ -98,65 +130,122 @@ exports.verifyOtpEmployer = async (req, res) => {
   }
 };
 
+// exports.detailDirectEmployer = async (req, res) => {
+//   try {
+//     const {
+//       mobile,
+//       job_desc,
+//       city,
+//       siteLocation,
+//       employmentType,
+//       category,
+//       no_Of_opening,
+//       fullTime,
+//       miniSalary,
+//       maxSalary,
+//       workingDays,
+//       workingHours,
+//       explainYourWork,
+//       date,
+//       // manpowerId,
+//       mobileVerified,
+//       instantOrdirect
+
+//     } = req.body;
+
+//     let employer = await Employerr.findOne({ mobile });
+
+//     if (!employer) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     employer.mobile = mobile;
+//     employer.job_desc = job_desc;
+//     employer.city = city;
+//     employer.siteLocation = siteLocation;
+//     employer.employmentType = employmentType;
+//     employer.category = category;
+//     employer.no_Of_opening = no_Of_opening;
+//     employer.fullTime = fullTime;
+//     employer.miniSalary = miniSalary;
+//     employer.maxSalary = maxSalary;
+//     employer.workingDays = workingDays;
+//     employer.workingHours = workingHours;
+//     employer.explainYourWork = explainYourWork;
+//     employer.date = date;
+//     // employer.manpowerId = manpowerId;
+//     employer.mobileVerified = mobileVerified;
+//     employer.instantOrdirect = instantOrdirect,
+
+//       await employer.save();
+
+//     res
+//       .status(200)
+//       .json({ message: "Details filled successfully", data: employer });
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({
+//       error: "Something went wrong"
+//     });
+//   }
+// }
+
 exports.detailDirectEmployer = async (req, res) => {
   try {
-    const {
-      mobile,
-      job_desc,
-      city,
-      siteLocation,
-      employmentType,
-      category,
-      no_Of_opening,
-      fullTime,
-      miniSalary,
-      maxSalary,
-      workingDays,
-      workingHours,
-      explainYourWork,
-      date,
-      manpowerId,
-      mobileVerified,
-      instantOrdirect
-
-    } = req.body;
-
-    let employer = await Employerr.findOne({ mobile });
-
-    if (!employer) {
-      return res.status(404).json({ error: "User not found" });
+    const data = {
+      // mobile: req.body.mobile,
+      job_desc: req.body.job_desc,
+      city: req.body.city,
+      siteLocation: req.body.siteLocation,
+      employmentType: req.body.employmentType,
+      category: req.body.category,
+      no_Of_opening: req.body.no_Of_opening,
+      fullTime: req.body.fullTime,
+      miniSalary: req.body.miniSalary,
+      maxSalary: req.body.maxSalary,
+      workingDays: req.body.workingDays,
+      workingHours: req.body.workingHours,
+      explainYourWork: req.body.explainYourWork,
+      date: req.body.date,
+      // manpowerId: req.body.manpowerId,
+      mobileVerified: req.body.mobileVerified,
+      instantOrdirect: req.body.instantOrdirect
     }
 
-    employer.mobile = mobile;
-    employer.job_desc = job_desc;
-    employer.city = city;
-    employer.siteLocation = siteLocation;
-    employer.employmentType = employmentType;
-    employer.category = category;
-    employer.no_Of_opening = no_Of_opening;
-    employer.fullTime = fullTime;
-    employer.miniSalary = miniSalary;
-    employer.maxSalary = maxSalary;
-    employer.workingDays = workingDays;
-    employer.workingHours = workingHours;
-    employer.explainYourWork = explainYourWork;
-    employer.date = date;
-    employer.manpowerId = manpowerId;
-    employer.mobileVerified = mobileVerified;
-    employer.instantOrdirect = instantOrdirect,
+    const updatedEmployer = await User.findByIdAndUpdate(
+      { _id: req.params.id },
+      {
+        $push: {
+          // mobile: data.mobile,
+          job_desc: data.job_desc,
+          city: data.city,
+          siteLocation: data.siteLocation,
+          employmentType: data.employmentType,
+          category: data.category,
+          no_Of_opening:data.no_Of_opening,
+          fullTime:data.fullTime,
+          miniSalary: data.miniSalary,
+          maxSalary: data.maxSalary,
+          workingDays:data.workingDays,
+          workingHours: data.workingHours,
+          explainYourWork: data.explainYourWork,
+          date: data.date,
+          // manpowerId: data.manpowerId,
+          mobileVerified: data.mobileVerified,
+          instantOrdirect: data.instantOrdirect
 
-      await employer.save();
+        },
+      },
+      { new: true }
+    );
 
-    res
-      .status(200)
-      .json({ message: "Details filled successfully", data: employer });
+    res.status(201).json(updatedEmployer);
   } catch (error) {
     console.log(error);
-    res.status(500).json({
-      error: "Something went wrong"
-    });
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
+
 
 exports.detailInstantEmployer = async (req, res) => {
   try {

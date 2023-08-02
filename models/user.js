@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
         },
         employmentType: {
             type: String,
-            enum: ["manpower", "agent"],
+            // enum: ["manpower", "agent"],
             default: "manpower",
         },
         category: {

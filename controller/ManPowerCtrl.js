@@ -17,10 +17,24 @@ const client = twilio(accountSid, authToken);
 
 exports.registrationManpower = async (req, res) => {
   try {
-    var { mobile ,otp } = req.body
+
+    const { mobile } = req.body;
+
+    // res.status(200).json({ message: "OTP sent successfully" });
+
     var user = await User.findOne({ mobile: mobile, userType: "manpower" })
 
     if (!user) {
+
+      const otp = Math.floor(1000 + Math.random() * 9000);
+    
+      // Create and send the SMS with the OTP
+      await client.messages.create({
+        to: mobile,
+        from: twilioPhoneNumber,
+        body: `Your OTP is: ${otp}`,
+      });
+
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
