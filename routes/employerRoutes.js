@@ -12,7 +12,8 @@ const {
     verifyOtpByManpower,
     manpowerDocument,
     registrationEmployer,
-    sendotpEmployer
+    sendotpEmployer,
+    getUsersByInstantOrDirect
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -36,9 +37,10 @@ router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
 router.put("/direct/detail/:id", detailDirectEmployer);
-router.put("/updatebyManpoweridEmployer/:id", updatebyManpoweridEmployer);
+router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);
 router.put("/instant/detail/:id", detailInstantEmployer);
-router.get("/getInstanOrDirect", getInstanOrDirect);
+router.get("/getUsersBy/InstantOrDirect/:value", getUsersByInstantOrDirect);
+// router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",
 //   upload.fields([{ name: "aadharCard" }, { name: "panCard" }]),
 //   manpowerDocument

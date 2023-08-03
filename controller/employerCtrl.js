@@ -8,6 +8,14 @@ const jwt = require("jsonwebtoken")
 const twilio = require("twilio");
 // var newOTP = require("otp-generators");
 
+const reffralCode = async () => {
+  var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let OTP = "";
+  for (let i = 0; i < 9; i++) {
+    OTP += digits[Math.floor(Math.random() * 36)];
+  }
+  return OTP;
+};
 
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
@@ -18,7 +26,7 @@ const client = twilio(accountSid, authToken);
 
 exports.registrationEmployer = async (req, res) => {
   try {
-    var { mobile,otp } = req.body
+    var { mobile, otp } = req.body
     var user = await User.findOne({ mobile: mobile, userType: "employer" })
 
     if (!user) {
@@ -63,7 +71,7 @@ exports.sendotpEmployer = async (req, res) => {
 
     // Generate a random 6-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
-    
+
     // Create and send the SMS with the OTP
     await client.messages.create({
       to: phoneNumber,
@@ -190,8 +198,79 @@ exports.verifyOtpEmployer = async (req, res) => {
 //   }
 // }
 
+// exports.detailDirectEmployer = async (req, res) => {
+//   try {
+//     const data = {
+//       // mobile: req.body.mobile,
+//       job_desc: req.body.job_desc,
+//       city: req.body.city,
+//       siteLocation: req.body.siteLocation,
+//       employmentType: req.body.employmentType,
+//       category: req.body.category,
+//       no_Of_opening: req.body.no_Of_opening,
+//       fullTime: req.body.fullTime,
+//       miniSalary: req.body.miniSalary,
+//       maxSalary: req.body.maxSalary,
+//       workingDays: req.body.workingDays,
+//       workingHours: req.body.workingHours,
+//       explainYourWork: req.body.explainYourWork,
+//       date: req.body.date,
+//       // manpowerId: req.body.manpowerId,
+//       mobileVerified: req.body.mobileVerified,
+//       instantOrdirect: req.body.instantOrdirect
+//     }
+
+//     const user = await User.findById(req.params.id);
+
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" });
+//     }
+
+//     // Push the new document into the documents array
+//     user.documents.push(data);
+
+//     // Save the updated user document
+//     await user.save();
+
+//     res.status(201).json(user);
+
+
+//     const updatedEmployer = await User.findByIdAndUpdate(
+//       { _id: req.params.id },
+//       {
+//         $push: {
+//           // mobile: data.mobile,
+//           job_desc: data.job_desc,
+//           city: data.city,
+//           siteLocation: data.siteLocation,
+//           employmentType: data.employmentType,
+//           category: data.category,
+//           no_Of_opening:data.no_Of_opening,
+//           fullTime:data.fullTime,
+//           miniSalary: data.miniSalary,
+//           maxSalary: data.maxSalary,
+//           workingDays:data.workingDays,
+//           workingHours: data.workingHours,
+//           explainYourWork: data.explainYourWork,
+//           date: data.date,
+//           // manpowerId: data.manpowerId,
+//           mobileVerified: data.mobileVerified,
+//           instantOrdirect: data.instantOrdirect
+//         },
+//       },
+//       { new: true }
+//     );
+
+//     res.status(201).json(updatedEmployer);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 exports.detailDirectEmployer = async (req, res) => {
   try {
+    let orderId = await reffralCode()
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
@@ -209,37 +288,24 @@ exports.detailDirectEmployer = async (req, res) => {
       date: req.body.date,
       // manpowerId: req.body.manpowerId,
       mobileVerified: req.body.mobileVerified,
-      instantOrdirect: req.body.instantOrdirect
+      instantOrdirect: "Direct",
+      orderId: orderId
     }
 
-    const updatedEmployer = await User.findByIdAndUpdate(
-      { _id: req.params.id },
-      {
-        $push: {
-          // mobile: data.mobile,
-          job_desc: data.job_desc,
-          city: data.city,
-          siteLocation: data.siteLocation,
-          employmentType: data.employmentType,
-          category: data.category,
-          no_Of_opening:data.no_Of_opening,
-          fullTime:data.fullTime,
-          miniSalary: data.miniSalary,
-          maxSalary: data.maxSalary,
-          workingDays:data.workingDays,
-          workingHours: data.workingHours,
-          explainYourWork: data.explainYourWork,
-          date: data.date,
-          // manpowerId: data.manpowerId,
-          mobileVerified: data.mobileVerified,
-          instantOrdirect: data.instantOrdirect
+    const user = await User.findById(req.params.id);
 
-        },
-      },
-      { new: true }
-    );
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-    res.status(201).json(updatedEmployer);
+    // Push the new document into the documents array
+    user.obj.push(data);
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(201).json(user);
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
@@ -249,68 +315,49 @@ exports.detailDirectEmployer = async (req, res) => {
 
 exports.detailInstantEmployer = async (req, res) => {
   try {
-    const {
-      mobile,
-      job_desc,
-      city,
-      siteLocation,
-      employmentType,
-      category,
-      no_Of_opening,
-      fullTime,
-      miniSalary,
-      maxSalary,
-      workingDays,
-      workingHours,
-      explainYourWork,
-      date,
-      manpowerId,
-      mobileVerified,
-      state,
-      pinCode,
-      GST_Number,
-      registration_Number,
-      lati,
-      longi,
-      instantOrdirect,
-    } = req.body;
+    let orderId = await reffralCode()
+    const data = {
+      // mobile: req.body.mobile,
+      job_desc: req.body.job_desc,
+      city: req.body.city,
+      siteLocation: req.body.siteLocation,
+      employmentType: req.body.employmentType,
+      category: req.body.category,
+      no_Of_opening: req.body.no_Of_opening,
+      fullTime: req.body.fullTime,
+      miniSalary: req.body.miniSalary,
+      maxSalary: req.body.maxSalary,
+      workingDays: req.body.workingDays,
+      workingHours: req.body.workingHours,
+      explainYourWork: req.body.explainYourWork,
+      date: req.body.date,
+      // manpowerId: req.body.manpowerId,
+      mobileVerified: req.body.mobileVerified,
+      state: req.body.state,
+      pinCode: req.body.pinCode,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      lati: req.body.lati,
+      longi: req.body.longi,
+      instantOrdirect: "instant",
+      orderId: orderId
+    }
 
-    let employer = await Employerr.findOne({ mobile });
+    const user = await User.findById(req.params.id);
 
-    if (!employer) {
+    if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    employer.mobile = mobile;
-    employer.job_desc = job_desc;
-    employer.city = city;
-    employer.siteLocation = siteLocation;
-    employer.employmentType = employmentType;
-    employer.category = category;
-    employer.no_Of_opening = no_Of_opening;
-    employer.fullTime = fullTime;
-    employer.miniSalary = miniSalary;
-    employer.maxSalary = maxSalary;
-    employer.workingDays = workingDays;
-    employer.workingHours = workingHours;
-    employer.explainYourWork = explainYourWork;
-    employer.date = date;
-    employer.manpowerId = manpowerId;
-    employer.mobileVerified = mobileVerified;
-    employer.state = state,
-      employer.pinCode = pinCode,
-      employer.GST_Number = GST_Number,
-      employer.registration_Number = registration_Number,
-      employer.lati = lati,
-      employer.longi = longi,
-      employer.instantOrdirect = instantOrdirect,
+    // Push the new document into the documents array
+    user.obj.push(data);
 
-
-      await employer.save();
+    // Save the updated user document
+    await user.save();
 
     res
       .status(200)
-      .json({ message: "Details filled successfully", data: employer });
+      .json({ message: "Details filled successfully", data: user });
   } catch (error) {
     console.log(error)
     res.status(500).json({ error: "Something went wrong" });
@@ -318,9 +365,41 @@ exports.detailInstantEmployer = async (req, res) => {
 }
 
 
+exports.getUsersByInstantOrDirect = async (req, res) => {
+  try {
+    const instantOrdirectValue = req.params.value;
+
+    const users = await User.aggregate([
+      {
+        $match: { "obj.instantOrdirect": instantOrdirectValue },
+      },
+      {
+        $project: {
+          mobile: 1,
+          obj: {
+            $filter: {
+              input: "$obj",
+              as: "item",
+              cond: { $eq: ["$$item.instantOrdirect", instantOrdirectValue] },
+            },
+          },
+        },
+      },
+    ]);
+
+    res.status(200).json(users);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
 exports.getAllEmployer = async (req, res) => {
   try {
-    const employer = await Employerr.find()
+    const employer = await User.find()
     if (!employer) {
       return res.status(400).json({ error: "Employer data not provided" });
     }
@@ -344,33 +423,33 @@ exports.getAllEmployerById = async (req, res) => {
 };
 
 
-exports.getInstanOrDirect = async (req, res) => {
-  try {
-    const { instantOrdirect } = req.query;
+// exports.getInstanOrDirect = async (req, res) => {
+//   try {
+//     const { instantOrdirect } = req.query;
 
-    // Build the filter object based on the provided query parameters
-    const filter = {}
-    // if (city) filter.city = city;
-    // if (category) filter.category = category;
-    // if (employmentType) filter.employmentType = employmentType;
-    if (instantOrdirect) filter.instantOrdirect = instantOrdirect;
+//     // Build the filter object based on the provided query parameters
+//     const filter = {}
+//     // if (city) filter.city = city;
+//     // if (category) filter.category = category;
+//     // if (employmentType) filter.employmentType = employmentType;
+//     if (instantOrdirect) filter.instantOrdirect = instantOrdirect;
 
-    // Query the database with the filter
-    const employers = await Employerr.find(filter);
+//     // Query the database with the filter
+//     const employers = await Employerr.find(filter);
 
-    // Send the filtered employers as a response
-    res.status(200).json(employers);
+//     // Send the filtered employers as a response
+//     res.status(200).json(employers);
 
-    if (employers.length == 0) {
-      res.status(404).send({ status: 404, message: "employee not found.", data: {} });
-    } else {
-      res.status(200).send({ status: 200, message: "Job Found successfully.", data: employers });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ status: 500, error: "Internal server error" })
-  }
-}
+//     if (employers.length == 0) {
+//       res.status(404).send({ status: 404, message: "employee not found.", data: {} });
+//     } else {
+//       res.status(200).send({ status: 200, message: "Job Found successfully.", data: employers });
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ status: 500, error: "Internal server error" })
+//   }
+// }
 
 
 exports.loginWithPhone = async (req, res) => {
@@ -410,38 +489,51 @@ exports.loginWithPhone = async (req, res) => {
 
 exports.updatebyManpoweridEmployer = async (req, res) => {
   try {
-    const data = {
-      apply,
-      manpowerId,
-    } = req.body;
+    const { mobile, orderId, manpowerId } = req.body;
 
-    const otp = OTP.generateOTP();
-    let employer = await Employerr.findOne({ _id: req.params.id })
+    // Find the user/employer with the given mobile number
+    const employer = await User.findOne({ mobile: mobile });
 
     if (!employer) {
-      return res.status(404).json({ error: "Employer not found" });
+      return res.status(404).json({ error: "User/Employer not found with the given mobile number." });
     }
-    employer.apply = data.apply,
-      employer.manpowerId = data.manpowerId,
-      employer.otpSendToEmployer = otp
 
-    await employer.save()
+    // Find the specific post in the obj array with the given orderId
+    const post = employer.obj.find((post) => post.orderId === orderId);
 
-    let manppowerr = await Manpowerr.findOne({ _id: data.manpowerId })
-    if (!manppowerr) {
-      return res.status(404).json({ error: "manppowerr not found" });
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." });
     }
-    manppowerr.otpSendToManpowerr = otp
 
-    await manppowerr.save()
+    if (!post.manpower || !Array.isArray(post.manpower)) {
+      post.manpower = []; // Initialize manpower as an empty array if it doesn't exist
+    }
 
-    res
-      .status(200)
-      .json({ message: "Details filled successfully", data: employer });
+    // Check if the post is already assigned to the provided manpower
+    if (post.manpower.includes(manpowerId)) {
+      return res.status(400).json({ error: "You have already applied for this post." });
+    }
+
+    // Add the manpowerId to the array for the post
+    post.manpower.push(manpowerId)
+    console.log(post);
+    // Find the index of the post in the obj array and update it with the updated post
+    const postIndex = employer.obj.findIndex((post) => post.orderId === orderId);
+    employer.obj[postIndex] = post;
+
+    // Save the changes to the employer
+    await employer.save();
+
+    res.status(200).json({ message: "Successfully applied for the post.", post: post });
   } catch (error) {
-    res.status(500).json({ error: "Something went wrong" })
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
   }
-}
+};
+
+
+
+
 
 
 //////////////this api for manpower//////////////////

@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
         },
         employmentType: {
             type: String,
-            // enum: ["manpower", "agent"],
+            enum: ["manpower", "agent"],
             default: "manpower",
         },
         category: {
@@ -61,8 +61,10 @@ const UserSchema = new mongoose.Schema(
         },
         manpowerId: {
             type: objectId,
-            ref: "ManPower",
+            ref: "User",
+            // default:""
         },
+        
         mobileVerified: {
             type: Boolean,
             default: false,
@@ -159,6 +161,15 @@ const UserSchema = new mongoose.Schema(
             type: String,
             enum: ["manpower", "employer", "agent"],
             default: "employer"
+        },
+        obj:{
+            type:Array
+        },
+        orderId:{
+            type:String
+        },
+        manpower:{
+            type:Array
         }
     },
     {
