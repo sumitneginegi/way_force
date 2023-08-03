@@ -16,14 +16,12 @@ const reffralCode = async () => {
     OTP += digits[Math.floor(Math.random() * 36)];
   }
   return OTP;
-};
-
+}
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
 const authToken = "9d20fa9d3a465dc7de999b0b3de610e0";
 const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
-
 
 exports.registrationEmployer = async (req, res) => {
   try {
@@ -86,7 +84,6 @@ exports.sendotpEmployer = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
 
 exports.signupEmployer = async (req, res) => {
   try {
@@ -397,7 +394,6 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
 };
 
 
-
 // exports.getAllEmployer = async (req, res) => {
 //   try {
 //     const employer = await User.find()
@@ -560,6 +556,75 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
 };
 
 
+
+// exports. = async (req, res) => {
+ 
+//   try {
+//     const { mobile, orderId, manpowerId } = req.body;
+
+//     // Find the user/employer with the given mobile number
+//     const employer = await User.findOne({
+//       mobile: mobile,
+//     });
+
+//     if (!employer) {
+//       return res.status(404).json({ error: "User/Employer not found with the given mobile number." });
+//     }
+
+//     // Find the specific post in the obj array with the given orderId
+//     const post = employer.obj.find((post) => post.orderId === orderId);
+    
+//     if (!post) {
+//       return res.status(404).json({ error: "Post not found." });
+//     }
+
+
+//     if (!post.manpower || !Array.isArray(post.manpower)) {
+//       post.manpower = [] // Initialize manpower as an empty array if it doesn't exist
+//     }
+
+//     // Check if the post is already assigned to the provided manpower
+//     if (post.manpower.includes(manpowerId)) {
+//       return res.status(400).json({ error: "You have already applied for this post." });
+//     }
+//     const otp = OTP.generateOTP()
+//     // Add the manpowerId to the array for the post
+//     post.manpower.manpowerId = manpowerId
+//     post.manpower.otpSendToEmployer = otp
+//     // post.manpower.push(manpowerId)
+//     // Generate OTP
+    
+// // console.log(post);
+//     // Save the changes to the employer
+//     await employer.save()
+
+//       // Find the index of the post in the obj array and update it with the updated post
+//   const postIndex = employer.obj.findIndex((post) => post.orderId === orderId)
+//   console.log(postIndex)
+//   employer.obj[postIndex] = post
+
+//   // Save the changes to the employer again to update the obj array
+//   await employer.save();
+
+//     // Find the manpower with the given manpowerId
+//     const manpower = await User.findById(manpowerId);
+//     console.log(manpower);
+//     if (!manpower) {
+//       return res.status(404).json({ error: "Manpower not found." });
+//     }
+
+//     // Save OTP to the manpower's otpSendToManpowerr field
+//     manpower.otpSendToManpowerr = otp;
+
+//     // Save the changes to the manpower
+//     await manpower.save();
+
+//     res.status(200).json({ message: "Successfully applied for the post.",post:post});
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
 
 //////////////this api for manpower//////////////////
 

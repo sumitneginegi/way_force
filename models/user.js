@@ -4,6 +4,9 @@ const objectId = mongoose.Types.ObjectId;
 
 const UserSchema = new mongoose.Schema(
     {
+        employerName:{
+            type:String
+        },
         mobile: {
             type: String,
         },
