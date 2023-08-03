@@ -4,6 +4,7 @@ const OTP = require("../config/OTP-Generate");
 const User = require("../models/user")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
+const mongoose = require('mongoose');
 
 const twilio = require("twilio");
 // var newOTP = require("otp-generators");
@@ -434,7 +435,8 @@ exports.getAllEmployerById = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-};
+}
+
 
 
 // exports.getInstanOrDirect = async (req, res) => {
@@ -498,55 +500,64 @@ exports.loginWithPhone = async (req, res) => {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-};
+}
 
 
 exports.updatebyManpoweridEmployer = async (req, res) => {
   try {
-    const { mobile, orderId, manpowerId } = req.body;
-
+    const { mobile, orderId, manpowerId } = req.body
+  
     // Find the user/employer with the given mobile number
-    const employer = await User.findOne({ mobile: mobile });
+    const employer = await User.findOne({
+      mobile: mobile,
+    });
 
     if (!employer) {
-      return res.status(404).json({ error: "User/Employer not found with the given mobile number." });
+      return res.status(404).json({ error: "User/Employer not found with the given mobile number." })
     }
 
     // Find the specific post in the obj array with the given orderId
-    const post = employer.obj.find((post) => post.orderId === orderId);
-
+    const post = employer.obj.find((post) => post.orderId === orderId)
+    
     if (!post) {
-      return res.status(404).json({ error: "Post not found." });
+      return res.status(404).json({ error: "Post not found." })
     }
 
+
     if (!post.manpower || !Array.isArray(post.manpower)) {
-      post.manpower = []; // Initialize manpower as an empty array if it doesn't exist
+      post.manpower = [] // Initialize manpower as an empty array if it doesn't exist
     }
 
     // Check if the post is already assigned to the provided manpower
     if (post.manpower.includes(manpowerId)) {
-      return res.status(400).json({ error: "You have already applied for this post." });
+      return res.status(400).json({ error: "You have already applied for this post." })
     }
-
+    // const otp = OTP.generateOTP()
     // Add the manpowerId to the array for the post
+    // post.manpower.manpowerId = manpowerId
+  
     post.manpower.push(manpowerId)
-    console.log(post);
-    // Find the index of the post in the obj array and update it with the updated post
-    const postIndex = employer.obj.findIndex((post) => post.orderId === orderId);
-    employer.obj[postIndex] = post;
-
+    // Generate OTP
+    
+// console.log(post);
     // Save the changes to the employer
-    await employer.save();
+    await employer.save()
 
-    res.status(200).json({ message: "Successfully applied for the post.", post: post });
+      // Find the index of the post in the obj array and update it with the updated post
+  const postIndex = employer.obj.findIndex((post) => post.orderId === orderId)
+  console.log(postIndex)
+  employer.obj[postIndex] = post
+
+  // Save the changes to the employer again to update the obj array
+  await employer.save();
+
+
+    res.status(200).json({ message: "Successfully applied for the post.",post:employer})
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ error: "Internal server error" })
   }
 };
-
-
-
 
 
 

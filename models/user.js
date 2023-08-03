@@ -59,11 +59,11 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: "false"
         },
-        manpowerId: {
+        manpowerId: [{
             type: objectId,
             ref: "User",
             // default:""
-        },
+        }],
         
         mobileVerified: {
             type: Boolean,
@@ -168,9 +168,7 @@ const UserSchema = new mongoose.Schema(
         orderId:{
             type:String
         },
-        manpower:{
-            type:Array
-        }
+    
     },
     {
         timestamps: true,
