@@ -397,15 +397,29 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
 
 
 
+// exports.getAllEmployer = async (req, res) => {
+//   try {
+//     const employer = await User.find()
+//     if (!employer) {
+//       return res.status(400).json({ error: "Employer data not provided" });
+//     }
+//     res.status(201).json({ success: true, data: employer })
+//   } catch (err) {
+//     res.status(500).json({ message: err.message });
+//   }
+// };
+
 exports.getAllEmployer = async (req, res) => {
   try {
-    const employer = await User.find()
-    if (!employer) {
-      return res.status(400).json({ error: "Employer data not provided" });
+    const employers = await User.find({}, '_id mobile otp obj createdAt updatedAt');
+
+    if (employers.length === 0) {
+      return res.status(404).json({ error: "No employer data found." });
     }
-    res.status(201).json({ success: true, data: employer })
+
+    res.status(200).json({ success: true, data: employers });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ error: "Internal server error" });
   }
 };
 
