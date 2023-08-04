@@ -439,7 +439,7 @@ exports.viewInShort = async (req, res) => {
     ]
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    res.json(result)
+    res.status(200).send({data:result})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
