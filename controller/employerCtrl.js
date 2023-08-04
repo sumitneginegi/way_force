@@ -6,6 +6,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
 
+
 const dbConnect = require("../config/DBConnect");
 // dotenv.config();
 dbConnect()
@@ -417,11 +418,12 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
 };
 
 
-
 exports.viewInShort = async (req, res) => {
   try {
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
+      // Match documents with userType: "employer"
+      { $match: { userType: "employer" } },
       // Unwind the 'obj' array to get individual job objects
       { $unwind: "$obj" },
       // Project only the desired fields from each job object
@@ -436,29 +438,51 @@ exports.viewInShort = async (req, res) => {
           miniSalary: "$obj.miniSalary",
         }
       }
-    ];
+    ]
+    // Execute the aggregation pipeline
+    const result = await User.aggregate(aggregationPipeline).exec();
+    res.json(result)
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
+
+exports.ViewJobInDdetails = async (req, res) => {
+  try {
+    // Aggregate pipeline to extract desired fields from the 'obj' array
+    const aggregationPipeline = [
+      // Match documents with userType: "employer"
+      { $match: { userType: "employer" } },
+      // Unwind the 'obj' array to get individual job objects
+      { $unwind: "$obj" },
+      // Project only the desired fields from each job object
+      {
+        $project: {
+          job_desc: "$obj.job_desc",
+          employerName: "$obj.employerName",
+          siteLocation: "$obj.siteLocation",
+          no_Of_opening: "$obj.no_Of_opening",
+          fullTime: "$obj.fullTime",
+          maxiSalary: "$obj.maxSalary",
+          miniSalary: "$obj.miniSalary",
+          workingDays: "$obj.workingDays",
+          workingHours: "$obj.workingHours",
+          date: "$obj.date",
+          skills: "$obj.skills",
+        }
+      }
+    ]
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
     res.json(result);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: "Internal Server Error" });
   }
-};
+}
 
-
-// exports.getAllEmployer = async (req, res) => {
-//   try {
-//     const employer = await User.find()
-//     if (!employer) {
-//       return res.status(400).json({ error: "Employer data not provided" });
-//     }
-//     res.status(201).json({ success: true, data: employer })
-//   } catch (err) {
-//     res.status(500).json({ message: err.message });
-//   }
-// };
 
 exports.getAllEmployer = async (req, res) => {
   try {

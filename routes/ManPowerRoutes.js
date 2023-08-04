@@ -13,6 +13,9 @@ const {
   registrationManpower,
   sendotp
 } = require("../controller/ManPowerCtrl");
+
+const auth = require("../middleware/auth")
+
 const router = express.Router();
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
@@ -41,7 +44,7 @@ router.post("/sendotp", sendotp);
 router.post("/signup", signupManpower);
 router.post("/login", loginManpower);
 router.post("/verify/otp/:id", verifyOtp);
-router.put("/fill/details/:id", detailSignup);
+router.put("/fill/details/:id",/*auth.verifyToken,*/ detailSignup);
 router.post("/work-details/:id", workDetails);
 router.put(
   "/upload/documents/:id",
