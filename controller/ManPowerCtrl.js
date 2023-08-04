@@ -359,6 +359,7 @@ exports.loginManpower = async (req, res) => {
       message: "Login successful",
       data: {
         token,
+        otp,
         manpower: manpower,
       },
     });
