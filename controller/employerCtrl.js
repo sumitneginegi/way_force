@@ -6,11 +6,9 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
 
-
 const dbConnect = require("../config/DBConnect");
 // dotenv.config();
 dbConnect()
-
 
 const twilio = require("twilio");
 // var newOTP = require("otp-generators");
@@ -484,6 +482,40 @@ exports.ViewJobInDdetails = async (req, res) => {
 }
 
 
+exports.viewInShortOfInstantLead = async (req, res) => {
+  try {
+    // Aggregate pipeline to extract desired fields from the 'obj' array
+    const aggregationPipeline = [
+      // Match documents with userType: "employer"
+      { $match: { userType: "employer", "obj.instantOrdirect": "instant" } },
+      // Unwind the 'obj' array to get individual job objects
+      { $unwind: "$obj" },
+      // Project only the desired fields from each job object
+      {
+        $project: {
+          job_desc: "$obj.job_desc",
+          employerName: "$obj.employerName",
+          siteLocation: "$obj.siteLocation",
+          fullTime: "$obj.fullTime",
+          maxiSalary: "$obj.maxSalary",
+          miniSalary: "$obj.miniSalary",
+          instantOrdirect: "$obj.instantOrdirect"
+        }
+      }
+    ];
+    // Execute the aggregation pipeline
+    const result = await User.aggregate(aggregationPipeline).exec();
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
+
+
+
+
+
 exports.getAllEmployer = async (req, res) => {
   try {
     const employers = await User.find({}, '_id mobile otp obj createdAt updatedAt');
@@ -634,6 +666,32 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
 };
 
 
+exports.verifyOtpByManpower = async (req, res) => {
+  const manpowerId = req.params.manpowerid;
+  const { otp } = req.body;
+
+  try {
+    // Find the order by ID
+    const Manpower = await Manpowerr.findById(manpowerId);
+    if (!Manpower) {
+      return res.status(404).json({ message: "Manpower not found." });
+    }
+
+    // Compare the provided OTP with the stored OTP
+    if (otp === Manpower.otpSendToManpowerr) {
+      // OTP is correct, mark the order as delivered and update deliveredAt timestamp
+      Manpower.otpSendToManpowerrVerified = "true";
+      await Manpower.save();
+
+      return res.status(200).json({ message: "OTP verified. Manpower verified successfully." });
+    } else {
+      return res.status(401).json({ message: "Invalid OTP , Manpower verified failed." });
+    }
+  } catch (err) {
+    console.error("Error verifying OTP:", err);
+    return res.status(500).json({ message: "An error occurred while verifying OTP." });
+  }
+};
 
 // exports. = async (req, res) => {
  
@@ -705,34 +763,6 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
 // };
 
 //////////////this api for manpower//////////////////
-
-exports.verifyOtpByManpower = async (req, res) => {
-  const manpowerId = req.params.manpowerid;
-  const { otp } = req.body;
-
-  try {
-    // Find the order by ID
-    const Manpower = await Manpowerr.findById(manpowerId);
-    if (!Manpower) {
-      return res.status(404).json({ message: "Manpower not found." });
-    }
-
-    // Compare the provided OTP with the stored OTP
-    if (otp === Manpower.otpSendToManpowerr) {
-      // OTP is correct, mark the order as delivered and update deliveredAt timestamp
-      Manpower.otpSendToManpowerrVerified = "true";
-      await Manpower.save();
-
-      return res.status(200).json({ message: "OTP verified. Manpower verified successfully." });
-    } else {
-      return res.status(401).json({ message: "Invalid OTP , Manpower verified failed." });
-    }
-  } catch (err) {
-    console.error("Error verifying OTP:", err);
-    return res.status(500).json({ message: "An error occurred while verifying OTP." });
-  }
-};
-
 
 
 

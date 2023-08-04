@@ -15,7 +15,8 @@ const {
     sendotpEmployer,
     getUsersByInstantOrDirect,
     viewInShort,
-    ViewJobInDdetails
+    ViewJobInDdetails,
+    viewInShortOfInstantLead
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -44,6 +45,7 @@ router.put("/instant/detail/:id", detailInstantEmployer);
 router.get("/getUsersBy/InstantOrDirect/:value", getUsersByInstantOrDirect);
 router.get("/get/viewPostInShort",viewInShort)
 router.get("/get/ViewJobInDdetails",ViewJobInDdetails)
+router.get("/get/viewInShortOfInstantLead",viewInShortOfInstantLead)
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",
 //   upload.fields([{ name: "aadharCard" }, { name: "panCard" }]),

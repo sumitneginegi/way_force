@@ -334,9 +334,17 @@ exports.loginManpower = async (req, res) => {
         .status(400)
         .json({ error: "Mobile number required" });
     }
-    let otp = OTP.generateOTP()
+    // Generate a random 6-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
+    
+    // Create and send the SMS with the OTP
+    // await client.messages.create({
+    //   to: mobile,
+    //   from: twilioPhoneNumber,
+    //   body: `Your OTP is: ${otp}`,
+    // });
 
-    const manpower = await User.findOne({ mobile });
+    const manpower = await User.findOne({ mobile:mobile });
     if (!manpower) {
       return res.status(404).json({ error: "Manpower not found" });
     }
@@ -345,7 +353,7 @@ exports.loginManpower = async (req, res) => {
     manpower.save()
 
 
-    const token = jwt.sign({ manpowerId: manpower.id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ manpowerId: manpower._id }, process.env.JWT_SECRET);
 
     res.status(200).json({
       message: "Login successful",
