@@ -13,7 +13,8 @@ const {
     manpowerDocument,
     registrationEmployer,
     sendotpEmployer,
-    getUsersByInstantOrDirect
+    getUsersByInstantOrDirect,
+    viewInShort
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -40,6 +41,7 @@ router.put("/direct/detail/:id", detailDirectEmployer);
 router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);
 router.put("/instant/detail/:id", detailInstantEmployer);
 router.get("/getUsersBy/InstantOrDirect/:value", getUsersByInstantOrDirect);
+router.get("/get/viewPostInShort",viewInShort)
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",
 //   upload.fields([{ name: "aadharCard" }, { name: "panCard" }]),

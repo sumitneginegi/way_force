@@ -6,6 +6,11 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
 
+const dbConnect = require("../config/DBConnect");
+// dotenv.config();
+dbConnect()
+
+
 const twilio = require("twilio");
 // var newOTP = require("otp-generators");
 
@@ -19,16 +24,30 @@ const reffralCode = async () => {
 }
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
-const authToken = "9d20fa9d3a465dc7de999b0b3de610e0";
+const authToken = "b84ef9419317143ffbff15233a713770";
 const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
 
 exports.registrationEmployer = async (req, res) => {
   try {
-    var { mobile, otp } = req.body
+
+    const { mobile } = req.body;
+
+    // res.status(200).json({ message: "OTP sent successfully" });
+
     var user = await User.findOne({ mobile: mobile, userType: "employer" })
 
     if (!user) {
+
+      const otp = Math.floor(1000 + Math.random() * 9000);
+    
+      // Create and send the SMS with the OTP
+      await client.messages.create({
+        to: mobile,
+        from: twilioPhoneNumber,
+        body: `Your OTP is: ${otp}`,
+      });
+
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
@@ -57,6 +76,8 @@ exports.registrationEmployer = async (req, res) => {
     } else {
       return res.status(409).send({ status: 409, msg: "Already Exit" });
     }
+
+ 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -66,7 +87,7 @@ exports.registrationEmployer = async (req, res) => {
 exports.sendotpEmployer = async (req, res) => {
   console.log("hi");
   try {
-    const { phoneNumber } = req.body;
+    const { phoneNumber } = req.body
 
     // Generate a random 6-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
@@ -287,7 +308,8 @@ exports.detailDirectEmployer = async (req, res) => {
       // manpowerId: req.body.manpowerId,
       mobileVerified: req.body.mobileVerified,
       instantOrdirect: "Direct",
-      orderId: orderId
+      orderId: orderId,
+      employerName:req.body.employerName
     }
 
     const user = await User.findById(req.params.id);
@@ -338,7 +360,8 @@ exports.detailInstantEmployer = async (req, res) => {
       lati: req.body.lati,
       longi: req.body.longi,
       instantOrdirect: "instant",
-      orderId: orderId
+      orderId: orderId,
+      employerName:req.body.employerName
     }
 
     const user = await User.findById(req.params.id);
@@ -390,6 +413,37 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+exports.viewInShort = async (req, res) => {
+  try {
+    // Aggregate pipeline to extract desired fields from the 'obj' array
+    const aggregationPipeline = [
+      // Unwind the 'obj' array to get individual job objects
+      { $unwind: "$obj" },
+      // Project only the desired fields from each job object
+      {
+        $project: {
+          job_desc: "$obj.job_desc",
+          employerName: "$obj.employerName",
+          siteLocation: "$obj.siteLocation",
+          no_Of_opening: "$obj.no_Of_opening",
+          fullTime: "$obj.fullTime",
+          maxiSalary: "$obj.maxSalary",
+          miniSalary: "$obj.miniSalary",
+        }
+      }
+    ];
+
+    // Execute the aggregation pipeline
+    const result = await User.aggregate(aggregationPipeline).exec();
+    res.json(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
 
