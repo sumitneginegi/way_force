@@ -323,8 +323,7 @@ exports.detailDirectEmployer = async (req, res) => {
     // Save the updated user document
     await user.save();
 
-    res.status(201).json(user);
-
+    res.status(200).send({data:user})
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
@@ -407,8 +406,7 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
       },
     ]);
 
-    res.status(200).json(users);
-
+    res.status(200).send({data:users})
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
@@ -474,7 +472,7 @@ exports.ViewJobInDdetails = async (req, res) => {
     ]
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    res.json(result);
+    res.status(200).send({data:result})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -505,7 +503,7 @@ exports.viewInShortOfInstantLead = async (req, res) => {
     ];
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    res.json(result);
+    res.status(200).send({data:result})
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
