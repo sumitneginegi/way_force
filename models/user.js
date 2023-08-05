@@ -171,12 +171,21 @@ const UserSchema = new mongoose.Schema(
         orderId:{
             type:String
         },
-    
+        startTime:{
+            type:String
+        },
+        endTime:{
+            type:String
+        },
+        manpowerObj:[{
+
+        }]
+
     },
     {
         timestamps: true,
     }
-);
+)
 
 const UserModel = mongoose.model("User", UserSchema);
 module.exports = UserModel;

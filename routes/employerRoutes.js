@@ -16,7 +16,9 @@ const {
     getUsersByInstantOrDirect,
     viewInShort,
     ViewJobInDdetails,
-    viewInShortOfInstantLead
+    viewInShortOfInstantLead,
+    generateAndSaveOTP,
+    verifyOTPByManpower
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -46,6 +48,8 @@ router.get("/getUsersBy/InstantOrDirect/:value", getUsersByInstantOrDirect);
 router.get("/get/viewPostInShort",viewInShort)
 router.get("/get/ViewJobInDdetails",ViewJobInDdetails)
 router.get("/get/viewInShortOfInstantLead",viewInShortOfInstantLead)
+router.put("/put/generateAndSaveOTP",generateAndSaveOTP)
+router.post("/post/verifyOTPByManpower",verifyOTPByManpower)
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",
 //   upload.fields([{ name: "aadharCard" }, { name: "panCard" }]),

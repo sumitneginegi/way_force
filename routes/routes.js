@@ -11,4 +11,10 @@ router.use("/bookingByEmployerr",require("./bookingByEmployer"))
 router.use("/paymentt",require("./payment"))
 
 
+
+//////////////////////////////////////////////////
+
+router.use("/adminn",require("./admin/dashboard"))
+
+
 module.exports = router;
