@@ -286,6 +286,8 @@ exports.verifyOtpEmployer = async (req, res) => {
 //   }
 // };
 
+
+
 exports.detailDirectEmployer = async (req, res) => {
   try {
     let orderId = await reffralCode()
@@ -416,13 +418,14 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
 
 exports.viewInShort = async (req, res) => {
   try {
+
+    const instantOrdirectValue = req.query.instantOrdirect;
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
-      // Match documents with userType: "employer"
-      { $match: { userType: "employer" } },
-      // Unwind the 'obj' array to get individual job objects
       { $unwind: "$obj" },
-      // Project only the desired fields from each job object
+      // Match documents with userType: "employer" and obj.instantOrdirect: "instant"
+      { $match: { userType: "employer", "obj.instantOrdirect": instantOrdirectValue } },
+ 
       {
         $project: {
           job_desc: "$obj.job_desc",
@@ -432,27 +435,33 @@ exports.viewInShort = async (req, res) => {
           fullTime: "$obj.fullTime",
           maxiSalary: "$obj.maxSalary",
           miniSalary: "$obj.miniSalary",
+          instantOrdirect: "$obj.instantOrdirect",
+          orderId:"$obj.orderId",
         }
       }
-    ]
+    ];
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    res.status(200).send({data:result})
+    res.status(200).send({ data: result });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-}
+};
+
 
 
 exports.ViewJobInDdetails = async (req, res) => {
   try {
+
+    const instantOrdirectValue = req.query.instantOrdirect;
+    const orderId = req.query.orderId
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
-      // Match documents with userType: "employer"
-      { $match: { userType: "employer" } },
-      // Unwind the 'obj' array to get individual job objects
       { $unwind: "$obj" },
+      // Match documents with userType: "employer" and obj.instantOrdirect: "instant"
+      { $match: { userType: "employer", "obj.instantOrdirect": instantOrdirectValue,"obj.orderId": orderId } },
+      // Match documents with userType: "employer"
       // Project only the desired fields from each job object
       {
         $project: {
@@ -467,6 +476,8 @@ exports.ViewJobInDdetails = async (req, res) => {
           workingHours: "$obj.workingHours",
           date: "$obj.date",
           skills: "$obj.skills",
+          instantOrdirect: "$obj.instantOrdirect",
+          orderId:"$obj.orderId",
         }
       }
     ]
@@ -509,9 +520,6 @@ exports.viewInShortOfInstantLead = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 }
-
-
-
 
 
 exports.getAllEmployer = async (req, res) => {
