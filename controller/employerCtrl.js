@@ -189,7 +189,7 @@ exports.detailDirectEmployer = async (req, res) => {
       mobileVerified: req.body.mobileVerified,
       instantOrdirect: "Direct",
       orderId: orderId,
-      employerName:req.body.employerName
+      employerName:req.body.employerName,
     }
 
     const user = await User.findById(req.params.id);

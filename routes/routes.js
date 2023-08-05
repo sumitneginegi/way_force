@@ -15,6 +15,7 @@ router.use("/paymentt",require("./payment"))
 //////////////////////////////////////////////////
 
 router.use("/adminn",require("./admin/dashboard"))
+router.use("/postVerificationn",require("./admin/postVerification"))
 
 
 module.exports = router;
