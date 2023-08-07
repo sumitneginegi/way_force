@@ -182,6 +182,13 @@ const UserSchema = new mongoose.Schema(
         endTime:{
             type:String
         },
+        statusOfCompletion:{
+            type:String
+        },
+        userVerification:{
+            type:String,
+            default:"false"
+        },
         manpowerObj:[{
 
         }]
@@ -192,5 +199,5 @@ const UserSchema = new mongoose.Schema(
     }
 )
 
-const UserModel = mongoose.model("User", UserSchema);
-module.exports = UserModel;
+const UserModel = mongoose.model("User", UserSchema)
+module.exports = UserModel

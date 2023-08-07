@@ -39,7 +39,7 @@ exports.registrationEmployer = async (req, res) => {
     if (!user) {
 
       const otp = Math.floor(1000 + Math.random() * 9000);
-    
+
       // Create and send the SMS with the OTP
       await client.messages.create({
         to: mobile,
@@ -76,7 +76,7 @@ exports.registrationEmployer = async (req, res) => {
       return res.status(409).send({ status: 409, msg: "Already Exit" });
     }
 
- 
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
@@ -138,7 +138,7 @@ exports.signupEmployer = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });
   }
-};
+}
 
 
 
@@ -163,7 +163,7 @@ exports.verifyOtpEmployer = async (req, res) => {
     console.error(err);
     return createResponse(res, 500, "Internal server error");
   }
-};
+}
 
 
 
@@ -189,7 +189,7 @@ exports.detailDirectEmployer = async (req, res) => {
       mobileVerified: req.body.mobileVerified,
       instantOrdirect: "Direct",
       orderId: orderId,
-      employerName:req.body.employerName,
+      employerName: req.body.employerName,
     }
 
     const user = await User.findById(req.params.id);
@@ -204,18 +204,27 @@ exports.detailDirectEmployer = async (req, res) => {
     // Save the updated user document
     await user.save();
 
-    res.status(200).send({data:user})
+    res.status(200).send({ data: user })
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
-};
+}
 
 
 
 exports.detailInstantEmployer = async (req, res) => {
   try {
     let orderId = await reffralCode()
+
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // Note: Month is 0-indexed, so adding 1
+    const day = today.getDate();
+
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log(formattedDate);
+
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
@@ -230,7 +239,7 @@ exports.detailInstantEmployer = async (req, res) => {
       workingDays: req.body.workingDays,
       workingHours: req.body.workingHours,
       explainYourWork: req.body.explainYourWork,
-      date: req.body.date,
+      date: formattedDate,
       // manpowerId: req.body.manpowerId,
       mobileVerified: req.body.mobileVerified,
       state: req.body.state,
@@ -241,7 +250,9 @@ exports.detailInstantEmployer = async (req, res) => {
       longi: req.body.longi,
       instantOrdirect: "instant",
       orderId: orderId,
-      employerName:req.body.employerName
+      employerName: req.body.employerName,
+      startTime: req.body.startTime,
+      endTime: req.body.endTime
     }
 
     const user = await User.findById(req.params.id);
@@ -289,12 +300,12 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
       },
     ]);
 
-    res.status(200).send({data:users})
+    res.status(200).send({ data: users })
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
-};
+}
 
 
 
@@ -307,7 +318,7 @@ exports.viewInShort = async (req, res) => {
       { $unwind: "$obj" },
       // Match documents with userType: "employer" and obj.instantOrdirect: "instant"
       { $match: { userType: "employer", "obj.instantOrdirect": instantOrdirectValue } },
- 
+
       {
         $project: {
           job_desc: "$obj.job_desc",
@@ -318,7 +329,7 @@ exports.viewInShort = async (req, res) => {
           maxiSalary: "$obj.maxSalary",
           miniSalary: "$obj.miniSalary",
           instantOrdirect: "$obj.instantOrdirect",
-          orderId:"$obj.orderId",
+          orderId: "$obj.orderId",
         }
       }
     ];
@@ -329,7 +340,7 @@ exports.viewInShort = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
   }
-};
+}
 
 
 
@@ -342,7 +353,7 @@ exports.ViewJobInDdetails = async (req, res) => {
     const aggregationPipeline = [
       { $unwind: "$obj" },
       // Match documents with userType: "employer" and obj.instantOrdirect: "instant"
-      { $match: { userType: "employer", "obj.instantOrdirect": instantOrdirectValue,"obj.orderId": orderId } },
+      { $match: { userType: "employer", "obj.instantOrdirect": instantOrdirectValue, "obj.orderId": orderId } },
       // Match documents with userType: "employer"
       // Project only the desired fields from each job object
       {
@@ -359,14 +370,16 @@ exports.ViewJobInDdetails = async (req, res) => {
           date: "$obj.date",
           skills: "$obj.skills",
           instantOrdirect: "$obj.instantOrdirect",
-          orderId:"$obj.orderId",
+          orderId: "$obj.orderId",
           mobile: 1,
+          startTime: "$obj.startTime",
+          endTime: "$obj.endTime"
         }
       }
     ]
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    res.status(200).send({data:result})
+    res.status(200).send({ data: result })
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -398,7 +411,7 @@ exports.viewInShortOfInstantLead = async (req, res) => {
     ];
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    res.status(200).send({data:result})
+    res.status(200).send({ data: result })
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal Server Error' });
@@ -419,7 +432,7 @@ exports.getAllEmployer = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: "Internal server error" });
   }
-};
+}
 
 
 
@@ -476,7 +489,7 @@ exports.loginWithPhone = async (req, res) => {
 exports.updatebyManpoweridEmployer = async (req, res) => {
   try {
     const { /*mobile,*/ orderId, manpowerId } = req.body
-  
+
     const employer = await User.findOne({
       "obj.orderId": orderId,
     });
@@ -494,7 +507,7 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
 
     // Find the specific post in the obj array with the given orderId
     const post = employer.obj.find((post) => post.orderId === orderId)
-    
+
     if (!post) {
       return res.status(404).json({ error: "Post not found." })
     }
@@ -510,24 +523,24 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
     // const otp = OTP.generateOTP()
     // Add the manpowerId to the array for the post
     // post.manpower.manpowerId = manpowerId
-  
+
     post.manpower.push(manpowerId)
     // Generate OTP
-    
-// console.log(post);
+
+    // console.log(post);
     // Save the changes to the employer
     await employer.save()
 
-      // Find the index of the post in the obj array and update it with the updated post
-  const postIndex = employer.obj.findIndex((post) => post.orderId === orderId)
-  console.log(postIndex)
-  employer.obj[postIndex] = post
+    // Find the index of the post in the obj array and update it with the updated post
+    const postIndex = employer.obj.findIndex((post) => post.orderId === orderId)
+    console.log(postIndex)
+    employer.obj[postIndex] = post
 
-  // Save the changes to the employer again to update the obj array
-  await employer.save();
+    // Save the changes to the employer again to update the obj array
+    await employer.save();
 
 
-    res.status(200).json({ message: "Successfully applied for the post.",post:employer})
+    res.status(200).json({ message: "Successfully applied for the post.", post: employer })
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" })
@@ -561,7 +574,7 @@ exports.verifyOtpByManpower = async (req, res) => {
     console.error("Error verifying OTP:", err);
     return res.status(500).json({ message: "An error occurred while verifying OTP." });
   }
-};
+}
 
 
 
@@ -636,6 +649,7 @@ exports.generateAndSaveOTP = async (req, res) => {
 
 
 
+
 exports.verifyOTPByManpower = async (req, res) => {
   try {
     const { orderId, manpowerId, otp } = req.body;
@@ -680,5 +694,137 @@ exports.verifyOTPByManpower = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+
+
+
+exports.scheduled_Jobs = async (req, res) => {
+  try {
+    const userType = req.query.userType;
+
+    // Find employers based on userType
+    const employers = await User.find({ userType });
+
+    // Filter and collect scheduled jobs with future dates
+    const scheduledJobs = [];
+    const currentDate = new Date();
+
+    employers.forEach(employer => {
+      employer.obj.forEach(job => {
+        const jobDate = new Date(job.date);
+        if (jobDate > currentDate) {
+          scheduledJobs.push(job);
+        }
+      });
+    });
+
+    if (scheduledJobs.length === 0) {
+      return res.json({ message: "No posts are scheduled ahead of the current date." });
+    }
+
+    res.status(200).json({ message: "success", scheduledJobs: scheduledJobs })
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "An error occurred" });
+  }
+}
+
+
+
+
+
+exports.upadtePostByStatusOfCompletion = async (req, res) => {
+  try {
+    const orderId = req.params.orderId;
+    const { startTime, endTime, statusOfCompletion } = req.body;
+
+    // Find the employer based on userType and update the post
+    const updatedUser = await User.findOneAndUpdate(
+      { userType: 'employer', 'obj.orderId': orderId },
+      {
+        $set: {
+          'obj.$.startTime': startTime,
+          'obj.$.endTime': endTime,
+          'obj.$.statusOfCompletion': statusOfCompletion,
+        },
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ msg: 'Post not found for the given orderId' });
+    }
+
+    res.status(200).json({ msg: 'Post updated successfully', data: updatedUser });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'An error occurred', error: error.message });
+  }
+}
+
+
+
+
+exports.getCompletedPosts = async (req, res) => {
+  try {
+    const completedPosts = await User.aggregate([
+      { $unwind: '$obj' },
+      { $match: { 'obj.statusOfCompletion': 'completed' } },
+      { $project: { _id: 0, 'obj': 1 } }
+    ]);
+
+    if (completedPosts.length === 0) {
+      return res.status(404).json({ msg: 'No completed posts found' });
+    }
+
+    res.status(200).json({ msg: 'Completed posts retrieved successfully', data: completedPosts });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: 'An error occurred', error: error.message });
+  }
+}
+
+
+
+
+exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
+  try {
+    const d = req.params.d
+    console.log(d)
+
+    if (d == "employer") {
+      const data1 = await User.aggregate([
+       
+      ])
+
+      return res.status(200).send({data: data1 });
+    }
+
+    if (d == "manpower") {
+      const data3 = await userSchema.aggregate([
+       
+      ]);
+
+      return res.status(201).json({
+        data: data3,
+      });
+    }
+
+    if (d == "agent") {
+      const data2 = await userSchema.aggregate([
+       
+      ]);
+
+  
+      return res.status(200).send({ data: data2 });
+    }
+
+  } catch (err) {
+    console.log(err)
+  }
+}
+
+
 
 

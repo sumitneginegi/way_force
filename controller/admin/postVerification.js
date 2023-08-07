@@ -63,7 +63,7 @@ exports.viewInShortAdmin = async (req, res) => {
   
       // Check if the post is already verified
       if (user.obj[postIndex].status === status) {
-        return res.status(400).json({ error: 'Post is already on hold.' });
+        return res.status(400).json({ error: 'Post is already checked.' });
       }
   
       // Update the status in the obj array for the specific orderId post

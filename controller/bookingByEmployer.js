@@ -12,7 +12,7 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
-    } = req.body;
+    } = req.body
 
     // const existingBooking = await BookingByEmployer.findOne({ EmployerId, manpowerId });
     const existingBooking = await BookingByEmployer.findOne({
@@ -20,7 +20,7 @@ exports.createBookingByEmployer = async (req, res) => {
               { EmployerId: EmployerId },
               { manpowerId: manpowerId }
             ]
-          });
+          })
 
     if (existingBooking) {
       // Check if work duration in years has been completed from the start date
@@ -36,7 +36,7 @@ exports.createBookingByEmployer = async (req, res) => {
             { EmployerId: EmployerId },
             { manpowerId: manpowerId }
           ]
-        });
+        })
 
         // Create a new booking with the updated details
         const newBooking = new BookingByEmployer({
@@ -51,7 +51,7 @@ exports.createBookingByEmployer = async (req, res) => {
           startDate,
         });
 
-        const savedBooking = await newBooking.save();
+        const savedBooking = await newBooking.save()
         return res.status(201).json({ message: 'Booking updated successfully', data: savedBooking });
       } else {
         return res.status(409).json({ error: 'Work duration not completed yet' });
@@ -68,16 +68,16 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
-    });
+    })
 
-    const savedBooking = await newBooking.save();
+    const savedBooking = await newBooking.save()
 
     res.status(201).json({ message: 'Booking created successfully', data: savedBooking });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
   }
-};
+}
 
 
 exports.calculateTimeDifference = (startTime, endTime) => {
@@ -89,7 +89,9 @@ exports.calculateTimeDifference = (startTime, endTime) => {
   const minutes = Math.floor((timeDifferenceInMs % (1000 * 60 * 60)) / (1000 * 60));
 
   return { hours, minutes };
-};
+}
+
+
 
 exports.calculateTimeDifferenceController = async (req, res) => {
   try {
@@ -106,7 +108,7 @@ exports.calculateTimeDifferenceController = async (req, res) => {
     console.error(err);
     return res.status(500).json({ error: "Internal server error" });
   }
-};
+}
 
 
 
@@ -124,6 +126,8 @@ exports.getBookingByEmployer = async (req, res) => {
   }
 }
 
+
+
 exports.getBookingByManpower = async (req, res) => {
   try {
     const manpowerId = req.params.manpowerId;
@@ -137,6 +141,7 @@ exports.getBookingByManpower = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong' });
   }
 }
+
 
 
 exports.updateBookingByEmployer = async (req, res) => {
@@ -188,9 +193,7 @@ exports.updateBookingByEmployer = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: 'Something went wrong' });
   }
-};
-
-
+}
 
 
 

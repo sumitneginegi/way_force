@@ -9,6 +9,9 @@ router.use("/statee",require("./state"))
 router.use("/category",require("./categoryROute"))
 router.use("/bookingByEmployerr",require("./bookingByEmployer"))
 router.use("/paymentt",require("./payment"))
+router.use("/OfferModell",require("./coupencode"))
+router.use("/termss",require("./admin/termsAndCondition"))
+
 
 
 

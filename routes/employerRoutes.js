@@ -18,7 +18,10 @@ const {
     ViewJobInDdetails,
     viewInShortOfInstantLead,
     generateAndSaveOTP,
-    verifyOTPByManpower
+    verifyOTPByManpower,
+    scheduled_Jobs,
+    upadtePostByStatusOfCompletion,
+    getCompletedPosts
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -50,6 +53,10 @@ router.get("/get/ViewJobInDdetails",ViewJobInDdetails)
 router.get("/get/viewInShortOfInstantLead",viewInShortOfInstantLead)
 router.put("/put/generateAndSaveOTP",generateAndSaveOTP)
 router.post("/post/verifyOTPByManpower",verifyOTPByManpower)
+router.get("/scheduled/Jobs", scheduled_Jobs);
+router.put("/upadtePost/ByStatusOfCompletion/:orderId", upadtePostByStatusOfCompletion);
+router.get("/getall/StatusOfCompletion", getCompletedPosts);
+
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",
 //   upload.fields([{ name: "aadharCard" }, { name: "panCard" }]),
