@@ -118,7 +118,7 @@ exports.signupManpower = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });
   }
-};
+}
 
 exports.verifyOtp = async (req, res) => {
   try {
@@ -143,7 +143,7 @@ exports.verifyOtp = async (req, res) => {
     console.error(err);
     return createResponse(res, 500, "Internal server error");
   }
-};
+}
 
 exports.detailSignup = async (req, res) => {
   try {
@@ -161,6 +161,8 @@ exports.detailSignup = async (req, res) => {
       minSalary,
       maxSalary,
       skills,
+      city,
+      state,
       jobType,
       serviceLocation,
       documents,
@@ -188,6 +190,8 @@ exports.detailSignup = async (req, res) => {
     manPower.jobType = jobType;
     manPower.serviceLocation = serviceLocation;
     manPower.documents = documents;
+    manPower.city = city;
+    manPower.state = state;
     // manPower.otp = OTP.generateOTP();
 
     await manPower.save();
@@ -199,7 +203,7 @@ exports.detailSignup = async (req, res) => {
     console.log(error);
     res.status(500).json({ error: "Something went wrong" });
   }
-};
+}
 
 exports.workDetails = async (req, res) => {
   try {
@@ -293,7 +297,7 @@ exports.workDetails = async (req, res) => {
     console.error("Error updating manpower work details:", error);
     return res.status(500).json({ error: "Internal server error" });
   }
-};
+}
 
 exports.manpowerDocument = async (req, res) => {
     try {
@@ -323,7 +327,7 @@ exports.manpowerDocument = async (req, res) => {
       console.error("Error uploading documents:", error);
       return res.status(500).json({ error: "Internal server error" });
     }
-};
+}
 
 exports.loginManpower = async (req, res) => {
   try {
@@ -367,7 +371,7 @@ exports.loginManpower = async (req, res) => {
     console.error(error);
     res.status(500).json({ error: "Something went wrong" });
   }
-};
+}
 
 exports.YourProfileUpdate = async (req, res) => {
   try {
@@ -392,7 +396,7 @@ exports.YourProfileUpdate = async (req, res) => {
       .status(500)
       .send({ status: 500, message: "Server error" + error.message });
   }
-};
+}
 
 exports.getAllManpower = async (req, res) => {
   try {
@@ -402,7 +406,7 @@ exports.getAllManpower = async (req, res) => {
     console.error(err);
     res.status(500).json({error:err.message});
   }
-};
+}
 
 exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
@@ -421,7 +425,7 @@ exports.getManpower = async (req, res) => {
     console.error(err);
     return res.status(500).json({ error:err.message });
   }
-};
+}
 
 exports.DeleteManpower = async (req, res) => {
   const { manpowerId } = req.params;
@@ -437,7 +441,7 @@ exports.DeleteManpower = async (req, res) => {
     console.error(err);
     return res.status(500).json({ error: err.message });
   }
-};
+}
 
 
 

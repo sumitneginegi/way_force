@@ -7,8 +7,9 @@ const {
     getAllEmployer,
     getAllEmployerById,
     updatebyManpoweridEmployer,
+    updatebyAgentidEmployer,
     getInstanOrDirect,
-    loginWithPhone,
+    loginEmployer,
     verifyOtpByManpower,
     manpowerDocument,
     registrationEmployer,
@@ -40,12 +41,13 @@ cloudinary.config({
 router.post("/registration/Employer", registrationEmployer);
 router.post("/sendotp/Employer", sendotpEmployer);
 router.post("/signup", signupEmployer);
-router.post("/login", loginWithPhone);
+router.post("/login", loginEmployer);
 router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
 router.put("/direct/detail/:id", detailDirectEmployer);
 router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);
+router.put("/updatebyAgentidEmployer", updatebyAgentidEmployer);
 router.put("/instant/detail/:id", detailInstantEmployer);
 router.get("/getUsersBy/InstantOrDirect/:value", getUsersByInstantOrDirect);
 router.get("/get/viewPostInShort",viewInShort)

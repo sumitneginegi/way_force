@@ -174,6 +174,8 @@ exports.detailDirectEmployer = async (req, res) => {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
       city: req.body.city,
+      skills:req.body.skills,
+      state:req.body.state,
       siteLocation: req.body.siteLocation,
       employmentType: req.body.employmentType,
       category: req.body.category,
@@ -229,6 +231,8 @@ exports.detailInstantEmployer = async (req, res) => {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
       city: req.body.city,
+      skills:req.body.skills,
+      state:req.body.state,
       siteLocation: req.body.siteLocation,
       employmentType: req.body.employmentType,
       category: req.body.category,
@@ -311,14 +315,20 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
 
 exports.viewInShort = async (req, res) => {
   try {
-
     const instantOrdirectValue = req.query.instantOrdirect;
+    const employmentTypeValue = req.query.employmentType; // Added line to get employmentType query parameter
+
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
       { $unwind: "$obj" },
-      // Match documents with userType: "employer" and obj.instantOrdirect: "instant"
-      { $match: { userType: "employer", "obj.instantOrdirect": instantOrdirectValue } },
-
+      // Match documents with userType: "employer", obj.instantOrdirect: instantOrdirectValue, and obj.employmentType: employmentTypeValue
+      { 
+        $match: { 
+          userType: "employer", 
+          "obj.instantOrdirect": instantOrdirectValue,
+          "obj.employmentType": employmentTypeValue 
+        } 
+      },
       {
         $project: {
           job_desc: "$obj.job_desc",
@@ -330,9 +340,11 @@ exports.viewInShort = async (req, res) => {
           miniSalary: "$obj.miniSalary",
           instantOrdirect: "$obj.instantOrdirect",
           orderId: "$obj.orderId",
+          employmentType:"$obj.employmentType"
         }
       }
     ];
+
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
     res.status(200).send({ data: result });
@@ -450,10 +462,10 @@ exports.getAllEmployerById = async (req, res) => {
 
 
 
-exports.loginWithPhone = async (req, res) => {
+exports.loginEmployer = async (req, res) => {
   try {
     const { mobile } = req.body;
-    const user = await Employerr.findOne({ mobile: mobile });
+    const user = await User.findOne({ mobile: mobile, userType: "employer" })
     if (!user) {
       return res.status(400).send({ msg: "not found" });
     }
@@ -546,6 +558,68 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
     res.status(500).json({ error: "Internal server error" })
   }
 }
+
+
+exports.updatebyAgentidEmployer = async (req, res) => {
+  try {
+    const { /*mobile,*/ orderId, agentId } = req.body
+
+    const employer = await User.findOne({
+      "obj.orderId": orderId,
+    });
+
+    if (!employer) {
+      return res.status(404).json({ error: "Employer not found with the given orderId." });
+    }
+    // const employer = await User.findOne({
+    //   mobile: mobile,
+    // });
+
+    // if (!employer) {
+    //   return res.status(404).json({ error: "User/Employer not found with the given mobile number." })
+    // }
+
+    // Find the specific post in the obj array with the given orderId
+    const post = employer.obj.find((post) => post.orderId === orderId)
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found." })
+    }
+
+    if (!post.agent || !Array.isArray(post.agent)) {
+      post.agent = [] // Initialize manpower as an empty array if it doesn't exist
+    }
+
+    // Check if the post is already assigned to the provided manpower
+    if (post.agent.includes(agentId)) {
+      return res.status(400).json({ error: "You have already applied for this post." })
+    }
+    // const otp = OTP.generateOTP()
+    // Add the manpowerId to the array for the post
+    // post.manpower.manpowerId = manpowerId
+
+    post.agent.push(agentId)
+    // Generate OTP
+
+    // console.log(post);
+    // Save the changes to the employer
+    await employer.save()
+
+    // Find the index of the post in the obj array and update it with the updated post
+    const postIndex = employer.obj.findIndex((post) => post.orderId === orderId)
+    console.log(postIndex)
+    employer.obj[postIndex] = post
+
+    // Save the changes to the employer again to update the obj array
+    await employer.save();
+
+    res.status(200).json({ message: "Successfully applied for the post.", post: employer })
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" })
+  }
+}
+
 
 
 
@@ -798,26 +872,26 @@ exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
        
       ])
 
-      return res.status(200).send({data: data1 });
+      return res.status(200).send({data: data1 })
     }
 
     if (d == "manpower") {
-      const data3 = await userSchema.aggregate([
+      const data3 = await User.aggregate([
        
-      ]);
+      ])
 
       return res.status(201).json({
         data: data3,
-      });
+      })
     }
 
     if (d == "agent") {
-      const data2 = await userSchema.aggregate([
+      const data2 = await User.aggregate([
        
-      ]);
+      ])
 
   
-      return res.status(200).send({ data: data2 });
+      return res.status(200).send({ data: data2 })
     }
 
   } catch (err) {

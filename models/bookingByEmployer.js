@@ -4,32 +4,33 @@ const bookingSchema = mongoose.Schema(
   {
     EmployerId: { type: objectid, ref: "User" },
     manpowerId: { type: objectid, ref: "User" },
+    agentId: { type: objectid, ref: "User" },
     Status: {
       type: String,
       default: "pending",
     },
-    amount_per_hour: { type: Number, default: 0 },
-    startTime: {
+    amount_per_hour : { type: Number, default: 0 },
+    startTime : {
       type: String
     },
-    endTime: {
+    endTime : {
       type: String
     },
-    diff:{
+    diff :{
       type:String
     },
-    payment: {
+    payment : {
       type: String,
       enum: ["online", "cash"],
       default: "online",
     },
-    workDetails: {
+    workDetails : {
       type: String
     },
-    workDurationInYear: {
+    workDurationInYear : {
       type: String
     },
-    date: {
+    date : {
       type: String
     },
     workLocation: {

@@ -67,6 +67,10 @@ const UserSchema = new mongoose.Schema(
             ref: "User",
             // default:""
         }],
+        agentId:[{
+            type: objectId,
+            ref: "User", 
+        }],
         
         mobileVerified: {
             type: Boolean,
@@ -191,7 +195,28 @@ const UserSchema = new mongoose.Schema(
         },
         manpowerObj:[{
 
-        }]
+        }],
+        agentName:{
+            type:String
+        },
+        agentAddress:{
+            type:String
+        },
+        agentServiceLocation:{
+            type:String
+        },
+        agentBusinessName:{
+            type:String
+        },
+        agentStrength:{
+            type:String
+        },
+        uploadaadhar:{
+            type:String
+        },
+        uploadPanCard:{
+            type:String
+        }
 
     },
     {
