@@ -18,7 +18,7 @@ const client = twilio(accountSid, authToken);
 exports.registrationManpower = async (req, res) => {
   try {
 
-    const { mobile } = req.body;
+    const { mobile,otp } = req.body;
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
@@ -26,14 +26,14 @@ exports.registrationManpower = async (req, res) => {
 
     if (!user) {
 
-      const otp = Math.floor(1000 + Math.random() * 9000);
+      // const otp = Math.floor(1000 + Math.random() * 9000);
     
-      // Create and send the SMS with the OTP
-      await client.messages.create({
-        to: mobile,
-        from: twilioPhoneNumber,
-        body: `Your OTP is: ${otp}`,
-      });
+      // // Create and send the SMS with the OTP
+      // await client.messages.create({
+      //   to: mobile,
+      //   from: twilioPhoneNumber,
+      //   body: `Your OTP is: ${otp}`,
+      // });
 
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
@@ -84,7 +84,7 @@ exports.sendotp = async (req, res) => {
       body: `Your OTP is: ${otp}`,
     });
 
-    res.status(200).json({ message: "OTP sent successfully" });
+    res.status(200).json({ message: "OTP sent successfully",otp:otp });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
@@ -331,7 +331,7 @@ exports.manpowerDocument = async (req, res) => {
 
 exports.loginManpower = async (req, res) => {
   try {
-    const { mobile } = req.body;
+    const { mobile,otp } = req.body;
 
     if (!mobile ) {
       return res
@@ -339,7 +339,7 @@ exports.loginManpower = async (req, res) => {
         .json({ error: "Mobile number required" });
     }
     // Generate a random 6-digit OTP
-    const otp = Math.floor(1000 + Math.random() * 9000);
+    // const otp = Math.floor(1000 + Math.random() * 9000);
     
     // Create and send the SMS with the OTP
     // await client.messages.create({
@@ -348,7 +348,7 @@ exports.loginManpower = async (req, res) => {
     //   body: `Your OTP is: ${otp}`,
     // });
 
-    const manpower = await User.findOne({ mobile:mobile });
+    const manpower = await User.findOne({ mobile:mobile , userType: "manpower"});
     if (!manpower) {
       return res.status(404).json({ error: "Manpower not found" });
     }

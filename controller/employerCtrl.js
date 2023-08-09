@@ -91,6 +91,8 @@ exports.sendotpEmployer = async (req, res) => {
   try {
     const { phoneNumber } = req.body
 
+    var user = await User.findOne({ mobile: phoneNumber, userType: "employer" })
+    if (!user) {
     // Generate a random 6-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
 
@@ -102,12 +104,15 @@ exports.sendotpEmployer = async (req, res) => {
     });
 
     res.status(200).json({ message: "OTP sent successfully" });
+  }
+  else {
+    return res.status(409).send({ status: 409, msg: "Already Exit" });
+  }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
 
 
 
