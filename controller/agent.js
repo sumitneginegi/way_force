@@ -473,6 +473,25 @@ exports.loginAgent = async (req, res) => {
   }
 
 
+  exports.getAgentById = async (req, res) => {
+    const { agentId } = req.params;
+  
+    try {
+      // Check if a user with the given userId exists in the database
+      const user = await User.findById(agentId).lean();
+  
+      if (!user) {
+        res.status(404).json({ message: "Agent not found" });
+      }
+  
+      // Send a response with the user information
+      return res.status(200).json({ message: "Agent retrieved successfully", data:user });
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error:err.message });
+    }
+  }
+
 
 // exports.updatebyManpoweridEmployer = async (req, res) => {
 //   try {

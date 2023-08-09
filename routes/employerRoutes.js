@@ -22,7 +22,10 @@ const {
     verifyOTPByManpower,
     scheduled_Jobs,
     upadtePostByStatusOfCompletion,
-    getCompletedPosts
+    getCompletedPosts,
+    getDataAccToEmployer_Manpower_Agent,
+    updateEmployer,
+    getDataOfAllEmployerInShort
 } = require("../controller/employerCtrl");
 const router = express.Router();
 
@@ -45,6 +48,7 @@ router.post("/login", loginEmployer);
 router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
+router.put("/update/Employer/:id", updateEmployer);
 router.put("/direct/detail/:id", detailDirectEmployer);
 router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);
 router.put("/updatebyAgentidEmployer", updatebyAgentidEmployer);
@@ -58,6 +62,9 @@ router.post("/post/verifyOTPByManpower",verifyOTPByManpower)
 router.get("/scheduled/Jobs", scheduled_Jobs);
 router.put("/upadtePost/ByStatusOfCompletion/:orderId", upadtePostByStatusOfCompletion);
 router.get("/getall/StatusOfCompletion", getCompletedPosts);
+router.get("/get/getDataAccToEmployer_Manpower_Agent/:d", getDataAccToEmployer_Manpower_Agent);
+router.get("/get/getDataOfAllEmployerInShort", getDataOfAllEmployerInShort)
+
 
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",

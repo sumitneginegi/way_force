@@ -10,6 +10,9 @@ const UserSchema = new mongoose.Schema(
         mobile: {
             type: String,
         },
+        email:{
+            type:String
+        },
         otp: {
             type: String,
         },
@@ -145,7 +148,6 @@ const UserSchema = new mongoose.Schema(
         language: [String],
         bio: String,
         experience: Number,
-
         skills: [{ type: Schema.Types.ObjectId }],
         jobType: { type: String },
         serviceLocation: String,

@@ -400,7 +400,7 @@ exports.YourProfileUpdate = async (req, res) => {
 
 exports.getAllManpower = async (req, res) => {
   try {
-    const users = await User.find().lean();
+    const users = await User.find({userType: "manpower" }).lean();
     res.status(200).json({message:"users fetched successfully", data:users});
   } catch (err) {
     console.error(err);

@@ -4,6 +4,7 @@ const {
     loginAgent,
     verifyOtpAgent,
     detailDirectAgent,
+    getAgentById,
     detailInstantEmployer,
     getAllEmployer,
     getAllEmployerById,
@@ -49,7 +50,7 @@ router.post("/registration/Agent", registrationAgent);
 router.post("/login/agent", loginAgent);
 router.post("/verifyOtp/Agent/:id", verifyOtpAgent);
 // router.get("/getAll", getAllEmployer);
-// router.get("/:id", getAllEmployerById);
+router.get("/getAgentById/:agentId", getAgentById);
 router.put("/detail/DirectAgent/:id", cpUpload,detailDirectAgent);
 // router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);
 // router.put("/instant/detail/:id", detailInstantEmployer);

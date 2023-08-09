@@ -172,6 +172,41 @@ exports.verifyOtpEmployer = async (req, res) => {
 
 
 
+
+
+exports.updateEmployer = async (req, res) => {
+  const employerId = req.params.id;
+
+  try {
+    const updatedData = {
+      employerName: req.body.employerName,
+      active: req.body.active,
+      gender: req.body.gender,
+      email: req.body.email,
+      createdAt: req.body.createdAt,
+      state: req.body.state,
+      city: req.body.city,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,  
+      aadharCard: req.body.aadharCard, // Updated field
+      panCard: req.body.panCard, // Updated field
+    };
+
+    const updatedEmployer = await User.findByIdAndUpdate(employerId, updatedData, { new: true });
+
+    if (!updatedEmployer) {
+      return res.status(404).json({ msg: 'Employer not found' });
+    }
+
+    return res.status(200).json({ updatedEmployer });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'An error occurred', error: err.message });
+  }
+}
+
+
+
 exports.detailDirectEmployer = async (req, res) => {
   try {
     let orderId = await reffralCode()
@@ -455,7 +490,7 @@ exports.getAllEmployer = async (req, res) => {
 
 exports.getAllEmployerById = async (req, res) => {
   try {
-    const Employer = await Employerr.find({ _id: req.params.id })
+    const Employer = await User.findOne({ _id: req.params.id })
     if (!Employer) {
       return res.status(400).json({ error: "Employer data not provided" });
     }
@@ -873,37 +908,93 @@ exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
     console.log(d)
 
     if (d == "employer") {
-      const data1 = await User.aggregate([
-       
-      ])
-
-      return res.status(200).send({data: data1 })
+     const data = await User.aggregate([
+        {
+          $match: {
+            userType: 'employer',
+          },
+        },
+        {
+          $project: {
+            employerName: { $arrayElemAt: ['$obj.employerName', 0] }, // Get the first employerName from the array
+            createdAt: 1,
+          },
+        },
+      ]);
+      return res.status(200).json({ data });
     }
 
     if (d == "manpower") {
-      const data3 = await User.aggregate([
-       
-      ])
-
+      const data = await User.aggregate([
+          {
+            $match: {
+              userType: 'manpower',
+            },
+          },
+          {
+            $project: {
+              name: 1,
+              createdAt: 1,
+            },
+          },
+        ]);
       return res.status(201).json({
-        data: data3,
+        data: data,
       })
     }
 
     if (d == "agent") {
-      const data2 = await User.aggregate([
-       
-      ])
-
-  
-      return res.status(200).send({ data: data2 })
+      const data = await User.aggregate([
+          {
+            $match: {
+              userType: 'agent',
+            },
+          },
+          {
+            $project: {
+              name: '$agentName',
+              createdAt: 1,
+            },
+          },
+        ]);  
+      return res.status(200).send({ data: data })
     }
-
+    return res.status(400).json({ msg: 'Invalid (d)' });
   } catch (err) {
     console.log(err)
+    res.status(500).json({ msg: 'An error occurred', error: err.message });
   }
 }
 
 
 
-
+exports.getDataOfAllEmployerInShort = async (req, res) => {
+  try {
+    const data = await User.aggregate([
+      {
+        $match: {
+          userType: 'employer',
+        },
+      },
+      {
+        $project: {
+          employerName: 1,
+          GST_Number:1,
+          aadharCard: 1,
+          city: 1,
+          email: 1,
+          gender: 1,
+          panCard: 1,
+          registration_Number: 1,
+          state: 1,
+          createdAt: 1,
+        
+        },
+      },
+    ]);
+      return res.status(200).json({ data });
+    }catch (err) {
+    console.log(err)
+    res.status(500).json({ msg: 'An error occurred', error: err.message });
+  }
+}
