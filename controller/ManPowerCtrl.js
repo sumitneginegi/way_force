@@ -10,7 +10,7 @@ const User = require("../models/user")
 
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
-const authToken = "9d20fa9d3a465dc7de999b0b3de610e0";
+const authToken = "44926560c80314dbec0cda2090ab4085";
 const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
 
@@ -69,7 +69,7 @@ exports.registrationManpower = async (req, res) => {
   }
 }
 
-exports.sendotp = async (req, res) => {
+exports.sendotpManpower = async (req, res) => {
   console.log("hi");
   try {
     const { phoneNumber } = req.body;

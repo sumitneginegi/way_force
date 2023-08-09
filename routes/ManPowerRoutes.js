@@ -11,7 +11,7 @@ const {
   getManpower,
   DeleteManpower,
   registrationManpower,
-  sendotp
+  sendotpManpower
 } = require("../controller/ManPowerCtrl");
 
 const auth = require("../middleware/auth")
@@ -40,7 +40,7 @@ cloudinary.config({
 
 
 router.post("/registration/Manpower", registrationManpower);
-router.post("/sendotp", sendotp);
+router.post("/sendotpManpower", sendotpManpower);
 router.post("/signup", signupManpower);
 router.post("/login", loginManpower);
 router.post("/verify/otp/:id", verifyOtp);
