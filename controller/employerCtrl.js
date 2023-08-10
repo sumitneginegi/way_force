@@ -381,6 +381,7 @@ exports.viewInShort = async (req, res) => {
           instantOrdirect: "$obj.instantOrdirect",
           orderId: "$obj.orderId",
           employmentType:"$obj.employmentType"
+
         }
       }
     ];
@@ -882,9 +883,11 @@ exports.upadtePostByStatusOfCompletion = async (req, res) => {
 
 exports.getCompletedPosts = async (req, res) => {
   try {
+
+    const completed = req.query.completion;
     const completedPosts = await User.aggregate([
       { $unwind: '$obj' },
-      { $match: { 'obj.statusOfCompletion': 'completed' } },
+      { $match: { 'obj.statusOfCompletion': completed } },
       { $project: { _id: 0, 'obj': 1 } }
     ]);
 
