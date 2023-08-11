@@ -10,7 +10,7 @@ const User = require("../models/user")
 
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
-const authToken = "44926560c80314dbec0cda2090ab4085";
+const authToken = "c2a9c936a986d3c90e082e799520d6c3";
 const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
 
