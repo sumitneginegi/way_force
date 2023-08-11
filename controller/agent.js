@@ -201,68 +201,68 @@ exports.updateFileAndDocumentVendor = async (req, res) => {
 
 
 
-// exports.detailInstantEmployer = async (req, res) => {
-//   try {
-//     let orderId = await reffralCode()
+exports.listOfAllLeadByEmployer = async (req, res) => {
+  try {
+    let orderId = await reffralCode()
 
-//     const today = new Date();
-//     const year = today.getFullYear();
-//     const month = today.getMonth() + 1; // Note: Month is 0-indexed, so adding 1
-//     const day = today.getDate();
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1; // Note: Month is 0-indexed, so adding 1
+    const day = today.getDate();
 
-//     const formattedDate = `${year}-${month}-${day}`;
-//     console.log(formattedDate);
+    const formattedDate = `${year}-${month}-${day}`;
+    console.log(formattedDate);
 
-//     const data = {
-//       // mobile: req.body.mobile,
-//       job_desc: req.body.job_desc,
-//       city: req.body.city,
-//       siteLocation: req.body.siteLocation,
-//       employmentType: req.body.employmentType,
-//       category: req.body.category,
-//       no_Of_opening: req.body.no_Of_opening,
-//       fullTime: req.body.fullTime,
-//       miniSalary: req.body.miniSalary,
-//       maxSalary: req.body.maxSalary,
-//       workingDays: req.body.workingDays,
-//       workingHours: req.body.workingHours,
-//       explainYourWork: req.body.explainYourWork,
-//       date: formattedDate,
-//       // manpowerId: req.body.manpowerId,
-//       mobileVerified: req.body.mobileVerified,
-//       state: req.body.state,
-//       pinCode: req.body.pinCode,
-//       GST_Number: req.body.GST_Number,
-//       registration_Number: req.body.registration_Number,
-//       lati: req.body.lati,
-//       longi: req.body.longi,
-//       instantOrdirect: "instant",
-//       orderId: orderId,
-//       employerName: req.body.employerName,
-//       startTime: req.body.startTime,
-//       endTime: req.body.endTime
-//     }
+    const data = {
+      // mobile: req.body.mobile,
+      job_desc: req.body.job_desc,
+      city: req.body.city,
+      siteLocation: req.body.siteLocation,
+      employmentType: req.body.employmentType,
+      category: req.body.category,
+      no_Of_opening: req.body.no_Of_opening,
+      fullTime: req.body.fullTime,
+      miniSalary: req.body.miniSalary,
+      maxSalary: req.body.maxSalary,
+      workingDays: req.body.workingDays,
+      workingHours: req.body.workingHours,
+      explainYourWork: req.body.explainYourWork,
+      date: formattedDate,
+      // manpowerId: req.body.manpowerId,
+      mobileVerified: req.body.mobileVerified,
+      state: req.body.state,
+      pinCode: req.body.pinCode,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      lati: req.body.lati,
+      longi: req.body.longi,
+      instantOrdirect: "direct",
+      orderId: orderId,
+      employerName: req.body.employerName,
+      startTime: req.body.startTime,
+      endTime: req.body.endTime
+    }
 
-//     const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.id);
 
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
-//     // Push the new document into the documents array
-//     user.obj.push(data);
+    // Push the new document into the documents array
+    user.obj.push(data);
 
-//     // Save the updated user document
-//     await user.save();
+    // Save the updated user document
+    await user.save();
 
-//     res
-//       .status(200)
-//       .json({ message: "Details filled successfully", data: user });
-//   } catch (error) {
-//     console.log(error)
-//     res.status(500).json({ error: "Something went wrong" });
-//   }
-// }
+    res
+      .status(200)
+      .json({ message: "Details filled successfully", data: user });
+  } catch (error) {
+    console.log(error)
+    res.status(500).json({ error: "Something went wrong" });
+  }
+}
 
 
 
