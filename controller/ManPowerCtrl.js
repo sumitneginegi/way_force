@@ -70,6 +70,8 @@ exports.registrationManpower = async (req, res) => {
   }
 }
 
+
+
 exports.sendotpManpower = async (req, res) => {
   console.log("hi");
   try {
@@ -91,6 +93,7 @@ exports.sendotpManpower = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
+
 
 exports.signupManpower = async (req, res) => {
   try {

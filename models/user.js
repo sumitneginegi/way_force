@@ -76,8 +76,8 @@ const UserSchema = new mongoose.Schema(
         }],
         
         mobileVerified: {
-            type: Boolean,
-            default: false,
+            type: String,
+            default: "false",
         },
         status:{
             type:String,
@@ -156,7 +156,7 @@ const UserSchema = new mongoose.Schema(
         ],
         myProjects: [{ type: Schema.Types.ObjectId, ref: 'Project' }],
         active: {
-            type: Boolean, default: true
+            type: String, default: "true"
         },
         aadharCard: {
             type: String,
