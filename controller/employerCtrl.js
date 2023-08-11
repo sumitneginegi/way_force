@@ -232,6 +232,15 @@ exports.detailDirectEmployer = async (req, res) => {
       instantOrdirect: "Direct",
       orderId: orderId,
       employerName: req.body.employerName,
+      
+      pinCode: req.body.pinCode,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      lati: req.body.lati,
+      longi: req.body.longi,
+      startTime: req.body.startTime,
+      endTime: req.body.endTime
+      
     }
 
     const user = await User.findById(req.params.id);
@@ -881,67 +890,14 @@ exports.upadtePostByStatusOfCompletion = async (req, res) => {
 
 
 
-// exports.getCompletedPosts = async (req, res) => {
-//   try {
-
-//     const completed = req.query.completion;
-//     const completedPosts = await User.aggregate([
-//       { $unwind: '$obj' },
-//       { $match: { 'obj.statusOfCompletion': completed } },
-//       { $project: { _id: 0, 'obj': 1 } }
-//     ]);
-
-//     if (completedPosts.length === 0) {
-//       return res.status(404).json({ msg: 'No completed posts found' });
-//     }
-
-//     res.status(200).json({ msg: 'Completed posts retrieved successfully', data: completedPosts });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ msg: 'An error occurred', error: error.message });
-//   }
-// }
-
-
-
 exports.getCompletedPosts = async (req, res) => {
   try {
+
     const completed = req.query.completion;
     const completedPosts = await User.aggregate([
       { $unwind: '$obj' },
       { $match: { 'obj.statusOfCompletion': completed } },
-      {
-        $project: {
-          _id: 0,
-          job_desc: '$obj.job_desc',
-          city: '$obj.city',
-          siteLocation: '$obj.siteLocation',
-          employmentType: '$obj.employmentType',
-          category: '$obj.category',
-          no_Of_opening: '$obj.no_Of_opening',
-          fullTime: '$obj.fullTime',
-          miniSalary: '$obj.miniSalary',
-          maxSalary: '$obj.maxSalary',
-          workingDays: '$obj.workingDays',
-          workingHours: '$obj.workingHours',
-          explainYourWork: '$obj.explainYourWork',
-          date: '$obj.date',
-          mobileVerified: '$obj.mobileVerified',
-          state: '$obj.state',
-          pinCode:'$obj.pinCode',
-          GST_Number:'$obj.GST_Number',
-          registration_Number: '$obj.registration_Number',
-          lati:'$obj.lati',
-          longi: '$obj.longi',
-          instantOrdirect: '$obj.instantOrdirect',
-          orderId: '$obj.orderId',
-          employerName:'$obj.employerName',
-          startTime:'$obj.startTime',
-          endTime: '$obj.endTime',
-          statusOfCompletion: '$obj.statusOfCompletion',
-          manpower: '$obj.manpower',
-        }
-      }
+      { $project: { _id: 0, 'obj': 1 } }
     ]);
 
     if (completedPosts.length === 0) {
@@ -953,8 +909,7 @@ exports.getCompletedPosts = async (req, res) => {
     console.error(error);
     res.status(500).json({ msg: 'An error occurred', error: error.message });
   }
-};
-
+}
 
 
 
