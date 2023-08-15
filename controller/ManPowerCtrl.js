@@ -29,11 +29,11 @@ exports.registrationManpower = async (req, res) => {
       // const otp = Math.floor(1000 + Math.random() * 9000);
     
       // // Create and send the SMS with the OTP
-      // await client.messages.create({
-      //   to: mobile,
-      //   from: twilioPhoneNumber,
-      //   body: `Your OTP is: ${otp}`,
-      // });
+      await client.messages.create({
+        to: mobile,
+        from: twilioPhoneNumber,
+        body: `Your OTP is: ${otp}`,
+      });
 
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
