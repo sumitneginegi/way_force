@@ -1,7 +1,6 @@
 const ManPower = require("../models/ManPowerModel")
 const OTP = require("../config/OTP-Generate")
 const Employerr = require("../models/employerModel")
-const Manpowerr = require("../models/ManPowerModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const twilio = require("twilio");
