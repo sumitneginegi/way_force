@@ -85,7 +85,6 @@ exports.registrationEmployer = async (req, res) => {
 
 
 
-
 exports.sendotpEmployer = async (req, res) => {
   console.log("hi");
   try {
@@ -119,11 +118,9 @@ exports.sendotpEmployer = async (req, res) => {
 exports.signupEmployer = async (req, res) => {
   try {
     const { mobile } = req.body;
-
     if (!mobile) {
       return res.status(400).json({ error: "Mobile number is required" });
     }
-
     const existingMobile = await Employerr.findOne({ mobile });
     if (existingMobile) {
       return res.status(409).json({ error: "Mobile number already in use" });
@@ -169,8 +166,6 @@ exports.verifyOtpEmployer = async (req, res) => {
     return createResponse(res, 500, "Internal server error");
   }
 }
-
-
 
 
 
@@ -514,35 +509,36 @@ exports.getAllEmployerById = async (req, res) => {
 
 exports.loginEmployer = async (req, res) => {
   try {
-    const { mobile } = req.body;
-    const user = await User.findOne({ mobile: mobile, userType: "employer" })
-    if (!user) {
-      return res.status(400).send({ msg: "not found" });
+    const { mobile,otp } = req.body;
+
+    if (!mobile ) {
+      return res
+        .status(400)
+        .json({ error: "Mobile number required" });
     }
-    const userObj = {};
-    userObj.otp = OTP.generateOTP();/* (4, {
-      alphabets: false,
-      upperCase: false,
-      specialChar: false,
-    } */;
-    //   userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
-    //   userObj.accountVerification = false;
-    const updated = await Employerr.findOneAndUpdate(
-      { mobile: mobile },
-      userObj,
-      { new: true }
-    );
-    let obj = {
-      id: updated._id,
-      otp: updated.otp,
-      mobile: updated.mobile,
-    };
-    res
-      .status(200)
-      .send({ status: 200, message: "logged in successfully", data: obj });
+
+    const employer = await User.findOne({ mobile:mobile , userType: "employer"});
+    if (!employer) {
+      return res.status(404).json({ error: "employer not found" });
+    }
+
+    employer.otp = otp
+    employer.save()
+
+
+    const token = jwt.sign({ employerId: employer._id }, process.env.JWT_SECRET);
+
+    res.status(200).json({
+      message: "Login successful",
+      data: {
+        token,
+        otp,
+        employer: employer,
+      },
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+    res.status(500).json({ error: "Something went wrong" });
   }
 }
 
