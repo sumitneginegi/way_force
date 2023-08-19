@@ -14,7 +14,7 @@ router.use("/OfferModell",require("./coupencode"))
 router.use("/termss",require("./admin/termsAndCondition"))
 
 //////////////////////////////////////////////////
-
+router.use("/auth",require("./admin/authadmin"))
 router.use("/adminn",require("./admin/dashboard"))
 router.use("/postVerificationn",require("./admin/postVerification"))
 

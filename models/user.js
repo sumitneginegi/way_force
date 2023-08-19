@@ -173,7 +173,7 @@ const UserSchema = new mongoose.Schema(
         },
         userType: {
             type: String,
-            enum: ["manpower", "employer", "agent"],
+            enum: ["manpower", "employer", "agent","admin"],
             default: "employer"
         },
         obj:{
@@ -217,6 +217,12 @@ const UserSchema = new mongoose.Schema(
             type:String
         },
         uploadPanCard:{
+            type:String
+        },
+        AdminName:{
+            type:String
+        },
+        password:{
             type:String
         }
 
