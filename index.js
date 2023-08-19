@@ -6,7 +6,7 @@ const dbConnect = require("./config/DBConnect");
 dotenv.config();
 dbConnect()
 
-app.get("/home", (req, res) => {
+app.use("/home", (req, res) => {
     res.send("Hello World!");
 });
 
