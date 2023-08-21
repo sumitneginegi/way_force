@@ -12,12 +12,12 @@ app.use("/home", (req, res) => {
 
 
 app.use(express.json());
-// app.use(cors());
-app.use(cors({
-  origin: "http://localhost:3000",
-  methods: ["GET", "POST"],
-  credentials: true, // If needed
-}));
+app.use(cors());
+// app.use(cors({
+//   origin: "http://localhost:3000",
+//   methods: ["GET", "POST"],
+//   credentials: true, // If needed
+// }));
 app.use("/api/v1", require("./routes/routes"))
 
 const PORT = process.env.PORT || 8080;
