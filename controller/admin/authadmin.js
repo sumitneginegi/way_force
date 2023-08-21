@@ -32,13 +32,13 @@ exports.registrationAdmin = async (req, res) => {
         userType: req.body.userType
       };
 
-      res.status(200).send({
+      res.status(200).json({
         status: 200,
         message: "Registered successfully",
         data: obj
       });
     } else {
-      return res.status(409).send({ status: 409, msg: "Already Exist" });
+      return res.status(409).json({ status: 409, msg: "Already Exist" });
     }
   } catch (error) {
     console.error(error);
