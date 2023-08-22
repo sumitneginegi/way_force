@@ -7,7 +7,8 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const bodyparser = require("body-parser");
-const xmlhttprequest = require("xmlhttprequest")
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+var xhr = new XMLHttpRequest();
 
 
 
