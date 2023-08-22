@@ -9,12 +9,12 @@ const bodyparser = require("body-parser");
 require("dotenv").config();
 
 
-// app.use(cors());
-app.use(cors({
-  origin: ["http://localhost:3000", "http://way-force-nu.vercel.app"],
-  methods: ["GET", "POST"],
-  credentials: true,
-}));
+app.use(cors());
+// app.use(cors({
+//   origin: ["http://localhost:3000", "http://way-force-nu.vercel.app"],
+//   methods: ["GET", "POST"],
+//   credentials: true,
+// }));
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
