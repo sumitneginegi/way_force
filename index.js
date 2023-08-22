@@ -26,7 +26,10 @@ const postVerificationn  = require("./routes/admin/postVerification")
 
 require("dotenv").config();
 
-app.use(cors());
+app.use(cors({
+  origin :"http://localhost:3000",
+  credentials:true
+}));
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
