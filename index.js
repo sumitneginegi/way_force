@@ -30,15 +30,20 @@ app.get("/home", (req, res) => {
 app.use("/api/v1", require("./routes/routes"));
 
 // Configure CORS
-const corsOptions = {
-  origin: ["http://localhost:3000", "https://way-force-nu.vercel.app"],
-  methods: ["GET", "POST"],
-  credentials: true,
-};
-app.use(cors(corsOptions));
+// const corsOptions = {
+//   origin: ["http://localhost:3000", "https://way-force-nu.vercel.app"],
+//   methods: ["GET", "POST"],
+//   credentials: true,
+// };
+// app.use(cors(corsOptions));
+
+app.use(cors({
+  origin:"*"
+}))
 
 const PORT = process.env.PORT || 8080;
 
 app.listen(PORT, () => {
+
   console.log(`Server listening on port ${PORT}`);
 });
