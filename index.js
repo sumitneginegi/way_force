@@ -6,6 +6,10 @@ const http = require('http');
 const server = http.createServer(app);
 const bodyparser = require("body-parser");
 
+app.use(cors({
+  origin :"*",
+}));
+
 const manpower = require("./routes/ManPowerRoutes")
 const helpp = require("./routes/helpAndsupportRoutes")
 const employer = require("./routes/employerRoutes")
@@ -26,10 +30,7 @@ const postVerificationn  = require("./routes/admin/postVerification")
 
 require("dotenv").config();
 
-app.use(cors({
-  origin :"http://localhost:3000",
-  credentials:true
-}));
+
 app.use(express.json());
 app.use(bodyparser.urlencoded({ extended: true }));
 
