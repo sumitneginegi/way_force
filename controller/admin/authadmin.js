@@ -9,6 +9,11 @@ exports.registrationAdmin = async (req, res) => {
   try {
     const { AdminName, email, password } = req.body;
 
+
+    if (!AdminName || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
+
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10); // 10 is the number of salt rounds
     console.log(hashedPassword);
