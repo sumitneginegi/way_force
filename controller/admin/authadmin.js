@@ -141,28 +141,35 @@ exports.registrationAdmin = async (req, res) => {
 
 
 
+
 exports.loginAdmin = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    if (!email ) {
-      return res
-        .status(400)
-        .json({ error: "email required" });
+    if (!email || !password) {
+      return res.status(400).json({ error: "Email and password are required" });
     }
 
-    const admin = await User.findOne({ email:email , userType: "admin"});
+    const admin = await User.findOne({ email, userType: "admin" });
+
     if (!admin) {
-      return res.status(404).json({ error: "admin not found" });
+      return res.status(404).json({ error: "Admin not found" });
     }
 
+    // Compare the provided password with the hashed password stored in the database
+    const isPasswordValid = bcrypt.compare(password, admin.password);
 
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+
+    // If the password is valid, create a JSON Web Token (JWT)
     const token = jwt.sign({ admin: admin._id }, process.env.JWT_SECRET);
 
     res.status(200).json({
       message: "Login successful",
       data: {
-        email, 
+        email,
         token
       },
     });
@@ -171,4 +178,3 @@ exports.loginAdmin = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
-

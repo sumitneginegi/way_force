@@ -5,6 +5,8 @@ const adminController = require('../../controller/admin/authadmin')
 // CREATE a new city
 router.post('/', adminController.registrationAdmin)
 
+router.post('/loginAdmin', adminController.loginAdmin)
+
 // READ all cities
 // router.get('/', stateController.getState)
 
