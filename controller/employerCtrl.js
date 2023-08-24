@@ -479,8 +479,8 @@ exports.viewInShortOfInstantLead = async (req, res) => {
 
 exports.getAllEmployer = async (req, res) => {
   try {
-    // const employers = await User.find({}, '_id mobile otp obj createdAt updatedAt');
-    const employers = await User.find()
+    const employers = await User.find({ userType: "employer"})
+    console.log(employers)
 
     if (employers.length === 0) {
       return res.status(404).json({ error: "No employer data found." });
