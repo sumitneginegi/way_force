@@ -30,7 +30,7 @@ const client = twilio(accountSid, authToken);
 exports.registrationEmployer = async (req, res) => {
   try {
 
-    const { mobile } = req.body;
+    const { mobile,otp } = req.body;
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
@@ -38,7 +38,7 @@ exports.registrationEmployer = async (req, res) => {
 
     if (!user) {
 
-      const otp = Math.floor(1000 + Math.random() * 9000);
+      // const otp = Math.floor(1000 + Math.random() * 9000);
 
       // Create and send the SMS with the OTP
       // await client.messages.create({
