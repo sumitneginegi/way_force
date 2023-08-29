@@ -30,7 +30,7 @@ const client = twilio(accountSid, authToken);
 exports.registrationEmployer = async (req, res) => {
   try {
 
-    const { mobile , otp } = req.body;
+    const { mobile,otp } = req.body;
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
@@ -104,7 +104,7 @@ exports.sendotpEmployer = async (req, res) => {
     //   body: `Your OTP is: ${otp}`,
     // });
 
-    res.status(200).json({ message: "OTP sent successfully", otp});
+    res.status(200).json({ message: "OTP sent successfully" ,otp:otp});
   }
   else {
     return res.status(409).send({ status: 409, msg: "Already Exit"});
