@@ -30,7 +30,7 @@ const client = twilio(accountSid, authToken);
 exports.registrationEmployer = async (req, res) => {
   try {
 
-    const { mobile } = req.body;
+    const { mobile , otp } = req.body;
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
@@ -38,14 +38,14 @@ exports.registrationEmployer = async (req, res) => {
 
     if (!user) {
 
-      const otp = Math.floor(1000 + Math.random() * 9000);
+      // const otp = Math.floor(1000 + Math.random() * 9000);
 
       // Create and send the SMS with the OTP
-      await client.messages.create({
-        to: mobile,
-        from: twilioPhoneNumber,
-        body: `Your OTP is: ${otp}`,
-      });
+      // await client.messages.create({
+      //   to: mobile,
+      //   from: twilioPhoneNumber,
+      //   body: `Your OTP is: ${otp}`,
+      // });
 
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
@@ -67,13 +67,13 @@ exports.registrationEmployer = async (req, res) => {
         mobile: userCreate.mobile,
       };
 
-      res.status(200).send({
+      res.status(201).send({
         status: 200,
         message: "Registered successfully ",
         data: obj
       });
     } else {
-      return res.status(409).send({ status: 409, msg: "Already Exit" });
+      return res.status(200).send({ status: 409, msg: "Already Exit" });
     }
 
 
@@ -93,26 +93,27 @@ exports.sendotpEmployer = async (req, res) => {
     var user = await User.findOne({ mobile: phoneNumber, userType: "employer" })
     if (!user) {
     // Generate a random 6-digit OTP
-    const otp = Math.floor(1000 + Math.random() * 9000);
+    const otp = Math.floor(1000 + Math.random() * 9000)
+
+   
 
     // Create and send the SMS with the OTP
-    await client.messages.create({
-      to: phoneNumber,
-      from: twilioPhoneNumber,
-      body: `Your OTP is: ${otp}`,
-    });
+    // await client.messages.create({
+    //   to: phoneNumber,
+    //   from: twilioPhoneNumber,
+    //   body: `Your OTP is: ${otp}`,
+    // });
 
-    res.status(200).json({ message: "OTP sent successfully" });
+    res.status(200).json({ message: "OTP sent successfully", otp});
   }
   else {
-    return res.status(409).send({ status: 409, msg: "Already Exit" });
+    return res.status(409).send({ status: 409, msg: "Already Exit"});
   }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
 
 
 exports.signupEmployer = async (req, res) => {

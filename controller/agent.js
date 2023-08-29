@@ -39,11 +39,11 @@ exports.registrationAgent = async (req, res) => {
       const otp = Math.floor(1000 + Math.random() * 9000)
     
       // Create and send the SMS with the OTP
-      await client.messages.create({
-        to: mobile,
-        from: twilioPhoneNumber,
-        body: `Your OTP is: ${otp}`,
-      });
+      // await client.messages.create({
+      //   to: mobile,
+      //   from: twilioPhoneNumber,
+      //   body: `Your OTP is: ${otp}`,
+      // });
       
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
@@ -123,7 +123,8 @@ exports.detailDirectAgent = async (req, res) => {
         agentStrength,
         aadharCard,
         panCard,
-        category
+        category,
+        gender
     } = req.body;
 
     // Check if the user exists
@@ -143,6 +144,7 @@ exports.detailDirectAgent = async (req, res) => {
     Agent.aadharCard = aadharCard;
     Agent.panCard = panCard; 
     Agent.category =  category,
+    Agent.gender =  gender,
     Agent.uploadaadhar = req.body.uploadaadhar,
     Agent.uploadPanCard = req.body.uploadPanCard,
 
@@ -266,34 +268,20 @@ exports.listOfAllLeadByEmployer = async (req, res) => {
 
 
 
-// exports.getUsersByInstantOrDirect = async (req, res) => {
-//   try {
-//     const instantOrdirectValue = req.params.value;
+exports.getAllAgent = async (req, res) => {
+  try {
+    const agentt = await User.find({ userType: "agent"})
+    console.log(agentt)
 
-//     const users = await User.aggregate([
-//       {
-//         $match: { "obj.instantOrdirect": instantOrdirectValue },
-//       },
-//       {
-//         $project: {
-//           mobile: 1,
-//           obj: {
-//             $filter: {
-//               input: "$obj",
-//               as: "item",
-//               cond: { $eq: ["$$item.instantOrdirect", instantOrdirectValue] },
-//             },
-//           },
-//         },
-//       },
-//     ]);
+    if (agentt.length === 0) {
+      return res.status(404).json({ error: "No agent data found." });
+    }
 
-//     res.status(200).send({ data: users })
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// }
+    res.status(200).json({ success: true, data: agentt });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
 
 
 
