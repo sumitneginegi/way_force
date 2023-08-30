@@ -73,7 +73,7 @@ exports.registrationEmployer = async (req, res) => {
         data: obj
       });
     } else {
-      return res.json({ status: 409, msg: "Already Exit" });
+      return res.json({ status: 409, message: "Already Exit" });
     }
 
 
