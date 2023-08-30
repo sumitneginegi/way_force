@@ -161,6 +161,41 @@ exports.updateEmployer = async (req, res) => {
 
 
 
+exports.fillEmployerDetails = async (req, res) => {
+  const employerId = req.params.id;
+console.log("hi");
+  try {
+    const updatedData = {
+      employerName: req.body.employerName,
+      active: req.body.active,
+      gender: req.body.gender,
+      email: req.body.email,
+      mobile: req.body.mobile,
+      createdAt: req.body.createdAt,
+      state: req.body.state,
+      city: req.body.city,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      pinCode:req.body.pinCode,
+      aadharCard: req.body.aadharCard, // Updated field
+      panCard: req.body.panCard, // Updated field,
+      siteLocation: req.body.siteLocation,
+    };
+
+    const updatedEmployer = await User.findByIdAndUpdate(employerId, updatedData, { new: true });
+
+    if (!updatedEmployer) {
+      return res.status(404).json({ msg: 'Employer not found' });
+    }
+
+    return res.status(200).json({ updatedEmployer });
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ msg: 'An error occurred', error: err.message });
+  }
+}
+
+
 exports.detailDirectEmployer = async (req, res) => {
   try {
     let orderId = await reffralCode()

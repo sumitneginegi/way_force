@@ -20,8 +20,7 @@ const UserSchema = new mongoose.Schema(
             type: String,
         },
         city: {
-            type: objectId,
-            ref: "city"
+            type: String,
         },
         siteLocation: {
             type: String,
@@ -32,8 +31,7 @@ const UserSchema = new mongoose.Schema(
             default: "manpower",
         },
         category: {
-            type: objectId,
-            ref: "Category"
+            type: String,
         },
         no_Of_opening: {
             type: String,
@@ -87,7 +85,6 @@ const UserSchema = new mongoose.Schema(
         /////////////////////////////
         state: {
             type: String,
-            ref: "state"
         },
         pinCode: {
             type: String

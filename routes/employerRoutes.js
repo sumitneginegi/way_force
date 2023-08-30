@@ -25,6 +25,7 @@ const {
     getCompletedPosts,
     getDataAccToEmployer_Manpower_Agent,
     updateEmployer,
+    fillEmployerDetails,
     getDataOfAllEmployerInShort
 } = require("../controller/employerCtrl");
 const router = express.Router();
@@ -49,6 +50,7 @@ router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
 router.put("/update/Employer/:id", updateEmployer);
+router.put("/update/fillEmployerDetails/:id", fillEmployerDetails);
 router.put("/direct/detail/:id", detailDirectEmployer);
 router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);
 router.put("/updatebyAgentidEmployer", updatebyAgentidEmployer);
