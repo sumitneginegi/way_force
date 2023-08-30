@@ -43,7 +43,7 @@ cloudinary.config({
 
 router.post("/registration/Employer", registrationEmployer);
 router.post("/sendotp/Employer", sendotpEmployer);
-router.post("/signup", signupEmployer);
+// router.post("/signup", signupEmployer);
 router.post("/login", loginEmployer);
 router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);

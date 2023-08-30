@@ -30,7 +30,7 @@ const client = twilio(accountSid, authToken);
 exports.registrationEmployer = async (req, res) => {
   try {
 
-    const { mobile,otp } = req.body;
+    const { mobile, otp } = req.body;
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
@@ -90,56 +90,14 @@ exports.sendotpEmployer = async (req, res) => {
   try {
     const { phoneNumber } = req.body
 
-    var user = await User.findOne({ mobile: phoneNumber, userType: "employer" })
-    if (!user) {
-    // Generate a random 6-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000)
 
-   
-
-    // Create and send the SMS with the OTP
-    // await client.messages.create({
-    //   to: phoneNumber,
-    //   from: twilioPhoneNumber,
-    //   body: `Your OTP is: ${otp}`,
-    // });
-
-    res.status(200).json({ message: "OTP sent successfully" ,otp:otp});
+    res.status(200).json({ message: "OTP sent successfully", phoneNumber: phoneNumber, otp: otp });
   }
-  else {
-    return res.status(409).send({ status: 409, msg: "Already Exit"});
-  }
-  } catch (err) {
+
+  catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
-  }
-}
-
-
-exports.signupEmployer = async (req, res) => {
-  try {
-    const { mobile } = req.body;
-    if (!mobile) {
-      return res.status(400).json({ error: "Mobile number is required" });
-    }
-    const existingMobile = await Employerr.findOne({ mobile });
-    if (existingMobile) {
-      return res.status(409).json({ error: "Mobile number already in use" });
-    }
-
-    const otp = OTP.generateOTP();
-
-    const newEmployerr = new Employerr({ mobile, otp });
-    await newEmployerr.save();
-
-    res.status(201).json({
-      message: "Sign up successful",
-      data: newEmployerr,
-      otp: otp,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Something went wrong" });
   }
 }
 
@@ -183,7 +141,7 @@ exports.updateEmployer = async (req, res) => {
       state: req.body.state,
       city: req.body.city,
       GST_Number: req.body.GST_Number,
-      registration_Number: req.body.registration_Number,  
+      registration_Number: req.body.registration_Number,
       aadharCard: req.body.aadharCard, // Updated field
       panCard: req.body.panCard, // Updated field
     };
@@ -196,7 +154,7 @@ exports.updateEmployer = async (req, res) => {
 
     return res.status(200).json({ updatedEmployer });
   } catch (err) {
-    console.error(err);
+    console.error(err)
     res.status(500).json({ msg: 'An error occurred', error: err.message });
   }
 }
@@ -210,8 +168,8 @@ exports.detailDirectEmployer = async (req, res) => {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
       city: req.body.city,
-      skills:req.body.skills,
-      state:req.body.state,
+      skills: req.body.skills,
+      state: req.body.state,
       siteLocation: req.body.siteLocation,
       employmentType: req.body.employmentType,
       category: req.body.category,
@@ -228,7 +186,7 @@ exports.detailDirectEmployer = async (req, res) => {
       instantOrdirect: "Direct",
       orderId: orderId,
       employerName: req.body.employerName,
-      
+
       pinCode: req.body.pinCode,
       GST_Number: req.body.GST_Number,
       registration_Number: req.body.registration_Number,
@@ -236,7 +194,7 @@ exports.detailDirectEmployer = async (req, res) => {
       longi: req.body.longi,
       startTime: req.body.startTime,
       endTime: req.body.endTime
-      
+
     }
 
     const user = await User.findById(req.params.id);
@@ -276,8 +234,8 @@ exports.detailInstantEmployer = async (req, res) => {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
       city: req.body.city,
-      skills:req.body.skills,
-      state:req.body.state,
+      skills: req.body.skills,
+      state: req.body.state,
       siteLocation: req.body.siteLocation,
       employmentType: req.body.employmentType,
       category: req.body.category,
@@ -367,12 +325,12 @@ exports.viewInShort = async (req, res) => {
     const aggregationPipeline = [
       { $unwind: "$obj" },
       // Match documents with userType: "employer", obj.instantOrdirect: instantOrdirectValue, and obj.employmentType: employmentTypeValue
-      { 
-        $match: { 
-          userType: "employer", 
+      {
+        $match: {
+          userType: "employer",
           "obj.instantOrdirect": instantOrdirectValue,
-          "obj.employmentType": employmentTypeValue 
-        } 
+          "obj.employmentType": employmentTypeValue
+        }
       },
       {
         $project: {
@@ -385,7 +343,7 @@ exports.viewInShort = async (req, res) => {
           miniSalary: "$obj.miniSalary",
           instantOrdirect: "$obj.instantOrdirect",
           orderId: "$obj.orderId",
-          employmentType:"$obj.employmentType"
+          employmentType: "$obj.employmentType"
 
         }
       }
@@ -480,7 +438,7 @@ exports.viewInShortOfInstantLead = async (req, res) => {
 
 exports.getAllEmployer = async (req, res) => {
   try {
-    const employers = await User.find({ userType: "employer"})
+    const employers = await User.find({ userType: "employer" })
     console.log(employers)
 
     if (employers.length === 0) {
@@ -511,15 +469,15 @@ exports.getAllEmployerById = async (req, res) => {
 
 exports.loginEmployer = async (req, res) => {
   try {
-    const { mobile,otp } = req.body;
+    const { mobile, otp } = req.body;
 
-    if (!mobile ) {
+    if (!mobile) {
       return res
         .status(400)
         .json({ error: "Mobile number required" });
     }
 
-    const employer = await User.findOne({ mobile:mobile , userType: "employer"});
+    const employer = await User.findOne({ mobile: mobile, userType: "employer" });
     if (!employer) {
       return res.status(404).json({ error: "employer not found" });
     }
@@ -917,7 +875,7 @@ exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
     console.log(d)
 
     if (d == "employer") {
-     const data = await User.aggregate([
+      const data = await User.aggregate([
         {
           $match: {
             userType: 'employer',
@@ -935,18 +893,18 @@ exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
 
     if (d == "manpower") {
       const data = await User.aggregate([
-          {
-            $match: {
-              userType: 'manpower',
-            },
+        {
+          $match: {
+            userType: 'manpower',
           },
-          {
-            $project: {
-              name: 1,
-              createdAt: 1,
-            },
+        },
+        {
+          $project: {
+            name: 1,
+            createdAt: 1,
           },
-        ]);
+        },
+      ]);
       return res.status(201).json({
         data: data,
       })
@@ -954,18 +912,18 @@ exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
 
     if (d == "agent") {
       const data = await User.aggregate([
-          {
-            $match: {
-              userType: 'agent',
-            },
+        {
+          $match: {
+            userType: 'agent',
           },
-          {
-            $project: {
-              name: '$agentName',
-              createdAt: 1,
-            },
+        },
+        {
+          $project: {
+            name: '$agentName',
+            createdAt: 1,
           },
-        ]);  
+        },
+      ]);
       return res.status(200).send({ data: data })
     }
     return res.status(400).json({ msg: 'Invalid (d)' });
@@ -988,7 +946,7 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
       {
         $project: {
           employerName: 1,
-          GST_Number:1,
+          GST_Number: 1,
           aadharCard: 1,
           city: 1,
           email: 1,
@@ -997,13 +955,42 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
           registration_Number: 1,
           state: 1,
           createdAt: 1,
-        
+
         },
       },
     ]);
-      return res.status(200).json({ data });
-    }catch (err) {
+    return res.status(200).json({ data });
+  } catch (err) {
     console.log(err)
     res.status(500).json({ msg: 'An error occurred', error: err.message });
   }
 }
+
+
+
+// exports.signupEmployer = async (req, res) => {
+//   try {
+//     const { mobile } = req.body;
+//     if (!mobile) {
+//       return res.status(400).json({ error: "Mobile number is required" });
+//     }
+//     const existingMobile = await Employerr.findOne({ mobile });
+//     if (existingMobile) {
+//       return res.status(409).json({ error: "Mobile number already in use" });
+//     }
+
+//     const otp = OTP.generateOTP();
+
+//     const newEmployerr = new Employerr({ mobile, otp });
+//     await newEmployerr.save();
+
+//     res.status(201).json({
+//       message: "Sign up successful",
+//       data: newEmployerr,
+//       otp: otp,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Something went wrong" });
+//   }
+// }
