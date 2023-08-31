@@ -144,11 +144,12 @@ exports.verifyOtp = async (req, res) => {
   }
 }
 
+
 exports.detailSignup = async (req, res) => {
   try {
     const id = req.params.id;
     const {
-      name,
+      manpowerName,
       address,
       education,
       age,
@@ -174,7 +175,7 @@ exports.detailSignup = async (req, res) => {
     }
 
     // Update the user's details
-    manPower.name = name;
+    manPower.manpowerName = manpowerName;
     manPower.address = address;
     manPower.education = education;
     manPower.age = age;
@@ -203,6 +204,7 @@ exports.detailSignup = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+
 
 exports.workDetails = async (req, res) => {
   try {

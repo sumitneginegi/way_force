@@ -11,7 +11,7 @@ exports.verifyToken = (req, res, next) => {
       message: "no token provided! Access prohibited",
     })
   }
-
+  
   try {
     jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
       if (err) {
@@ -20,14 +20,15 @@ exports.verifyToken = (req, res, next) => {
           message: "UnAuthorised !",
         })
       }
-      const user = await User.findOne({ _id: decoded.id })
-
+    
+      const user = await User.findOne({ _id: decoded.admin })
+      console.log(user)
       if (!user) {
         return res.status(400).send({
           message: "The user that this token belongs to does not exist",
         })
       }
-      const allowedRoles = ["manpower", "employer", "agent", "ADMIN"];
+      const allowedRoles = ["manpower", "employer", "agent", "admin"];
 
       if (!allowedRoles.includes(user.userType)) {
         return res.status(403).send({

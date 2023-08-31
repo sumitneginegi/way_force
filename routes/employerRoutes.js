@@ -26,8 +26,12 @@ const {
     getDataAccToEmployer_Manpower_Agent,
     updateEmployer,
     fillEmployerDetails,
-    getDataOfAllEmployerInShort
+    getDataOfAllEmployerInShort,
+
+    registrationthroughAdmin
 } = require("../controller/employerCtrl");
+
+const {verifyToken} = require("../middleware/auth")
 const router = express.Router();
 
 const multer = require("multer");
@@ -41,6 +45,10 @@ cloudinary.config({
   api_key: "343572995738873",
   api_secret: "wrcHAy3wkDu8jhv0UHYlMpYmdDQ",
 });
+
+
+router.post("/registrationthroughAdmin",verifyToken,  registrationthroughAdmin);
+//////////////////////////////////////////////////////////////////////////////
 
 router.post("/registration/Employer", registrationEmployer);
 router.post("/sendotp/Employer", sendotpEmployer);

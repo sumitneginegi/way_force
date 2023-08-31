@@ -27,6 +27,75 @@ const authToken = "b84ef9419317143ffbff15233a713770";
 const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
 
+
+
+exports.registrationthroughAdmin = async (req, res) => {
+  try {
+
+    const data = {
+      employerName: req.body.employerName,
+      active: req.body.active,
+      gender: req.body.gender,
+      email: req.body.email,
+      mobile: req.body.mobile,
+      createdAt: req.body.createdAt,
+      state: req.body.state,
+      city: req.body.city,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      pinCode: req.body.pinCode,
+      aadharCard: req.body.aadharCard, // Updated field
+      panCard: req.body.panCard, // Updated field,
+      siteLocation: req.body.siteLocation,
+    }
+
+    var user = await User.findOne({ mobile: data.mobile, userType: "employer" })
+
+    if (!user) {
+      req.body.userType = "employer"
+
+
+      const userCreate = await User.create({
+        data,
+        ...req.body
+      })
+
+      let obj = {
+        id: userCreate._id,
+        mobile: userCreate.mobile,
+        employerName: userCreate.employerName,
+        active: userCreate.active,
+        gender: userCreate.gender,
+        email: userCreate.email,
+        mobile: userCreate.mobile,
+        createdAt: userCreate.createdAt,
+        state: userCreate.state,
+        city: userCreate.city,
+        GST_Number: userCreate.GST_Number,
+        registration_Number: userCreate.registration_Number,
+        pinCode: userCreate.pinCode,
+        aadharCard: userCreate.aadharCard,
+        panCard: userCreate.panCard,
+        siteLocation: userCreate.siteLocation,
+      }
+
+      res.status(201).send({
+        status: 200,
+        message: "Registered successfully ",
+        data: obj
+      })
+    } else {
+      return res.json({ status: 409, message: "Already Exit" });
+    }
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+
 exports.registrationEmployer = async (req, res) => {
   try {
 
@@ -163,7 +232,7 @@ exports.updateEmployer = async (req, res) => {
 
 exports.fillEmployerDetails = async (req, res) => {
   const employerId = req.params.id;
-console.log("hi");
+  console.log("hi");
   try {
     const updatedData = {
       employerName: req.body.employerName,
@@ -176,7 +245,7 @@ console.log("hi");
       city: req.body.city,
       GST_Number: req.body.GST_Number,
       registration_Number: req.body.registration_Number,
-      pinCode:req.body.pinCode,
+      pinCode: req.body.pinCode,
       aadharCard: req.body.aadharCard, // Updated field
       panCard: req.body.panCard, // Updated field,
       siteLocation: req.body.siteLocation,

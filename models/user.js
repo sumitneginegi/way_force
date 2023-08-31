@@ -108,7 +108,7 @@ const UserSchema = new mongoose.Schema(
             type: String
         },
         /////////////////////////////////
-        name: {
+        manpowerName: {
             type: String,
             // required: true,
         },
@@ -220,6 +220,9 @@ const UserSchema = new mongoose.Schema(
             type:String
         },
         password:{
+            type:String
+        },
+        profile:{
             type:String
         }
 
