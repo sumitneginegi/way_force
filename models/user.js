@@ -4,61 +4,31 @@ const objectId = mongoose.Types.ObjectId;
 
 const UserSchema = new mongoose.Schema(
     {
-        employerName:{
-            type:String
-        },
-        mobile: {
-            type: String,
-        },
-        email:{
-            type:String
-        },
-        otp: {
-            type: String,
-        },
-        job_desc: {
-            type: String,
-        },
-        city: {
-            type: String,
-        },
-        siteLocation: {
-            type: String,
-        },
+        employerName:String,
+        mobile:String,
+        email:String,
+        otp:String,
+        job_desc:String,
+        city:String,
+        siteLocation:String,
         employmentType: {
             type: String,
             enum: ["manpower", "agent"],
             default: "manpower",
         },
-        category: {
-            type: String,
-        },
-        no_Of_opening: {
-            type: String,
-        },
+        category : String,
+        no_Of_opening : String,
         fullTime: {
             type: String,
             enum: ["fullTime", "partTime"],
             default: "fullTime",
         },
-        miniSalary: {
-            type: String,
-        },
-        maxSalary: {
-            type: String,
-        },
-        workingDays: {
-            type: Array,
-        },
-        workingHours: {
-            type: String,
-        },
-        explainYourWork: {
-            type: String,
-        },
-        date: {
-            type: String,
-        },
+        miniSalary:String,
+        maxSalary:String,
+        workingDays:Array,
+        workingHours:String,
+        explainYourWork:String,
+        date:String,
         apply: {
             type: String,
             default: "false"
@@ -83,44 +53,19 @@ const UserSchema = new mongoose.Schema(
             default:"pending"
         },
         /////////////////////////////
-        state: {
-            type: String,
-        },
-        pinCode: {
-            type: String
-        },
-        GST_Number: {
-            type: String
-        },
-        registration_Number: {
-            type: String
-        },
-        lati: {
-            type: String
-        },
-        longi: {
-            type: String
-        },
-        instantOrdirect: {
-            type: String
-        },
-        otpSendToEmployer: {
-            type: String
-        },
+        state:String,
+        pinCode:String,
+        GST_Number:String,
+        registration_Number:String,
+        lati:String,
+        longi:String,
+        instantOrdirect:String,
+        otpSendToEmployer:String,
         /////////////////////////////////
-        manpowerName: {
-            type: String,
-            // required: true,
-        },
-        country: {
-            type: String
-        },
-        landmark: {
-            type: String
-        },
-        postOffice: {
-            type: String
-        },
+        manpowerName:String,
+        country:String,
+        landmark:String,
+        postOffice:String,
         address: {
             state: String,
             city: String,
@@ -132,12 +77,8 @@ const UserSchema = new mongoose.Schema(
             village: String,
             block: String,
         },
-        village: {
-            type: String
-        },
-        block: {
-            type: String
-        },
+        village : String,
+        block : String,
         education: [{ educationType: String, degree: String, yearOfPassing: String }],
         age: Number,
         gender: String,
@@ -155,15 +96,9 @@ const UserSchema = new mongoose.Schema(
         active: {
             type: String, default: "true"
         },
-        aadharCard: {
-            type: String,
-        },
-        panCard: {
-            type: String,
-        },
-        otpSendToManpowerr: {
-            type: String
-        },
+        aadharCard:String,
+        panCard:String,
+        otpSendToManpowerr:String,
         otpSendToManpowerrVerified: {
             type: String,
             default: "false"
@@ -173,21 +108,11 @@ const UserSchema = new mongoose.Schema(
             enum: ["manpower", "employer", "agent","admin"],
             default: "employer"
         },
-        obj:{
-            type:Array
-        },
-        orderId:{
-            type:String
-        },
-        startTime:{
-            type:String
-        },
-        endTime:{
-            type:String
-        },
-        statusOfCompletion:{
-            type:String
-        },
+        obj:Array,
+        orderId: String,
+        startTime: String,
+        endTime: String,
+        statusOfCompletion: String,
         userVerification:{
             type:String,
             default:"false"
@@ -195,36 +120,16 @@ const UserSchema = new mongoose.Schema(
         manpowerObj:[{
 
         }],
-        agentName:{
-            type:String
-        },
-        agentAddress:{
-            type:String
-        },
-        agentServiceLocation:{
-            type:String
-        },
-        agentBusinessName:{
-            type:String
-        },
-        agentStrength:{
-            type:String
-        },
-        uploadaadhar:{
-            type:String
-        },
-        uploadPanCard:{
-            type:String
-        },
-        AdminName:{
-            type:String
-        },
-        password:{
-            type:String
-        },
-        profile:{
-            type:String
-        }
+        agentName: String,
+        agentAddress: String,
+        agentServiceLocation: String,
+        agentBusinessName: String,
+        agentStrength: String,
+        uploadaadhar: String,
+        uploadPanCard: String,
+        AdminName: String,
+        password: String,
+        profile: String,
 
     },
     {

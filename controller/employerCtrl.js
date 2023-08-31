@@ -570,6 +570,30 @@ exports.getAllEmployerById = async (req, res) => {
 }
 
 
+// Assuming you have already required the necessary modules and defined the User model
+
+exports.getPostsByEmployerId = async (req, res) => {
+  try {
+    const employerId = req.params.id;
+    
+    // Find the employer by their ID
+    const employer = await User.findOne({ _id: employerId });
+
+    if (!employer) {
+      return res.status(400).json({ error: "Employer data not found" });
+    }
+    
+    // Extract the posts from the 'obj' array
+    const posts = employer.obj;
+
+    // Respond with the extracted posts
+    res.status(200).json({ success: true, data: posts });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+
 
 exports.loginEmployer = async (req, res) => {
   try {

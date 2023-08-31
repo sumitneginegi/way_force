@@ -54,7 +54,7 @@ router.put(
 
   ]),
   manpowerDocument
-);
+)
 router.put("/profile/:id", upload.fields([{ name: "profile", maxCount: 1 },]), YourProfileUpdate);
 router.get("/", getAllManpower);
 router.get("/:manpowerId", getManpower);

@@ -27,6 +27,7 @@ const {
     updateEmployer,
     fillEmployerDetails,
     getDataOfAllEmployerInShort,
+    getPostsByEmployerId,
 
     registrationthroughAdmin
 } = require("../controller/employerCtrl");
@@ -74,6 +75,7 @@ router.put("/upadtePost/ByStatusOfCompletion/:orderId", upadtePostByStatusOfComp
 router.get("/getall/StatusOfCompletion", getCompletedPosts);
 router.get("/get/getDataAccToEmployer_Manpower_Agent/:d", getDataAccToEmployer_Manpower_Agent);
 router.get("/get/getDataOfAllEmployerInShort", getDataOfAllEmployerInShort)
+router.get("/get/getPostsByEmployerId/:id", getPostsByEmployerId)
 
 
 // router.get("/getInstanOrDirect", getInstanOrDirect);
