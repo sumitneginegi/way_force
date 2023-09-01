@@ -604,9 +604,11 @@ exports.sendotpEmployerLogin = async (req, res) => {
     const otp = Math.floor(1000 + Math.random() * 9000)
 
     const user = await User.findOneAndUpdate({ mobile: phoneNumber, userType: "employer" },{otp:otp},{new:true})
+if(!user){
+  return res.status(400).json({ message: "phone number not exist"});
+}
 
-
-    res.status(200).json({ message: "OTP sent successfully", otp:user.otp});
+   return  res.status(200).json({ message: "OTP sent successfully", otp:user.otp});
   }
 
   catch (err) {
