@@ -595,6 +595,26 @@ exports.getPostsByEmployerId = async (req, res) => {
 
 
 
+
+exports.sendotpEmployerLogin = async (req, res) => {
+  console.log("hi");
+  try {
+    const { phoneNumber } = req.body
+
+    const otp = Math.floor(1000 + Math.random() * 9000)
+
+    const user = await User.findOneAndUpdate({ mobile: phoneNumber, userType: "employer" },{otp:otp},{new:true})
+
+
+    res.status(200).json({ message: "OTP sent successfully", otp:user.otp});
+  }
+
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+}
+
 exports.loginEmployer = async (req, res) => {
   try {
     const { mobile, otp } = req.body;
@@ -604,28 +624,30 @@ exports.loginEmployer = async (req, res) => {
         .status(400)
         .json({ error: "Mobile number required" });
     }
+    const test = await User.findOne({ mobile: mobile ,userType: "employer", });
 
-    const employer = await User.findOne({ mobile: mobile, userType: "employer" });
-    if (!employer) {
-      return res.status(404).json({ error: "employer not found" });
+    if(test){
+      const employer = await User.findOne({ mobile: mobile, userType: "employer",otp:otp });  
+      if (!employer) {
+
+        return res.status(404).json({ error: "Otp is incorrect" });
+      }
     }
+  else{
+    return res.status(404).json({ error: "employer not found" });
+  }
 
-    employer.otp = otp
-    employer.save()
+    // employer.otp = otp
+    // employer.save()
 
- const emp1=  await User.findOne({ mobile: mobile, userType: "employer", otp:otp });
- if(!emp1){
-  return res.status(404).json({ error: "otp not match" });
- } 
-
-    const token = jwt.sign({ employerId: employer._id }, process.env.JWT_SECRET);
+    const token = jwt.sign({ employerId: test._id }, process.env.JWT_SECRET);
 
     res.status(200).json({
       message: "Login successful",
       data: {
         token,
         otp,
-        employer: emp1,
+        employer: test,
       },
     });
   } catch (error) {

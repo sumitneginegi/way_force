@@ -28,6 +28,7 @@ const {
     fillEmployerDetails,
     getDataOfAllEmployerInShort,
     getPostsByEmployerId,
+    sendotpEmployerLogin,
 
     registrationthroughAdmin
 } = require("../controller/employerCtrl");
@@ -55,6 +56,7 @@ router.post("/registration/Employer", registrationEmployer);
 router.post("/sendotp/Employer", sendotpEmployer);
 // router.post("/signup", signupEmployer);
 router.post("/login", loginEmployer);
+router.post("/sendotpEmployerLogin", sendotpEmployerLogin);
 router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
