@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const multer = require("multer");
 // const path = require("path");
-const { uploadManpowerData } = require("../controller/Admin");
+const { uploadManpowerData } = require("../controller/excel");
 
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {

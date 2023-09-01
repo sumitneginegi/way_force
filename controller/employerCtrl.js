@@ -613,6 +613,10 @@ exports.loginEmployer = async (req, res) => {
     employer.otp = otp
     employer.save()
 
+ const emp1=  await User.findOne({ mobile: mobile, userType: "employer", otp:otp });
+ if(!emp1){
+  return res.status(404).json({ error: "otp not match" });
+ } 
 
     const token = jwt.sign({ employerId: employer._id }, process.env.JWT_SECRET);
 
@@ -621,7 +625,7 @@ exports.loginEmployer = async (req, res) => {
       data: {
         token,
         otp,
-        employer: employer,
+        employer: emp1,
       },
     });
   } catch (error) {
