@@ -15,6 +15,81 @@ const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
 
 
+
+exports.registrationManpowerAdmin = async (req, res) => {
+  try {
+
+    const data = {
+      manpowerName: req.body.manpowerName,
+      active: req.body.active,
+      gender: req.body.gender,
+      email: req.body.email,
+      mobile: req.body.mobile,
+      createdAt: req.body.createdAt,
+      state: req.body.state,
+      city: req.body.city,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      pinCode: req.body.pinCode,
+      aadharCard: req.body.aadharCard, // Updated field
+      panCard: req.body.panCard, // Updated field,
+      serviceLocation: req.body.serviceLocation,
+      landmark: req.body.landmark,
+      block: req.body.block,
+      education: req.body.education,
+      skills: req.body.skills,
+    }
+
+    var user = await User.findOne({ mobile: data.mobile, userType: "manpower" })
+
+    if (user) {
+      return res.json({ status: 409, message: "Already Exit" });
+    } else {
+      req.body.userType = "manpower"
+
+
+      const userCreate = await User.create({
+        data,
+        ...req.body
+      })
+
+      let obj = {
+        id: userCreate._id,
+        mobile: userCreate.mobile,
+        manpowerName: userCreate.manpowerName,
+        active: userCreate.active,
+        gender: userCreate.gender,
+        email: userCreate.email,
+        mobile: userCreate.mobile,
+        createdAt: userCreate.createdAt,
+        state: userCreate.state,
+        city: userCreate.city,
+        GST_Number: userCreate.GST_Number,
+        registration_Number: userCreate.registration_Number,
+        pinCode: userCreate.pinCode,
+        aadharCard: userCreate.aadharCard,
+        panCard: userCreate.panCard,
+        serviceLocation: userCreate.serviceLocation,
+        landmark: userCreate.landmark,
+        block: userCreate.block,
+        education: userCreate.education,
+        skills: userCreate.skills,
+      }
+
+      res.status(201).send({
+        status: 200,
+        message: "Registered successfully ",
+        data: obj
+      })
+    }
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
 exports.registrationManpower = async (req, res) => {
   try {
 
@@ -85,8 +160,6 @@ exports.sendotpManpower = async (req, res) => {
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
-
 
 
 
