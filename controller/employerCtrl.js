@@ -337,6 +337,7 @@ exports.detailInstantEmployer = async (req, res) => {
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
+<<<<<<< HEAD
       siteLocation: req.body.siteLocation,
       category: req.body.category,
       date: formattedDate,
@@ -344,6 +345,16 @@ exports.detailInstantEmployer = async (req, res) => {
       workingHours: req.body.workingHours,
       radius: req.body.radius,
       explainYourWork: req.body.explainYourWork,
+=======
+      
+      siteLocation: req.body.siteLocation,
+
+      category: req.body.category,
+   
+      explainYourWork: req.body.explainYourWork,
+      date: formattedDate,
+     
+>>>>>>> 843f2d70f676c8d4c8c6294ab1f164636da81c32
       lati: req.body.lati,
       longi: req.body.longi,
       instantOrdirect: "instant",
