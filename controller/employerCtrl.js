@@ -337,15 +337,6 @@ exports.detailInstantEmployer = async (req, res) => {
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
-<<<<<<< HEAD
-      siteLocation: req.body.siteLocation,
-      category: req.body.category,
-      date: formattedDate,
-      // manpowerId: req.body.manpowerId
-      workingHours: req.body.workingHours,
-      radius: req.body.radius,
-      explainYourWork: req.body.explainYourWork,
-=======
       
       siteLocation: req.body.siteLocation,
 
@@ -354,7 +345,6 @@ exports.detailInstantEmployer = async (req, res) => {
       explainYourWork: req.body.explainYourWork,
       date: formattedDate,
      
->>>>>>> 843f2d70f676c8d4c8c6294ab1f164636da81c32
       lati: req.body.lati,
       longi: req.body.longi,
       instantOrdirect: "instant",
@@ -846,10 +836,10 @@ exports.generateAndSaveOTP = async (req, res) => {
       postIndex.manpower = [] // Initialize manpower as an empty array if it doesn't exist
     }
     // Check if the manpower has applied for the post with the given orderId
-    const post = employer.obj[postIndex];
-    if (!post.manpower || !post.manpower.includes(manpowerId)) {
-      return res.status(400).json({ error: "Manpower has not applied for this post." });
-    }
+    // const post = employer.obj[postIndex];
+    // if (!post.manpower || !post.manpower.includes(manpowerId)) {
+    //   return res.status(400).json({ error: "Manpower has not applied for this post." });
+    // }
 
     // Generate the OTP
     const otp = generateOTP();
@@ -1125,9 +1115,79 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
 
 
 // Define a route for finding manpower by location and radius
+// exports.findManpowerthroughRadius = async (req, res) => {
+//   try {
+//     const { latitude, longitude, radiusInKm } = req.body;
+
+//     // Find manpower within the specified radius
+//     const manpowerWithinRadius = await User.find({
+//       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
+//       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
+//     }).lean();
+
+//     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
+//       const distance = getDistanceFromLatLonInKm(
+//         latitude,
+//         longitude,
+//         manpower.serviceLocation.lati,
+//         manpower.serviceLocation.longi
+//       );
+//       console.log(distance)
+//       return distance <= radiusInKm; // Filter by radius
+//     });
+
+//     res.json({ manpower: filteredManpower });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Internal Server Error" });
+//   }
+// }
+
+
+
+// // Function to calculate distance between two coordinates using Haversine formula
+// function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+//   const R = 6371; // Radius of the Earth in km
+//   const dLat = deg2rad(lat2 - lat1);
+//   const dLon = deg2rad(lon2 - lon1);
+//   const a =
+//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+//     Math.cos(deg2rad(lat1)) *
+//     Math.cos(deg2rad(lat2)) *
+//     Math.sin(dLon / 2) *
+//     Math.sin(dLon / 2);
+//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+//   const distance = R * c; // Distance in km
+//   return distance;
+// }
+
+// // Utility function to convert degrees to radians
+// function deg2rad(deg) {
+//   return deg * (Math.PI / 180);
+// }
+
+
+
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
-    const { latitude, longitude, radiusInKm } = req.body;
+    const { employerId, orderId, radiusInKm } = req.body;
+
+    // Find the employer by employerId
+    const employer = await User.findById(employerId);
+
+    if (!employer || employer.userType !== "employer") {
+      return res.status(400).json({ message: "Invalid employer ID" });
+    }
+
+    // Find the post within the employer's obj array by postId
+    const post = employer.obj.find((post) => post.orderId == orderId);
+
+    if (!post) {
+      return res.status(400).json({ message: "orderId not found" });
+    }
+
+    // Extract the post's latitude and longitude
+    const { lati, longi } = post;
 
     // Find manpower within the specified radius
     const manpowerWithinRadius = await User.find({
@@ -1137,8 +1197,8 @@ exports.findManpowerthroughRadius = async (req, res) => {
 
     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
       const distance = getDistanceFromLatLonInKm(
-        latitude,
-        longitude,
+        lati,
+        longi,
         manpower.serviceLocation.lati,
         manpower.serviceLocation.longi
       );
@@ -1153,8 +1213,6 @@ exports.findManpowerthroughRadius = async (req, res) => {
   }
 }
 
-
-
 // Function to calculate distance between two coordinates using Haversine formula
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Radius of the Earth in km
@@ -1163,9 +1221,9 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) *
-    Math.cos(deg2rad(lat2)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      Math.cos(deg2rad(lat2)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c; // Distance in km
   return distance;

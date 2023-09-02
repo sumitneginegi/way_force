@@ -91,11 +91,7 @@ const UserSchema = new mongoose.Schema(
         experience: Number,
         skills: [{ type: Schema.Types.ObjectId }],
         jobType: { type: String },
-<<<<<<< HEAD
         serviceLocation: {lati:Number, longi:Number},
-=======
-        serviceLocation: [{lati:Number, longi:Number}],
->>>>>>> 843f2d70f676c8d4c8c6294ab1f164636da81c32
         documents: [
             { documentName: String, documentNumber: String, documentImage: String },
         ],
