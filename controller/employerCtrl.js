@@ -1188,12 +1188,15 @@ exports.findManpowerthroughRadius = async (req, res) => {
 
     // Extract the post's latitude and longitude
     const { lati, longi } = post;
+    
 
     // Find manpower within the specified radius
     const manpowerWithinRadius = await User.find({
       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
     }).lean();
+
+    console.log(manpowerWithinRadius)
 
     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
       const distance = getDistanceFromLatLonInKm(
@@ -1206,18 +1209,18 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return distance <= radiusInKm; // Filter by radius
     });
 
-    res.json({ manpower: filteredManpower });
+    res.json({ manpower: filteredManpower })
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal Server Error" });
+    console.error(error)
+    res.status(500).json({ message: "Internal Server Error" })
   }
 }
 
 // Function to calculate distance between two coordinates using Haversine formula
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const R = 6371; // Radius of the Earth in km
-  const dLat = deg2rad(lat2 - lat1);
-  const dLon = deg2rad(lon2 - lon1);
+  const dLat = deg2rad(lat2 - lat1)
+  const dLon = deg2rad(lon2 - lon1)
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) *
