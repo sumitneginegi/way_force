@@ -61,7 +61,9 @@ const UserSchema = new mongoose.Schema(
         longi:String,
         instantOrdirect:String,
         otpSendToEmployer:String,
+
         /////////////////////////////////
+
         manpowerName:String,
         country:String,
         landmark:String,
@@ -88,7 +90,7 @@ const UserSchema = new mongoose.Schema(
         experience: Number,
         skills: [{ type: Schema.Types.ObjectId }],
         jobType: { type: String },
-        serviceLocation: String,
+        serviceLocation: [{lati:Number, longi:Number}],
         documents: [
             { documentName: String, documentNumber: String, documentImage: String },
         ],
@@ -112,7 +114,7 @@ const UserSchema = new mongoose.Schema(
         orderId: String,
         startTime: String,
         endTime: String,
-        statusOfCompletion: String,
+        statusOfCompletion: [],
         userVerification:{
             type:String,
             default:"false"

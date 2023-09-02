@@ -337,26 +337,14 @@ exports.detailInstantEmployer = async (req, res) => {
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
-      city: req.body.city,
-      skills: req.body.skills,
-      state: req.body.state,
+      
       siteLocation: req.body.siteLocation,
-      employmentType: req.body.employmentType,
+
       category: req.body.category,
-      no_Of_opening: req.body.no_Of_opening,
-      fullTime: req.body.fullTime,
-      miniSalary: req.body.miniSalary,
-      maxSalary: req.body.maxSalary,
-      workingDays: req.body.workingDays,
-      workingHours: req.body.workingHours,
+   
       explainYourWork: req.body.explainYourWork,
       date: formattedDate,
-      // manpowerId: req.body.manpowerId,
-      mobileVerified: req.body.mobileVerified,
-      state: req.body.state,
-      pinCode: req.body.pinCode,
-      GST_Number: req.body.GST_Number,
-      registration_Number: req.body.registration_Number,
+     
       lati: req.body.lati,
       longi: req.body.longi,
       instantOrdirect: "instant",
