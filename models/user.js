@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema(
         workingDays:Array,
         workingHours:String,
         explainYourWork:String,
+        radius:String,
         date:String,
         apply: {
             type: String,
@@ -88,7 +89,7 @@ const UserSchema = new mongoose.Schema(
         experience: Number,
         skills: [{ type: Schema.Types.ObjectId }],
         jobType: { type: String },
-        serviceLocation: String,
+        serviceLocation: {lati:Number, longi:Number},
         documents: [
             { documentName: String, documentNumber: String, documentImage: String },
         ],

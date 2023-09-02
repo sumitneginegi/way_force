@@ -337,26 +337,13 @@ exports.detailInstantEmployer = async (req, res) => {
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
-      city: req.body.city,
-      skills: req.body.skills,
-      state: req.body.state,
       siteLocation: req.body.siteLocation,
-      employmentType: req.body.employmentType,
       category: req.body.category,
-      no_Of_opening: req.body.no_Of_opening,
-      fullTime: req.body.fullTime,
-      miniSalary: req.body.miniSalary,
-      maxSalary: req.body.maxSalary,
-      workingDays: req.body.workingDays,
-      workingHours: req.body.workingHours,
-      explainYourWork: req.body.explainYourWork,
       date: formattedDate,
-      // manpowerId: req.body.manpowerId,
-      mobileVerified: req.body.mobileVerified,
-      state: req.body.state,
-      pinCode: req.body.pinCode,
-      GST_Number: req.body.GST_Number,
-      registration_Number: req.body.registration_Number,
+      // manpowerId: req.body.manpowerId
+      workingHours: req.body.workingHours,
+      radius: req.body.radius,
+      explainYourWork: req.body.explainYourWork,
       lati: req.body.lati,
       longi: req.body.longi,
       instantOrdirect: "instant",
@@ -575,14 +562,14 @@ exports.getAllEmployerById = async (req, res) => {
 exports.getPostsByEmployerId = async (req, res) => {
   try {
     const employerId = req.params.id;
-    
+
     // Find the employer by their ID
     const employer = await User.findOne({ _id: employerId });
 
     if (!employer) {
       return res.status(400).json({ error: "Employer data not found" });
     }
-    
+
     // Extract the posts from the 'obj' array
     const posts = employer.obj;
 
@@ -603,12 +590,12 @@ exports.sendotpEmployerLogin = async (req, res) => {
 
     const otp = Math.floor(1000 + Math.random() * 9000)
 
-    const user = await User.findOneAndUpdate({ mobile: phoneNumber, userType: "employer" },{otp:otp},{new:true})
-if(!user){
-  return res.status(400).json({ message: "phone number not exist"});
-}
+    const user = await User.findOneAndUpdate({ mobile: phoneNumber, userType: "employer" }, { otp: otp }, { new: true })
+    if (!user) {
+      return res.status(400).json({ message: "phone number not exist" });
+    }
 
-   return  res.status(200).json({ message: "OTP sent successfully", otp:user.otp});
+    return res.status(200).json({ message: "OTP sent successfully", otp: user.otp });
   }
 
   catch (err) {
@@ -626,18 +613,18 @@ exports.loginEmployer = async (req, res) => {
         .status(400)
         .json({ error: "Mobile number required" });
     }
-    const test = await User.findOne({ mobile: mobile ,userType: "employer", });
+    const test = await User.findOne({ mobile: mobile, userType: "employer", });
 
-    if(test){
-      const employer = await User.findOne({ mobile: mobile, userType: "employer",otp:otp });  
+    if (test) {
+      const employer = await User.findOne({ mobile: mobile, userType: "employer", otp: otp });
       if (!employer) {
 
         return res.status(404).json({ error: "Otp is incorrect" });
       }
     }
-  else{
-    return res.status(404).json({ error: "employer not found" });
-  }
+    else {
+      return res.status(404).json({ error: "employer not found" });
+    }
 
     // employer.otp = otp
     // employer.save()
@@ -1124,29 +1111,58 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
 
 
 
-// exports.signupEmployer = async (req, res) => {
-//   try {
-//     const { mobile } = req.body;
-//     if (!mobile) {
-//       return res.status(400).json({ error: "Mobile number is required" });
-//     }
-//     const existingMobile = await Employerr.findOne({ mobile });
-//     if (existingMobile) {
-//       return res.status(409).json({ error: "Mobile number already in use" });
-//     }
 
-//     const otp = OTP.generateOTP();
 
-//     const newEmployerr = new Employerr({ mobile, otp });
-//     await newEmployerr.save();
+// Define a route for finding manpower by location and radius
+exports.findManpowerthroughRadius = async (req, res) => {
+  try {
+    const { latitude, longitude, radiusInKm } = req.body;
 
-//     res.status(201).json({
-//       message: "Sign up successful",
-//       data: newEmployerr,
-//       otp: otp,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Something went wrong" });
-//   }
-// }
+    // Find manpower within the specified radius
+    const manpowerWithinRadius = await User.find({
+      "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
+      "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
+    }).lean();
+
+    const filteredManpower = manpowerWithinRadius.filter((manpower) => {
+      const distance = getDistanceFromLatLonInKm(
+        latitude,
+        longitude,
+        manpower.serviceLocation.lati,
+        manpower.serviceLocation.longi
+      );
+      console.log(distance)
+      return distance <= radiusInKm; // Filter by radius
+    });
+
+    res.json({ manpower: filteredManpower });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
+
+
+// Function to calculate distance between two coordinates using Haversine formula
+function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = deg2rad(lat2 - lat1);
+  const dLon = deg2rad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(lat1)) *
+    Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c; // Distance in km
+  return distance;
+}
+
+// Utility function to convert degrees to radians
+function deg2rad(deg) {
+  return deg * (Math.PI / 180);
+}
+
+
