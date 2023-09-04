@@ -4,31 +4,31 @@ const objectId = mongoose.Types.ObjectId;
 
 const UserSchema = new mongoose.Schema(
     {
-        employerName:String,
-        mobile:String,
-        email:String,
-        otp:String,
-        job_desc:String,
-        city:String,
-        siteLocation:String,
+        employerName: String,
+        mobile: String,
+        email: String,
+        otp: String,
+        job_desc: String,
+        city: String,
+        siteLocation: String,
         employmentType: {
             type: String,
             enum: ["manpower", "agent"],
             default: "manpower",
         },
-        category : String,
-        no_Of_opening : String,
+        category: String,
+        no_Of_opening: String,
         fullTime: {
             type: String,
             enum: ["fullTime", "partTime"],
             default: "fullTime",
         },
-        miniSalary:String,
-        maxSalary:String,
-        workingDays:Array,
-        workingHours:String,
-        explainYourWork:String,
-        date:String,
+        miniSalary: String,
+        maxSalary: String,
+        workingDays: Array,
+        workingHours: String,
+        explainYourWork: String,
+        date: String,
         apply: {
             type: String,
             default: "false"
@@ -38,36 +38,36 @@ const UserSchema = new mongoose.Schema(
             ref: "User",
             // default:""
         }],
-        agentId:[{
+        agentId: [{
             type: objectId,
-            ref: "User", 
+            ref: "User",
         }],
-        
+
         mobileVerified: {
             type: String,
             default: "false",
         },
-        status:{
-            type:String,
+        status: {
+            type: String,
             // enum:["hold","pending"]
-            default:"pending"
+            default: "pending"
         },
         /////////////////////////////
-        state:String,
-        pinCode:String,
-        GST_Number:String,
-        registration_Number:String,
-        lati:String,
-        longi:String,
-        instantOrdirect:String,
-        otpSendToEmployer:String,
+        state: String,
+        pinCode: String,
+        GST_Number: String,
+        registration_Number: String,
+        lati: String,
+        longi: String,
+        instantOrdirect: String,
+        otpSendToEmployer: String,
 
         /////////////////////////////////
 
-        manpowerName:String,
-        country:String,
-        landmark:String,
-        postOffice:String,
+        manpowerName: String,
+        country: String,
+        landmark: String,
+        postOffice: String,
         address: {
             state: String,
             city: String,
@@ -79,8 +79,8 @@ const UserSchema = new mongoose.Schema(
             village: String,
             block: String,
         },
-        village : String,
-        block : String,
+        village: String,
+        block: String,
         education: [{ educationType: String, degree: String, yearOfPassing: String }],
         age: Number,
         gender: String,
@@ -90,7 +90,7 @@ const UserSchema = new mongoose.Schema(
         experience: Number,
         skills: [{ type: Schema.Types.ObjectId }],
         jobType: { type: String },
-        serviceLocation: [{lati:Number, longi:Number}],
+        serviceLocation: [{ lati: Number, longi: Number }],
         documents: [
             { documentName: String, documentNumber: String, documentImage: String },
         ],
@@ -98,28 +98,29 @@ const UserSchema = new mongoose.Schema(
         active: {
             type: String, default: "true"
         },
-        aadharCard:String,
-        panCard:String,
-        otpSendToManpowerr:String,
+        aadharCard: String,
+        panCard: String,
+        otpSendToManpowerr: String,
         otpSendToManpowerrVerified: {
             type: String,
             default: "false"
         },
-        userType: {
-            type: String,
-            enum: ["manpower", "employer", "agent","admin"],
-            default: "employer"
-        },
-        obj:Array,
+        // userType: {
+        //     type: String,
+        //     enum: ["manpower", "employer", "agent","admin"],
+        //     default: "employer"
+        // },
+        userType:String,
+        obj: Array,
         orderId: String,
         startTime: String,
         endTime: String,
         statusOfCompletion: [],
-        userVerification:{
-            type:String,
-            default:"false"
+        userVerification: {
+            type: String,
+            default: "false"
         },
-        manpowerObj:[{
+        manpowerObj: [{
 
         }],
         agentName: String,
