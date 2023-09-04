@@ -23,12 +23,13 @@ const UserSchema = new mongoose.Schema(
             enum: ["fullTime", "partTime"],
             default: "fullTime",
         },
-        miniSalary: String,
-        maxSalary: String,
-        workingDays: Array,
-        workingHours: String,
-        explainYourWork: String,
-        date: String,
+        miniSalary:String,
+        maxSalary:String,
+        workingDays:Array,
+        workingHours:String,
+        explainYourWork:String,
+        radius:String,
+        date:String,
         apply: {
             type: String,
             default: "false"
@@ -90,7 +91,7 @@ const UserSchema = new mongoose.Schema(
         experience: Number,
         skills: [{ type: Schema.Types.ObjectId }],
         jobType: { type: String },
-        serviceLocation: [{ lati: Number, longi: Number }],
+        serviceLocation: {lati:Number, longi:Number},
         documents: [
             { documentName: String, documentNumber: String, documentImage: String },
         ],

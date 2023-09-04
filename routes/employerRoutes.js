@@ -30,7 +30,8 @@ const {
     getPostsByEmployerId,
     sendotpEmployerLogin,
 
-    registrationthroughAdmin
+    registrationthroughAdmin,
+    findManpowerthroughRadius
 } = require("../controller/employerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
@@ -79,6 +80,8 @@ router.get("/get/getDataAccToEmployer_Manpower_Agent/:d", getDataAccToEmployer_M
 router.get("/get/getDataOfAllEmployerInShort", getDataOfAllEmployerInShort)
 router.get("/get/getPostsByEmployerId/:id", getPostsByEmployerId)
 
+
+router.post("/findManpower", findManpowerthroughRadius)
 
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",
