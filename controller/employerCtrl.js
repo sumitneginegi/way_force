@@ -440,6 +440,27 @@ exports.getPostByEmployerIdAndOrderId = async (req, res) => {
 
 
 
+exports.getCountOfPostsByEmployerIdAndInstantOrDirect = async (req, res) => {
+  try {
+    const employerId = req.query.employerId; // Assuming you're passing employerId as a query parameter
+    const instantOrdirectValue = req.query.instantOrdirect; // Assuming you're passing instantOrdirect as a query parameter
+
+    const user = await User.findOne({
+      _id: employerId,
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const posts = user.obj.filter((item) => item.instantOrdirect === instantOrdirectValue);
+
+   return res.status(200).json({ post:posts });
+  } catch (error) {
+    console.log(error);
+   return res.status(500).json({ error: "Internal server error" });
+  }
+};
 
 
 
