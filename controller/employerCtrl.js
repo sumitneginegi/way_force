@@ -5,6 +5,8 @@ const User = require("../models/user")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
+const io = require('socket.io')(); // Import the Socket.io instance (make sure it's the same instance as in your main server file)
+
 
 const dbConnect = require("../config/DBConnect");
 // dotenv.config();
@@ -405,6 +407,40 @@ exports.getUsersByInstantOrDirect = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 }
+
+
+
+
+exports.getPostByEmployerIdAndOrderId = async (req, res) => {
+  try {
+    const employerId = req.query.employerId; // Assuming you're passing employerId as a URL parameter
+    const orderId = req.query.orderId; // Assuming you're passing orderId as a URL parameter
+
+    const user = await User.findOne({
+      _id: employerId,
+      "obj.orderId": orderId,
+    });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found or orderId not found." });
+    }
+
+    const post = user.obj.find((item) => item.orderId === orderId);
+
+    if (!post) {
+      return res.status(404).json({ error: "Post not found with the specified orderId." });
+    }
+
+   return res.status(200).json({ data: post });
+  } catch (error) {
+    console.log(error);
+   return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
 
 
 
@@ -1189,14 +1225,13 @@ exports.findManpowerthroughRadius = async (req, res) => {
     // Extract the post's latitude and longitude
     const { lati, longi } = post;
     
-
     // Find manpower within the specified radius
     const manpowerWithinRadius = await User.find({
       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
     }).lean();
 
-    console.log(manpowerWithinRadius)
+    // console.log(manpowerWithinRadius)
 
     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
       const distance = getDistanceFromLatLonInKm(
@@ -1209,12 +1244,17 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return distance <= radiusInKm; // Filter by radius
     });
 
+    console.log("hi",
+    io.emit('manpowerData', filteredManpower))
     res.json({ manpower: filteredManpower })
   } catch (error) {
     console.error(error)
     res.status(500).json({ message: "Internal Server Error" })
   }
 }
+
+
+
 
 // Function to calculate distance between two coordinates using Haversine formula
 function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
