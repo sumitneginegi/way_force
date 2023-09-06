@@ -1265,8 +1265,8 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return distance <= radiusInKm; // Filter by radius
     });
 
-    console.log("hi",
-    io.emit('manpowerData', filteredManpower))
+    // console.log("hi",
+    // io.emit('manpowerData', filteredManpower))
     res.json({ manpower: filteredManpower })
   } catch (error) {
     console.error(error)
