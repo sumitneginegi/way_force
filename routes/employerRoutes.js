@@ -33,16 +33,26 @@ const {
     registrationthroughAdmin,
     findManpowerthroughRadius,
     getPostByEmployerIdAndOrderId,
-    getCountOfPostsByEmployerIdAndInstantOrDirect
+    getCountOfPostsByEmployerIdAndInstantOrDirect,
+    YourProfileUpdateEmployer
 } = require("../controller/employerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
 const router = express.Router();
 
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
+
 const multer = require("multer");
 const cloudinary = require("cloudinary").v2;
 
-const upload = multer();
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "images/image",
+    allowed_formats: ["jpg", "jpeg", "png", "PNG", "xlsx", "xls", "pdf", "PDF"],
+  },
+});
+const upload = multer({ storage: storage });
 
 
 cloudinary.config({
@@ -86,6 +96,8 @@ router.get("/get/getPostsByEmployerId/:id", getPostsByEmployerId)
 router.post("/findManpower", findManpowerthroughRadius)
 router.get("/getPostByEmployerId/OrderId", getPostByEmployerIdAndOrderId)
 router.get("/getCountOfPostsByEmployerId/InstantOrDirect", getCountOfPostsByEmployerIdAndInstantOrDirect)
+
+router.put("/profileEmployer/:id", upload.fields([{ name: "profile", maxCount: 1 },]), YourProfileUpdateEmployer);
 
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",

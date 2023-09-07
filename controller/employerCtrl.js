@@ -1299,3 +1299,30 @@ function deg2rad(deg) {
 }
 
 
+
+exports.YourProfileUpdateEmployer = async (req, res) => {
+  try {
+    let ProfileUpdate = req.files["profile"];
+    req.body.pro = ProfileUpdate[0].path;
+    console.log(req.body.pro)
+    const user = await User.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: {
+          profile: req.body.pro,
+        },
+      },
+      { new: true }
+    );
+    // user.save();
+    return res
+      .status(200)
+      .json({ msg: "Your profile updated successfully", user: user });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ status: 500, message: "Server error" + error.message });
+  }
+}
+
