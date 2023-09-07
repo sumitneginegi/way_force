@@ -12,7 +12,8 @@ const {
   DeleteManpower,
   registrationManpower,
   sendotpManpower,
-  registrationManpowerAdmin
+  registrationManpowerAdmin,
+  getManpowerWhoHaveApplied
 } = require("../controller/ManPowerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
@@ -61,7 +62,8 @@ router.put(
 router.put("/profile/:id", upload.fields([{ name: "profile", maxCount: 1 },]), YourProfileUpdate);
 router.get("/", getAllManpower);
 router.get("/:manpowerId", getManpower);
-router.delete("/delete/:manpowerId", DeleteManpower);
+router.delete("/delete/:manpowerId", DeleteManpower)
+router.get("/getManpowerWhoHave/Applied/:manpowerId", getManpowerWhoHaveApplied)
 
-
+;
 module.exports = router;

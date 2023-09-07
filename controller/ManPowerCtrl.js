@@ -6,6 +6,7 @@ const jwt = require("jsonwebtoken")
 const twilio = require("twilio");
 // var newOTP = require("otp-generators");
 const User = require("../models/user")
+const mongoose = require("mongoose");
 
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
@@ -93,7 +94,7 @@ exports.registrationManpowerAdmin = async (req, res) => {
 exports.registrationManpower = async (req, res) => {
   try {
 
-    const { mobile,otp } = req.body;
+    const { mobile, otp } = req.body;
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
@@ -102,7 +103,7 @@ exports.registrationManpower = async (req, res) => {
     if (!user) {
 
       // const otp = Math.floor(1000 + Math.random() * 9000);
-    
+
       // // Create and send the SMS with the OTP
       // await client.messages.create({
       //   to: mobile,
@@ -152,16 +153,14 @@ exports.sendotpManpower = async (req, res) => {
     const { phoneNumber } = req.body
 
     const otp = Math.floor(1000 + Math.random() * 9000)
-    
+
     res.status(200).json({ message: "OTP sent successfully", phoneNumber: phoneNumber, otp: otp });
-    
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
-
 
 exports.signupManpower = async (req, res) => {
   try {
@@ -239,6 +238,7 @@ exports.detailSignup = async (req, res) => {
       jobType,
       serviceLocation,
       documents,
+      email
     } = req.body;
 
     // Check if the user exists
@@ -265,6 +265,7 @@ exports.detailSignup = async (req, res) => {
     manPower.documents = documents;
     manPower.city = city;
     manPower.state = state;
+    manPower.email = email;
     // manPower.otp = OTP.generateOTP();
 
     await manPower.save();
@@ -374,47 +375,47 @@ exports.workDetails = async (req, res) => {
 }
 
 exports.manpowerDocument = async (req, res) => {
-    try {
-      // let profile = req.files["profile"];
-      let Aadhar = req.files["aadharCard"];
-      let panCard = req.files["panCard"];
+  try {
+    // let profile = req.files["profile"];
+    let Aadhar = req.files["aadharCard"];
+    let panCard = req.files["panCard"];
 
-      req.body.AadharCard = Aadhar[0].path;
-      req.body.uploadPanCard = panCard[0].path;
+    req.body.AadharCard = Aadhar[0].path;
+    req.body.uploadPanCard = panCard[0].path;
 
-      const manpower = await User.findOneAndUpdate(
-        { _id: req.params.id },
-        {
-          $set: {
-            panCard: req.body.uploadPanCard,
-            aadharCard: req.body.AadharCard,
-          },
+    const manpower = await User.findOneAndUpdate(
+      { _id: req.params.id },
+      {
+        $set: {
+          panCard: req.body.uploadPanCard,
+          aadharCard: req.body.AadharCard,
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
 
-      return res.json({
-        message: "Aadhar Card and PAN Card documents uploaded successfully",
-        data:manpower,
-      });
-    } catch (error) {
-      console.error("Error uploading documents:", error);
-      return res.status(500).json({ error: "Internal server error" });
-    }
+    return res.json({
+      message: "Aadhar Card and PAN Card documents uploaded successfully",
+      data: manpower,
+    });
+  } catch (error) {
+    console.error("Error uploading documents:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 
 exports.loginManpower = async (req, res) => {
   try {
-    const { mobile,otp } = req.body;
+    const { mobile, otp } = req.body;
 
-    if (!mobile ) {
+    if (!mobile) {
       return res
         .status(400)
         .json({ error: "Mobile number required" });
     }
     // Generate a random 6-digit OTP
     // const otp = Math.floor(1000 + Math.random() * 9000);
-    
+
     // Create and send the SMS with the OTP
     // await client.messages.create({
     //   to: mobile,
@@ -422,7 +423,7 @@ exports.loginManpower = async (req, res) => {
     //   body: `Your OTP is: ${otp}`,
     // });
 
-    const manpower = await User.findOne({ mobile:mobile , userType: "manpower"});
+    const manpower = await User.findOne({ mobile: mobile, userType: "manpower" });
     if (!manpower) {
       return res.status(404).json({ error: "Manpower not found" });
     }
@@ -446,6 +447,7 @@ exports.loginManpower = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+
 
 exports.YourProfileUpdate = async (req, res) => {
   try {
@@ -474,11 +476,11 @@ exports.YourProfileUpdate = async (req, res) => {
 
 exports.getAllManpower = async (req, res) => {
   try {
-    const users = await User.find({userType: "manpower" }).lean();
-    res.status(200).json({message:"users fetched successfully", data:users});
+    const users = await User.find({ userType: "manpower" }).lean();
+    res.status(200).json({ message: "users fetched successfully", data: users });
   } catch (err) {
     console.error(err);
-    res.status(500).json({error:err.message});
+    res.status(500).json({ error: err.message });
   }
 }
 
@@ -494,10 +496,10 @@ exports.getManpower = async (req, res) => {
     }
 
     // Send a response with the user information
-    return res.status(200).json({ message: "User retrieved successfully", data:user });
+    return res.status(200).json({ message: "User retrieved successfully", data: user });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error:err.message });
+    return res.status(500).json({ error: err.message });
   }
 }
 
@@ -518,4 +520,21 @@ exports.DeleteManpower = async (req, res) => {
 }
 
 
+exports.getManpowerWhoHaveApplied = async (req, res) => {
+  const manpowerId = req.params.manpowerId;
 
+  try {
+    // Query the database to find posts where manpowerId exists in the manpower array
+    const posts = await User.find({
+      userType: 'employer',
+      'obj.manpower': manpowerId, // Use $elemMatch to find a specific element in the array
+    }, {
+      'obj.$': 1, // Project only the matching element
+    });
+
+    res.json(posts);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}

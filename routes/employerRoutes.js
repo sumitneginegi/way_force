@@ -34,7 +34,8 @@ const {
     findManpowerthroughRadius,
     getPostByEmployerIdAndOrderId,
     getCountOfPostsByEmployerIdAndInstantOrDirect,
-    YourProfileUpdateEmployer
+    YourProfileUpdateEmployer,
+    updateLatAndLong
 } = require("../controller/employerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
@@ -98,6 +99,7 @@ router.get("/getPostByEmployerId/OrderId", getPostByEmployerIdAndOrderId)
 router.get("/getCountOfPostsByEmployerId/InstantOrDirect", getCountOfPostsByEmployerIdAndInstantOrDirect)
 
 router.put("/profileEmployer/:id", upload.fields([{ name: "profile", maxCount: 1 },]), YourProfileUpdateEmployer);
+router.put("/update/LatAndLong/:orderId", updateLatAndLong);
 
 // router.get("/getInstanOrDirect", getInstanOrDirect);
 // router.post("/upload/documents/:id",

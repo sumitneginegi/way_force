@@ -1326,3 +1326,38 @@ exports.YourProfileUpdateEmployer = async (req, res) => {
   }
 }
 
+
+
+
+// Define the PUT API route to update lati and longi for a specific post
+exports.updateLatAndLong = async (req, res) => {
+  const orderId = req.params.orderId;
+  const { lati, longi } = req.body; // Assuming you send lati and longi in the request body
+
+  try {
+    // Find the post by _id and update the lati and longi fields inside obj array
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        userType: 'employer',
+        'obj.orderId': orderId, // Find the user with the specific post inside obj array
+      },
+      {
+        $set: {
+          'obj.$.lati': lati,
+          'obj.$.longi': longi,
+        },
+      },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    res.json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
