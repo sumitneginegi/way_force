@@ -524,15 +524,16 @@ exports.getManpowerWhoHaveApplied = async (req, res) => {
   const manpowerId = req.params.manpowerId;
 
   try {
-    // Query the database to find posts where manpowerId exists in the manpower array
     const posts = await User.find({
       userType: 'employer',
       'obj.manpower': manpowerId, // Use $elemMatch to find a specific element in the array
     }, {
       'obj.$': 1, // Project only the matching element
+      'employerName': 1, // Include the employerName field
+      'mobile': 1, // Include the mobile field
     });
 
-   return res.json({msg:"success",posts});
+    return res.json({ msg: "success", posts });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: 'Internal server error' });
