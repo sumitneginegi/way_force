@@ -404,6 +404,29 @@ exports.manpowerDocument = async (req, res) => {
   }
 }
 
+
+exports.sendotpManpowerLogin = async (req, res) => {
+  console.log("hi");
+  try {
+    const { phoneNumber } = req.body
+
+    const otp = Math.floor(1000 + Math.random() * 9000)
+
+    const user = await User.findOneAndUpdate({ mobile: phoneNumber, userType: "manpower" }, { otp: otp }, { new: true })
+    if (!user) {
+      return res.status(400).json({ message: "phone number not exist" });
+    }
+
+    return res.status(200).json({ message: "OTP sent successfully", otp: user.otp });
+  }
+
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+}
+
+
 exports.loginManpower = async (req, res) => {
   try {
     const { mobile, otp } = req.body;
@@ -539,3 +562,31 @@ exports.getManpowerWhoHaveApplied = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+
+
+// exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
+//   const manpowerId = req.query.manpowerId;
+//   const instantOrDirect = req.query.instantOrDirect
+//   try {
+//     const posts = await User.find({
+//       userType: 'employer',
+//       'obj.manpower': manpowerId, // Use $elemMatch to find a specific element in the array
+//       'obj.instantOrdirect': instantOrDirect, // Filter for instant posts
+//     }, {
+//       'obj.$': 1, // Project only the matching element
+//       'employerName': 1, // Include the employerName field
+//       'mobile': 1, // Include the mobile field
+//     });
+
+//     return res.json({ msg: "success", posts });
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ error: 'Internal server error' });
+//   }
+// }
+
+
+
+
+

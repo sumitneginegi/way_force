@@ -6,6 +6,7 @@ const {
   verifyOtp,
   detailSignup,
   loginManpower,
+  sendotpManpowerLogin,
   YourProfileUpdate,
   getAllManpower,
   getManpower,
@@ -13,7 +14,8 @@ const {
   registrationManpower,
   sendotpManpower,
   registrationManpowerAdmin,
-  getManpowerWhoHaveApplied
+  getManpowerWhoHaveApplied,
+  getManpowerWhoHaveAppliedforInstantOrDirect
 } = require("../controller/ManPowerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
@@ -42,11 +44,11 @@ cloudinary.config({
 
 
 router.post("/registrationthroughAdmin",verifyToken,  registrationManpowerAdmin);
-
 router.post("/registration/Manpower", registrationManpower);
 router.post("/sendotpManpower", sendotpManpower);
 router.post("/signup", signupManpower);
 router.post("/login", loginManpower);
+router.post("/sendotpManpower/Login", sendotpManpowerLogin);
 router.post("/verify/otp/:id", verifyOtp);
 router.put("/fill/details/:id",/*auth.verifyToken,*/ detailSignup);
 router.post("/work-details/:id", workDetails);
@@ -64,6 +66,7 @@ router.get("/", getAllManpower);
 router.get("/:manpowerId", getManpower);
 router.delete("/delete/:manpowerId", DeleteManpower)
 router.get("/getManpowerWhoHave/Applied/:manpowerId", getManpowerWhoHaveApplied)
+// router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAppliedforInstantOrDirect)
 
 ;
 module.exports = router;
