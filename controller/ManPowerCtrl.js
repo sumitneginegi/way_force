@@ -532,9 +532,9 @@ exports.getManpowerWhoHaveApplied = async (req, res) => {
       'obj.$': 1, // Project only the matching element
     });
 
-    res.json(posts);
+   return res.json({msg:"success",posts});
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 }
