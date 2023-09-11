@@ -2,7 +2,7 @@ const HelpAndSupport = require("../models/helpAndsupportModel");
 
 
 
-const AddQuery = async (req, res) => {
+exports.AddQuery = async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
 
@@ -20,13 +20,13 @@ const AddQuery = async (req, res) => {
 
     return res.json({ message: "Help and support request submitted successfully", request: newRequest });
   } catch (error) {
-    console.error("Error submitting help and support request:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Error submitting help and support request:", error)
+    return res.status(500).json({ error: "Internal server error" })
   }
-};
+}
 
 
-const getAllQuery = async (req, res) => {
+exports.getAllQuery = async (req, res) => {
   try {
     // Retrieve all help and support requests from the database
     const requests = await HelpAndSupport.find();
@@ -39,21 +39,22 @@ const getAllQuery = async (req, res) => {
 };
 
 
-const updateQuery = async (req, res) => {
+
+exports.updateQuery = async (req, res) => {
   try {
-    const requestId = req.params.id;
-    const { status, assignedTo, resolvedBy } = req.body;
+    const requestId = req.params.id
+    const { status, assignedTo, resolvedBy } = req.body
 
     // Validate the status field
     if (!status || !["Open", "In Progress", "Resolved"].includes(status)) {
-      return res.status(400).json({ error: "Invalid status provided" });
+      return res.status(400).json({ error: "Invalid status provided" })
     }
 
     // Retrieve the help and support request from the database
-    const request = await HelpAndSupport.findById(requestId);
+    const request = await HelpAndSupport.findById(requestId)
 
     if (!request) {
-      return res.status(404).json({ error: "Help and support request not found" });
+      return res.status(404).json({ error: "Help and support request not found" })
     }
 
     // Update the request details based on the provided data
@@ -67,14 +68,15 @@ const updateQuery = async (req, res) => {
     // Save the updated request in the database
     await request.save();
 
-    return res.json({ message: "Help and support request updated successfully", request });
+    return res.json({ message: "Help and support request updated successfully", request })
   } catch (error) {
-    console.error("Error updating help and support request:", error);
-    return res.status(500).json({ error: "Internal server error" });
+    console.error("Error updating help and support request:", error)
+    return res.status(500).json({ error: "Internal server error" })
   }
 };
 
-const deleteQuery = async (req, res) => {
+
+exports.deleteQuery = async (req, res) => {
     try {
     const request = await HelpAndSupport.findByIdAndDelete({userId: req.params.id});
 
@@ -87,12 +89,3 @@ const deleteQuery = async (req, res) => {
   }
 };
 
-
-
-
-module.exports = {
-    AddQuery,
-    getAllQuery,
-    updateQuery,
-    deleteQuery
-};

@@ -758,13 +758,13 @@ exports.updatebyManpoweridEmployer = async (req, res) => {
     // Save the changes to the employer again to update the obj array
     await employer.save();
 
-
-    res.status(200).json({ message: "Successfully applied for the post.", post: employer })
+    res.status(200).json({ message: "Successfully applied for the post.", post: employer.obj[postIndex] })
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" })
   }
 }
+
 
 
 exports.updatebyAgentidEmployer = async (req, res) => {
@@ -1170,61 +1170,6 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
 
 
 
-
-// Define a route for finding manpower by location and radius
-// exports.findManpowerthroughRadius = async (req, res) => {
-//   try {
-//     const { latitude, longitude, radiusInKm } = req.body;
-
-//     // Find manpower within the specified radius
-//     const manpowerWithinRadius = await User.find({
-//       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
-//       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
-//     }).lean();
-
-//     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
-//       const distance = getDistanceFromLatLonInKm(
-//         latitude,
-//         longitude,
-//         manpower.serviceLocation.lati,
-//         manpower.serviceLocation.longi
-//       );
-//       console.log(distance)
-//       return distance <= radiusInKm; // Filter by radius
-//     });
-
-//     res.json({ manpower: filteredManpower });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Internal Server Error" });
-//   }
-// }
-
-
-
-// // Function to calculate distance between two coordinates using Haversine formula
-// function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
-//   const R = 6371; // Radius of the Earth in km
-//   const dLat = deg2rad(lat2 - lat1);
-//   const dLon = deg2rad(lon2 - lon1);
-//   const a =
-//     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-//     Math.cos(deg2rad(lat1)) *
-//     Math.cos(deg2rad(lat2)) *
-//     Math.sin(dLon / 2) *
-//     Math.sin(dLon / 2);
-//   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-//   const distance = R * c; // Distance in km
-//   return distance;
-// }
-
-// // Utility function to convert degrees to radians
-// function deg2rad(deg) {
-//   return deg * (Math.PI / 180);
-// }
-
-
-
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
     const { employerId, orderId, radiusInKm } = req.body;
@@ -1327,8 +1272,6 @@ exports.YourProfileUpdateEmployer = async (req, res) => {
 }
 
 
-
-
 // Define the PUT API route to update lati and longi for a specific post
 exports.updateLatAndLong = async (req, res) => {
   const orderId = req.params.orderId;
@@ -1360,4 +1303,5 @@ exports.updateLatAndLong = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 }
+
 

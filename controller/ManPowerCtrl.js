@@ -565,52 +565,6 @@ exports.getManpowerWhoHaveApplied = async (req, res) => {
 
 
 
-// exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
-//   const manpowerId = req.query.manpowerId;
-
-//   try {
-//     // Find all posts where manpowerId exists in the manpower array across all employers
-//     const users = await User.find({
-//       $and: [
-//         { userType: 'employer' },
-//         { 'obj.manpower': manpowerId }
-//       ]
-//     }, {
-//       'obj.$': 1, // Project only the matching element
-//       'employerName': 1, // Include the employerName field
-//       'mobile': 1, // Include the mobile field
-//     });
-
-//     if (!users || users.length === 0) {
-//       return res.json({ msg: "No data available for this query" });
-//     }
-
-//     // Filter the posts to include only the ones where manpowerId has applied
-//     const filteredPosts = users.flatMap(user =>
-//       user.obj.filter(post => post.manpower.includes(manpowerId))
-//     );
-//     console.log(filteredPosts);
-//     if (filteredPosts.length === 0) {
-//       return res.json({ msg: "No posts available for this manpower" });
-//     }
-
-//     // Extract only the posts with instantOrDirect set to 'instant'
-//     const instantPosts = filteredPosts.filter(post => post.instantOrDirect === 'instant');
-
-//     if (instantPosts.length === 0) {
-//       // No instant posts found, return an appropriate message
-//       return res.json({ msg: "No instant posts available for this manpower" });
-//     }
-
-//     return res.json({ msg: "success", posts: instantPosts });
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ error: 'Internal server error' });
-//   }
-// }
-
-
-
 exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
   const manpowerId = req.query.manpowerId;
   const instantOrDirect = req.query.instantOrDirect; // Add this query parameter
@@ -636,6 +590,7 @@ exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
           objItem.manpower.toString() === manpowerId.toString() &&
           objItem.instantOrdirect === instantOrDirect
         ) {
+          const employerName = post.employerName || "Unknown Employer"; // Use employerName from the post or set a default value
           result.push({
             job_desc: objItem.job_desc,
             siteLocation: objItem.siteLocation,
@@ -646,7 +601,7 @@ exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
             longi: objItem.longi,
             instantOrdirect: objItem.instantOrdirect,
             orderId: objItem.orderId,
-            employerName: objItem.employerName,
+            employerName: employerName, // Include the employer name
             startTime: objItem.startTime,
             endTime: objItem.endTime,
             manpower: objItem.manpower,
