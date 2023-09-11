@@ -66,7 +66,7 @@ router.get("/", getAllManpower);
 router.get("/:manpowerId", getManpower);
 router.delete("/delete/:manpowerId", DeleteManpower)
 router.get("/getManpowerWhoHave/Applied/:manpowerId", getManpowerWhoHaveApplied)
-// router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAppliedforInstantOrDirect)
+router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAppliedforInstantOrDirect)
 
 ;
 module.exports = router;

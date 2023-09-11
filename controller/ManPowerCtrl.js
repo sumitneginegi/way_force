@@ -567,24 +567,101 @@ exports.getManpowerWhoHaveApplied = async (req, res) => {
 
 // exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
 //   const manpowerId = req.query.manpowerId;
-//   const instantOrDirect = req.query.instantOrDirect
+
 //   try {
-//     const posts = await User.find({
-//       userType: 'employer',
-//       'obj.manpower': manpowerId, // Use $elemMatch to find a specific element in the array
-//       'obj.instantOrdirect': instantOrDirect, // Filter for instant posts
+//     // Find all posts where manpowerId exists in the manpower array across all employers
+//     const users = await User.find({
+//       $and: [
+//         { userType: 'employer' },
+//         { 'obj.manpower': manpowerId }
+//       ]
 //     }, {
 //       'obj.$': 1, // Project only the matching element
 //       'employerName': 1, // Include the employerName field
 //       'mobile': 1, // Include the mobile field
 //     });
 
-//     return res.json({ msg: "success", posts });
+//     if (!users || users.length === 0) {
+//       return res.json({ msg: "No data available for this query" });
+//     }
+
+//     // Filter the posts to include only the ones where manpowerId has applied
+//     const filteredPosts = users.flatMap(user =>
+//       user.obj.filter(post => post.manpower.includes(manpowerId))
+//     );
+//     console.log(filteredPosts);
+//     if (filteredPosts.length === 0) {
+//       return res.json({ msg: "No posts available for this manpower" });
+//     }
+
+//     // Extract only the posts with instantOrDirect set to 'instant'
+//     const instantPosts = filteredPosts.filter(post => post.instantOrDirect === 'instant');
+
+//     if (instantPosts.length === 0) {
+//       // No instant posts found, return an appropriate message
+//       return res.json({ msg: "No instant posts available for this manpower" });
+//     }
+
+//     return res.json({ msg: "success", posts: instantPosts });
 //   } catch (err) {
 //     console.error(err);
 //     return res.status(500).json({ error: 'Internal server error' });
 //   }
 // }
+
+
+
+exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
+  const manpowerId = req.query.manpowerId;
+  const instantOrDirect = req.query.instantOrDirect; // Add this query parameter
+
+  try {
+    // Find all posts where manpowerId exists in the 'obj.manpower' array,
+    // userType is 'employer', and instantOrdirect matches the query parameter
+    const posts = await User.find({
+      'obj.manpower': manpowerId,
+      userType: 'employer',
+      'obj.instantOrdirect': instantOrDirect,
+    });
+
+    if (!posts || posts.length === 0) {
+      return res.json({ msg: "No posts available for this manpower" });
+    }
+
+    // Extract only the desired data from the posts
+    const extractedData = posts.reduce((result, post) => {
+      post.obj.forEach(objItem => {
+        if (
+          objItem.manpower &&
+          objItem.manpower.toString() === manpowerId.toString() &&
+          objItem.instantOrdirect === instantOrDirect
+        ) {
+          result.push({
+            job_desc: objItem.job_desc,
+            siteLocation: objItem.siteLocation,
+            category: objItem.category,
+            explainYourWork: objItem.explainYourWork,
+            date: objItem.date,
+            lati: objItem.lati,
+            longi: objItem.longi,
+            instantOrdirect: objItem.instantOrdirect,
+            orderId: objItem.orderId,
+            employerName: objItem.employerName,
+            startTime: objItem.startTime,
+            endTime: objItem.endTime,
+            manpower: objItem.manpower,
+          });
+        }
+      });
+      return result;
+    }, []);
+
+    return res.json({ msg: "success", posts: extractedData });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
 
 
 
