@@ -134,6 +134,14 @@ const UserSchema = new mongoose.Schema(
         AdminName: String,
         password: String,
         profile: String,
+        averageRating: {
+            type: Number,
+            default:0
+        },
+        totalRating: {
+            type: Number,
+            default:0
+        },
 
     },
     {

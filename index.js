@@ -8,8 +8,6 @@ const server = http.createServer(app);
 const bodyparser = require("body-parser");
 
 
-
-
 app.use(cors({
   origin :"*",
 }));
@@ -29,6 +27,7 @@ const auth  = require("./routes/admin/authadmin")
 const adminn  = require("./routes/admin/dashboard")
 const postVerificationn  = require("./routes/admin/postVerification")
 const excel = require("./routes/AdminRoutes")
+const rating = require("./routes/ratingRoute")
 // router.use("/paymentt",require("./payment"))
 
 
@@ -88,10 +87,8 @@ app.use("/api/v1/auth",auth);
 app.use("/api/v1/adminn",adminn);
 app.use("/api/v1/postVerificationn",postVerificationn);
 app.use("/api/v1/excel",excel);
+app.use("/api/v1/ratingg",rating)
 // router.use("/paymentt",require("./payment"))
-
-
-
 
 app.listen(PORT, () => {
 
