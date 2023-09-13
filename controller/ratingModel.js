@@ -62,7 +62,35 @@ async function updateEmployerRatings(target) {
 
 
 
-  exports.getComment = async (req, res) => {
+  // exports.getComment = async (req, res) => {
+  // try {
+  //   const targetId = req.params.targetId;
+
+  //   // Find all ratings with the specified target ID
+  //   const ratings = await Rating.find({ target: targetId });
+
+  //   if (!ratings || ratings.length === 0) {
+  //     return res.status(404).json({ message: "No comments found for the specified target" });
+  //   }
+
+  //   // Extract comments from the ratings
+  //   const comments = ratings.map((rating) => ({
+  //     user: rating.user, // You can also populate user details if needed
+  //     comment: rating.comment,
+  //   }));
+
+  //   return res.status(200).json({ comments });
+  // } catch (error) {
+  //   console.error("Error retrieving comments:", error);
+  //   res.status(500).json({ message: "Failed to retrieve comments" });
+  // }
+  // }
+
+
+
+
+
+  exports.getCommentOfManpower = async (req, res) => {
   try {
     const targetId = req.params.targetId;
 
@@ -73,16 +101,63 @@ async function updateEmployerRatings(target) {
       return res.status(404).json({ message: "No comments found for the specified target" });
     }
 
-    // Extract comments from the ratings
-    const comments = ratings.map((rating) => ({
-      user: rating.user, // You can also populate user details if needed
-      comment: rating.comment,
-    }));
+    // Create an array to store the populated comments
+    const populatedComments = [];
 
-    return res.status(200).json({ comments });
+    for (const rating of ratings) {
+      // Find the user by ID and populate the 'name' field
+      const user = await User.findById(rating.user).select('employerName');
+      console.log(user)
+
+      if (user) {
+        populatedComments.push({
+          user: user.employerName,
+          comment: rating.comment,
+        });
+      }
+    }
+
+    return res.status(200).json({ comments: populatedComments });
   } catch (error) {
     console.error("Error retrieving comments:", error);
     res.status(500).json({ message: "Failed to retrieve comments" });
   }
-  }
+}
 
+
+
+
+
+exports.getCommentOfEmployer = async (req, res) => {
+  try {
+    const targetId = req.params.targetId;
+
+    // Find all ratings with the specified target ID
+    const ratings = await Rating.find({ target: targetId });
+
+    if (!ratings || ratings.length === 0) {
+      return res.status(404).json({ message: "No comments found for the specified target" });
+    }
+
+    // Create an array to store the populated comments
+    const populatedComments = [];
+
+    for (const rating of ratings) {
+      // Find the user by ID and populate the 'name' field
+      const user = await User.findById(rating.user).select('manpowerName');
+      console.log(user)
+
+      if (user) {
+        populatedComments.push({
+          user: user.manpowerName,
+          comment: rating.comment,
+        });
+      }
+    }
+
+    return res.status(200).json({ comments: populatedComments });
+  } catch (error) {
+    console.error("Error retrieving comments:", error);
+    res.status(500).json({ message: "Failed to retrieve comments" });
+  }
+}
