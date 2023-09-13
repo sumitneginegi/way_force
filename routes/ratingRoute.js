@@ -7,7 +7,7 @@ router.post('/ratings', ratingController.createRating);
 // router.post('/createEmployer/Rating', ratingController.createEmployerRating);
 
 // Get all ratings for a specific employer
-// router.get('/ratings/employer/:employerId', ratingController.getAllRatings);
+router.get('/get/comment/:targetId', ratingController.getComment);
 // router.put('/ratings/employer/:employerId', ratingController.updateEmployerRatings);
 
 
