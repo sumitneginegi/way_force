@@ -155,3 +155,73 @@ exports.deletePayment = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while deleting the Payment.' });
   }
 }
+
+
+
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Replace with your Stripe secret key
+
+
+exports.addMoneyToWallet = async (req, res) => {
+  try {
+    const { employerId, amount, paymentMethod, stripeToken } = req.body;
+
+      //  /*Create a new Payment record for the wallet recharge*/
+    // const payment = new paymentModel({
+    //   employerId,
+    //   amount,
+    //   paymentMethod,
+    //   status: "pending", // Mark payment as pending initially
+    //   // Add other payment details as needed
+    // });
+
+    // Save the payment record
+    // await payment.save();
+
+    // Use Stripe to make a payment
+    // const charge = await stripe.charges.create({
+    //   amount: amount * 100, // Amount in cents
+    //   currency: "usd", // Change currency as needed
+    //   description: "Wallet recharge",
+    //   source: stripeToken, // Token obtained from frontend (Stripe.js)
+    // });
+
+    // Update the payment record status to "success" if the charge is successful
+    // if (charge.status === "succeeded") {
+    //   payment.status = "success";
+    //   await payment.save();
+
+      // Find or create a wallet for the employer
+      let wallet = await User.findOne({ employerId })
+
+      if (!wallet) {
+        const updatedModel = await User.findByIdAndUpdate(
+          employerId,
+          {
+            $push: { wallet: 0 }, // Append the new data to the "data" array
+          },
+          { new: true } // Return the updated document
+        )
+      }
+
+      // Update the wallet balance
+      // wallet.wallet += amount;
+
+      // Save the wallet
+      // await wallet.save();
+
+      return res.status(200).json({ message: "Money added to wallet successfully" });
+    // } /*else {
+      // If the charge fails, update the payment record status to "failed"
+      // payment.status = "failed";
+      // await payment.save();
+      // return res.status(400).json({ error: "Payment failed" });
+    // }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}
+
+
+

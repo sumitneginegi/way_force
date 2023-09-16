@@ -34,8 +34,6 @@ exports.createRating = async (req, res) => {
 };
 
 
-
-
 // Function to update manpower's average and total rating
 async function updateEmployerRatings(target) {
   try {
@@ -58,35 +56,6 @@ async function updateEmployerRatings(target) {
     throw err;
   }
 }
-
-
-
-
-  // exports.getComment = async (req, res) => {
-  // try {
-  //   const targetId = req.params.targetId;
-
-  //   // Find all ratings with the specified target ID
-  //   const ratings = await Rating.find({ target: targetId });
-
-  //   if (!ratings || ratings.length === 0) {
-  //     return res.status(404).json({ message: "No comments found for the specified target" });
-  //   }
-
-  //   // Extract comments from the ratings
-  //   const comments = ratings.map((rating) => ({
-  //     user: rating.user, // You can also populate user details if needed
-  //     comment: rating.comment,
-  //   }));
-
-  //   return res.status(200).json({ comments });
-  // } catch (error) {
-  //   console.error("Error retrieving comments:", error);
-  //   res.status(500).json({ message: "Failed to retrieve comments" });
-  // }
-  // }
-
-
 
 
 
@@ -123,9 +92,6 @@ async function updateEmployerRatings(target) {
     res.status(500).json({ message: "Failed to retrieve comments" });
   }
 }
-
-
-
 
 
 exports.getCommentOfEmployer = async (req, res) => {

@@ -26,6 +26,7 @@ exports.registrationAdmin = async (req, res) => {
       const userCreate = await User.create({
         AdminName,
         email,
+        wallet : 0 ,
         password: hashedPassword, // Store the hashed password
         userType : "admin"
       });
@@ -46,7 +47,7 @@ exports.registrationAdmin = async (req, res) => {
       return res.status(409).json({ status: 409, msg: "Already Exist" });
     }
   } catch (error) {
-    console.error(error);
+    console.error/8520(error);
     res.status(500).json({ message: "Server error" });
   }
 };

@@ -81,6 +81,75 @@ exports.registrationAgent = async (req, res) => {
 }
 
 
+
+
+exports.registrationthroughAdmin = async (req, res) => {
+  try {
+
+    const data = {
+      employerName: req.body.employerName,
+      active: req.body.active,
+      gender: req.body.gender,
+      email: req.body.email,
+      mobile: req.body.mobile,
+      createdAt: req.body.createdAt,
+      state: req.body.state,
+      city: req.body.city,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      pinCode: req.body.pinCode,
+      aadharCard: req.body.aadharCard, // Updated field
+      panCard: req.body.panCard, // Updated field,
+      siteLocation: req.body.siteLocation,
+    }
+
+    var user = await User.findOne({ mobile: data.mobile, userType: "employer" })
+
+    if (!user) {
+      req.body.userType = "employer"
+
+
+      const userCreate = await User.create({
+        data,
+        wallet: 100,
+        ...req.body
+      })
+
+      let obj = {
+        id: userCreate._id,
+        mobile: userCreate.mobile,
+        employerName: userCreate.employerName,
+        active: userCreate.active,
+        gender: userCreate.gender,
+        email: userCreate.email,
+        mobile: userCreate.mobile,
+        createdAt: userCreate.createdAt,
+        state: userCreate.state,
+        city: userCreate.city,
+        GST_Number: userCreate.GST_Number,
+        registration_Number: userCreate.registration_Number,
+        pinCode: userCreate.pinCode,
+        aadharCard: userCreate.aadharCard,
+        panCard: userCreate.panCard,
+        siteLocation: userCreate.siteLocation,
+      }
+
+      res.status(201).send({
+        status: 200,
+        message: "Registered successfully ",
+        data: obj
+      })
+    } else {
+      return res.json({ status: 409, message: "Already Exit" });
+    }
+
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
 exports.verifyOtpAgent = async (req, res) => {
   try {
     const { otp } = req.body;

@@ -49,9 +49,7 @@ exports.viewInShortAdmin = async (req, res) => {
   }
 }
 
-
-  
-  exports.verifyPostAdmin = async (req, res) => {
+exports.verifyPostAdmin = async (req, res) => {
     try {
       const orderId = req.params.orderId;
       const status = req.body.status;
@@ -89,9 +87,7 @@ exports.viewInShortAdmin = async (req, res) => {
       console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
-  };
-
-
+}
 
 exports.verifyUserVerificationAdmin = async (req, res) => {
   const employerId = req.params.id;
@@ -115,8 +111,6 @@ exports.verifyUserVerificationAdmin = async (req, res) => {
   }
 }
 
-
-
 exports.getALlUserVerificationAdmin = async (req, res) => {
   try {
     // Find all employers with userVerification: 'true' and userType: 'employer'
@@ -131,3 +125,5 @@ exports.getALlUserVerificationAdmin = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+

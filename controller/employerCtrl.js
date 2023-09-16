@@ -5,6 +5,7 @@ const User = require("../models/user")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
+const Notification = require('../models/notification');
 const io = require('socket.io')(); // Import the Socket.io instance (make sure it's the same instance as in your main server file)
 
 
@@ -59,6 +60,7 @@ exports.registrationthroughAdmin = async (req, res) => {
 
       const userCreate = await User.create({
         data,
+        wallet: 100,
         ...req.body
       })
 
@@ -121,7 +123,8 @@ exports.registrationEmployer = async (req, res) => {
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
-      req.body.userType = "employer"
+      req.body.userType = "employer",
+        req.body.wallet = 100;
 
       // let referalUser = null;
 
@@ -339,14 +342,10 @@ exports.detailInstantEmployer = async (req, res) => {
     const data = {
       // mobile: req.body.mobile,
       job_desc: req.body.job_desc,
-      
       siteLocation: req.body.siteLocation,
-
       category: req.body.category,
-   
       explainYourWork: req.body.explainYourWork,
       date: formattedDate,
-     
       lati: req.body.lati,
       longi: req.body.longi,
       instantOrdirect: "instant",
@@ -362,18 +361,30 @@ exports.detailInstantEmployer = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+
+    // Check if the user's wallet balance is sufficient to post a job
+    const walletBalance = user.wallet || 0; // Assuming walletBalance is a property of the user object
+    const jobPostingPrice = 10; // Define the price for posting a job here
+
+    if (walletBalance < jobPostingPrice) {
+      return res.status(400).json({ error: "You do not have sufficient balance to post a job. Please add funds to your wallet." });
+    }
+
+    // Deduct the job posting price from the wallet balance
+    user.wallet-= jobPostingPrice;
+
     // Push the new document into the documents array
     user.obj.push(data);
 
     // Save the updated user document
     await user.save();
 
-    res
+    return res
       .status(200)
       .json({ message: "Details filled successfully", data: user });
   } catch (error) {
     console.log(error)
-    res.status(500).json({ error: "Something went wrong" });
+    return res.status(500).json({ error: "Something went wrong" });
   }
 }
 
@@ -431,10 +442,10 @@ exports.getPostByEmployerIdAndOrderId = async (req, res) => {
       return res.status(404).json({ error: "Post not found with the specified orderId." });
     }
 
-   return res.status(200).json({ data: post });
+    return res.status(200).json({ data: post });
   } catch (error) {
     console.log(error);
-   return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -455,10 +466,10 @@ exports.getCountOfPostsByEmployerIdAndInstantOrDirect = async (req, res) => {
 
     const posts = user.obj.filter((item) => item.instantOrdirect === instantOrdirectValue);
 
-   return res.status(200).json({ post:posts });
+    return res.status(200).json({ post: posts });
   } catch (error) {
     console.log(error);
-   return res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
 
@@ -929,8 +940,6 @@ exports.generateAndSaveOTP = async (req, res) => {
 }
 
 
-
-
 exports.verifyOTPByManpower = async (req, res) => {
   try {
     const { orderId, manpowerId, otp } = req.body;
@@ -977,8 +986,6 @@ exports.verifyOTPByManpower = async (req, res) => {
 }
 
 
-
-
 exports.scheduled_Jobs = async (req, res) => {
   try {
     const userType = req.query.userType;
@@ -1010,8 +1017,6 @@ exports.scheduled_Jobs = async (req, res) => {
     res.status(500).json({ message: "An error occurred" });
   }
 }
-
-
 
 
 
@@ -1190,7 +1195,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
 
     // Extract the post's latitude and longitude
     const { lati, longi } = post;
-    
+
     // Find manpower within the specified radius
     const manpowerWithinRadius = await User.find({
       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
@@ -1210,16 +1215,27 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return distance <= radiusInKm; // Filter by radius
     });
 
+
+    for (const manpower of filteredManpower) {
+      const notification = new Notification({
+        userId: manpower._id, // Assuming you have a field to store the user's ID in the Notification model
+        title: "New Job Opportunity",
+        body: "A new job opportunity is available in your area.",
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+      });
+
+      await notification.save();
+    }
+
     // console.log("hi",
     // io.emit('manpowerData', filteredManpower))
-    res.json({ manpower: filteredManpower })
+    return res.json({ manpower: filteredManpower })
   } catch (error) {
     console.error(error)
-    res.status(500).json({ message: "Internal Server Error" })
+    return res.status(500).json({ message: "Internal Server Error" })
   }
 }
-
-
 
 
 // Function to calculate distance between two coordinates using Haversine formula
@@ -1230,13 +1246,14 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
   const a =
     Math.sin(dLat / 2) * Math.sin(dLat / 2) +
     Math.cos(deg2rad(lat1)) *
-      Math.cos(deg2rad(lat2)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+    Math.cos(deg2rad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   const distance = R * c; // Distance in km
   return distance;
 }
+
 
 // Utility function to convert degrees to radians
 function deg2rad(deg) {
@@ -1305,3 +1322,20 @@ exports.updateLatAndLong = async (req, res) => {
 }
 
 
+exports.updateWalletForEmployers = async (req, res) => {
+  try {
+    // Define the condition to find employers (adjust as needed)
+    const condition = { userType: "employer" };
+
+    // Define the update operation (adding the wallet field)
+    const update = { $set: { wallet: 0 } }; // Set the initial wallet balance (0 in this example)
+
+    // Use updateMany to update documents that match the condition
+    const result = await User.updateMany(condition, update);
+
+    return res.status(200).json({ message: "Wallet field added to employers", updatedCount: result.nModified });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}
