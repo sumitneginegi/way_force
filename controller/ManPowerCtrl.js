@@ -237,7 +237,8 @@ exports.detailSignup = async (req, res) => {
       jobType,
       serviceLocation,
       documents,
-      email
+      email,
+      siteLocation
     } = req.body;
 
     // Check if the user exists
@@ -265,6 +266,7 @@ exports.detailSignup = async (req, res) => {
     manPower.city = city;
     manPower.state = state;
     manPower.email = email;
+    manPower.siteLocation = siteLocation
     // manPower.otp = OTP.generateOTP();
 
     await manPower.save();
