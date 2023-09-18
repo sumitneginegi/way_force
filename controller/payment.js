@@ -157,8 +157,6 @@ exports.deletePayment = async (req, res) => {
 }
 
 
-
-
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Replace with your Stripe secret key
 
 

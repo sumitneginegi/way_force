@@ -270,8 +270,7 @@ exports.updateFileAndDocumentVendor = async (req, res) => {
   };
     
 
-
-
+  
 exports.listOfAllLeadByEmployer = async (req, res) => {
   try {
     let orderId = await reffralCode()

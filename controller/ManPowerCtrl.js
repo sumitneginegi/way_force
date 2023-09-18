@@ -146,7 +146,6 @@ exports.registrationManpower = async (req, res) => {
 }
 
 
-
 exports.sendotpManpower = async (req, res) => {
   console.log("hi");
   try {
@@ -447,12 +446,20 @@ exports.loginManpower = async (req, res) => {
     // });
 
     const manpower = await User.findOne({ mobile: mobile, userType: "manpower" });
-    if (!manpower) {
-      return res.status(404).json({ error: "Manpower not found" });
+    if (manpower) {
+      const manpower1 = await User.findOne({ mobile: mobile, userType: "manpower", otp: otp });
+      if (!manpower1) {
+
+        return res.status(404).json({ error: "Otp is incorrect" });
+      }
+    }
+    else {
+      return res.status(404).json({ error: "manpower not found" });
     }
 
-    manpower.otp = otp
-    manpower.save()
+
+    // manpower.otp = otp
+    // manpower.save()
 
 
     const token = jwt.sign({ manpowerId: manpower._id }, process.env.JWT_SECRET);
@@ -470,6 +477,7 @@ exports.loginManpower = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+
 
 
 exports.YourProfileUpdate = async (req, res) => {
@@ -497,6 +505,7 @@ exports.YourProfileUpdate = async (req, res) => {
   }
 }
 
+
 exports.getAllManpower = async (req, res) => {
   try {
     const users = await User.find({ userType: "manpower" }).lean();
@@ -506,6 +515,7 @@ exports.getAllManpower = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 }
+
 
 exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
@@ -525,6 +535,7 @@ exports.getManpower = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 }
+
 
 exports.DeleteManpower = async (req, res) => {
   const { manpowerId } = req.params;
@@ -562,7 +573,6 @@ exports.getManpowerWhoHaveApplied = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
-
 
 
 exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
@@ -617,6 +627,8 @@ exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 }
+
+
 
 
 
