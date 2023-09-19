@@ -15,7 +15,8 @@ const {
   sendotpManpower,
   registrationManpowerAdmin,
   getManpowerWhoHaveApplied,
-  getManpowerWhoHaveAppliedforInstantOrDirect
+  getManpowerWhoHaveAppliedforInstantOrDirect,
+  updateManpowerLocation
 } = require("../controller/ManPowerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
@@ -67,6 +68,7 @@ router.get("/:manpowerId", getManpower);
 router.delete("/delete/:manpowerId", DeleteManpower)
 router.get("/getManpowerWhoHave/Applied/:manpowerId", getManpowerWhoHaveApplied)
 router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAppliedforInstantOrDirect)
+router.put("/updateManpowerLocation/:id", updateManpowerLocation);
 
 ;
 module.exports = router;
