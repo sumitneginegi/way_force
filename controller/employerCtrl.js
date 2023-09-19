@@ -1106,7 +1106,7 @@ exports.getDataAccToEmployer_Manpower_Agent = async (req, res) => {
         },
         {
           $project: {
-            name: 1,
+            manpowerName: 1,
             createdAt: 1,
           },
         },
