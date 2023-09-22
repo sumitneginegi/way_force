@@ -1182,10 +1182,10 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
 
 exports.updateManpowerToken = async (req, res) => {
   try {
-    const { manpowerId, newToken } = req.body;
+    const { newToken } = req.body;
 
     // Find the manpower by manpowerId
-    const manpower = await User.findById({_id:manpowerId});
+    const manpower = await User.findById({_id:req.params.manpowerId});
 console.log(manpower);
     if (!manpower || manpower.userType !== "manpower") {
       return res.status(400).json({ message: "Invalid manpower ID" });
@@ -1203,7 +1203,6 @@ console.log(manpower);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 
 exports.findManpowerthroughRadius = async (req, res) => {
@@ -1233,7 +1232,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
     }).lean();
 
-    // console.log(manpowerWithinRadius)
+    console.log(manpowerWithinRadius);
 
     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
       const distance = getDistanceFromLatLonInKm(
@@ -1242,44 +1241,42 @@ exports.findManpowerthroughRadius = async (req, res) => {
         manpower.serviceLocation.lati,
         manpower.serviceLocation.longi
       );
-      console.log(distance)
+      console.log(distance);
       return distance <= radiusInKm; // Filter by radius
     });
 
-    console.log(filteredManpower);
-    for (const manpower of filteredManpower) {
 
-const message = {
-  data: {
-    userType: manpower.userType, // Custom data
-    key2: 'value2',
-  },
-  notification: {
-    title: 'Notification Title', // Notification title
-    body: 'Notification Body',   // Notification body
-  },
-  token: manpower.token,
+    console.log(filteredManpower);
+    // Send notifications
+    for (const manpower of filteredManpower) {
+      const message = {
+        data: {
+          userType: manpower.userType, // Custom data
+          _id: manpower._id ? manpower._id.toString() : "",
+        },
+        notification: {
+          title: 'Notification Title', // Notification title
+          body: 'Notification Body',   // Notification body
+        },
+        token: manpower.token,
+      };
+
+      try {
+        const response = await admin.messaging().send(message);
+        console.log('Successfully sent message:', response);
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+
+    io.emit('manpowerData', filteredManpower);
+    return res.json({ data: filteredManpower.length, manpower: filteredManpower });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
-admin
-  .messaging()
-  .send(message)
-  .then((response) => {
-    console.log('Successfully sent message:', response);
-  })
-  .catch((error) => {
-    console.log('Error sending message:', error);
-  });
-``
-    // console.log("hi",
-    io.emit('manpowerData', filteredManpower)
-    return res.json({ data:filteredManpower.length,manpower: filteredManpower })
-  } 
-}catch (error) {
-    console.error(error)
-    return res.status(500).json({ message: "Internal Server Error" })
-  }
-}
 
 
 // Function to calculate distance between two coordinates using Haversine formula

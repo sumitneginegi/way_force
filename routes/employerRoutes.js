@@ -111,6 +111,6 @@ router.put("/update/LatAndLong/:orderId", updateLatAndLong);
 
 router.post("/verifyOtpByManpower/:manpowerid", verifyOtpByManpower);
 router.put("/updateWalletForEmployers", updateWalletForEmployers);
-router.put("/update/ManpowerToken", updateManpowerToken);
+router.put("/update/ManpowerToken/:manpowerId", updateManpowerToken);
 
 module.exports = router;
