@@ -1273,7 +1273,7 @@ admin
 ``
     // console.log("hi",
     io.emit('manpowerData', filteredManpower)
-    return res.json({ manpower: filteredManpower })
+    return res.json({ data:filteredManpower.length,manpower: filteredManpower })
   } 
 }catch (error) {
     console.error(error)
@@ -1303,6 +1303,38 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
+
+
+
+// admin.initializeApp({
+//   credential: admin.credential.cert(serviceAccount),
+//   // Add your database URL here
+//   databaseURL: 'https://your-project.firebaseio.com'
+// });
+
+// const registrationTokens = ['token1', 'token2', /* Add more tokens here */];
+
+// const message = {
+//   data: {
+//     title: 'Job Offer',
+//     body: 'You have received a job offer from Employer XYZ',
+//     jobDetails: 'Job details go here',
+//     // You can include more custom data as needed
+//   },
+//   tokens: registrationTokens,
+// };
+
+// admin.messaging().sendMulticast(message)
+//   .then((response) => {
+//     console.log('Successfully sent message:', response);
+//   })
+//   .catch((error) => {
+//     console.log('Error sending message:', error);
+//   });
+
+
+
+
 
 
 
