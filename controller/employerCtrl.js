@@ -1,3 +1,8 @@
+var admin = require("firebase-admin");
+var serviceAccount = require("../firebasee.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount)
+});
 const Employerr = require("../models/employerModel");
 const Manpowerr = require("../models/ManPowerModel");
 const OTP = require("../config/OTP-Generate");
@@ -6,6 +11,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
 const Notification = require('../models/notification');
+
 const io = require('socket.io')(); // Import the Socket.io instance (make sure it's the same instance as in your main server file)
 
 
@@ -1174,6 +1180,31 @@ exports.getDataOfAllEmployerInShort = async (req, res) => {
 
 
 
+exports.updateManpowerToken = async (req, res) => {
+  try {
+    const { manpowerId, newToken } = req.body;
+
+    // Find the manpower by manpowerId
+    const manpower = await User.findById({_id:manpowerId});
+console.log(manpower);
+    if (!manpower || manpower.userType !== "manpower") {
+      return res.status(400).json({ message: "Invalid manpower ID" });
+    }
+
+    // Update the token field for the manpower
+    manpower.token = newToken;
+
+    // Save the updated manpower document
+    await manpower.save();
+
+    return res.status(200).json({ message: "Token updated successfully",data:manpower });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
@@ -1215,23 +1246,36 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return distance <= radiusInKm; // Filter by radius
     });
 
-
+    console.log(filteredManpower);
     for (const manpower of filteredManpower) {
-      const notification = new Notification({
-        userId: manpower._id, // Assuming you have a field to store the user's ID in the Notification model
-        title: "New Job Opportunity",
-        body: "A new job opportunity is available in your area.",
-        date: new Date().toLocaleDateString(),
-        time: new Date().toLocaleTimeString(),
-      });
 
-      await notification.save();
-    }
+const message = {
+  data: {
+    userType: manpower.userType, // Custom data
+    key2: 'value2',
+  },
+  notification: {
+    title: 'Notification Title', // Notification title
+    body: 'Notification Body',   // Notification body
+  },
+  token: manpower.token,
+};
 
+admin
+  .messaging()
+  .send(message)
+  .then((response) => {
+    console.log('Successfully sent message:', response);
+  })
+  .catch((error) => {
+    console.log('Error sending message:', error);
+  });
+``
     // console.log("hi",
-    // io.emit('manpowerData', filteredManpower))
+    io.emit('manpowerData', filteredManpower)
     return res.json({ manpower: filteredManpower })
-  } catch (error) {
+  } 
+}catch (error) {
     console.error(error)
     return res.status(500).json({ message: "Internal Server Error" })
   }

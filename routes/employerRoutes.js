@@ -36,7 +36,8 @@ const {
     getCountOfPostsByEmployerIdAndInstantOrDirect,
     YourProfileUpdateEmployer,
     updateLatAndLong,
-    updateWalletForEmployers
+    updateWalletForEmployers,
+    updateManpowerToken
 } = require("../controller/employerCtrl");
 
 const {verifyToken} = require("../middleware/auth")
@@ -110,5 +111,6 @@ router.put("/update/LatAndLong/:orderId", updateLatAndLong);
 
 router.post("/verifyOtpByManpower/:manpowerid", verifyOtpByManpower);
 router.put("/updateWalletForEmployers", updateWalletForEmployers);
+router.put("/update/ManpowerToken", updateManpowerToken);
 
 module.exports = router;

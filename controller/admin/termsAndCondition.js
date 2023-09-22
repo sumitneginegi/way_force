@@ -65,3 +65,5 @@ exports.gettermsById = async (req, res) => {
         res.status(400).send({ mesage: err.mesage });
     }
 }
+
+
