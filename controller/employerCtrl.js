@@ -1205,24 +1205,35 @@ console.log(manpower);
 };
 
 
+
+
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
-    const { employerId, orderId, radiusInKm } = req.body;
+    const { employerId, orderId, radiusInKm , category } = req.body;
 
     // Find the employer by employerId
     const employer = await User.findById(employerId);
+    // console.log(employer.employerName);
 
     if (!employer || employer.userType !== "employer") {
       return res.status(400).json({ message: "Invalid employer ID" });
     }
 
-    // Find the post within the employer's obj array by postId
+    // Find the post within the employer's obj array by orderId
     const post = employer.obj.find((post) => post.orderId == orderId);
-
+console.log(post);
     if (!post) {
       return res.status(400).json({ message: "orderId not found" });
     }
 
+    // Extract post details
+    const {
+      job_desc,
+      siteLocation,
+      explainYourWork,
+      date
+    } = post;
+  
     // Extract the post's latitude and longitude
     const { lati, longi } = post;
 
@@ -1230,9 +1241,11 @@ exports.findManpowerthroughRadius = async (req, res) => {
     const manpowerWithinRadius = await User.find({
       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
+      "category": category
     }).lean();
 
-    console.log(manpowerWithinRadius);
+    // console.log(manpowerWithinRadius);
+
 
     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
       const distance = getDistanceFromLatLonInKm(
@@ -1245,9 +1258,8 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return distance <= radiusInKm; // Filter by radius
     });
 
-
     console.log(filteredManpower);
-    // Send notifications
+    // Send notifications for each post
     for (const manpower of filteredManpower) {
       const message = {
         data: {
@@ -1255,8 +1267,13 @@ exports.findManpowerthroughRadius = async (req, res) => {
           _id: manpower._id ? manpower._id.toString() : "",
         },
         notification: {
-          title: 'Notification Title', // Notification title
-          body: 'Notification Body',   // Notification body
+          title: `Lead for ${category}`, // Corrected title property
+          body: `Description: ${job_desc}
+            Location: ${siteLocation}
+            Category: ${category}
+            Explain Your Work: ${explainYourWork}
+            Date: ${date}
+          `, // Include post details in the body
         },
         token: manpower.token,
       };
@@ -1300,38 +1317,6 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
-
-
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount),
-//   // Add your database URL here
-//   databaseURL: 'https://your-project.firebaseio.com'
-// });
-
-// const registrationTokens = ['token1', 'token2', /* Add more tokens here */];
-
-// const message = {
-//   data: {
-//     title: 'Job Offer',
-//     body: 'You have received a job offer from Employer XYZ',
-//     jobDetails: 'Job details go here',
-//     // You can include more custom data as needed
-//   },
-//   tokens: registrationTokens,
-// };
-
-// admin.messaging().sendMulticast(message)
-//   .then((response) => {
-//     console.log('Successfully sent message:', response);
-//   })
-//   .catch((error) => {
-//     console.log('Error sending message:', error);
-//   });
-
-
-
-
 
 
 
