@@ -632,38 +632,51 @@ exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
 
 
 
-// Define the PUT API route to update lati and longi for a specific "manpower" user
+
+// Define the PUT API route to update lati, longi, and siteLocation for a specific "manpower" user
 exports.updateManpowerLocation = async (req, res) => {
-  const { lati, longi ,siteLocation} = req.body; // Assuming you send lati and longi in the request body
-  const id = req.params.id; // Assuming you send the user's email in the URL
+  const { lati, longi, siteLocation } = req.body;
+  const id = req.params.id;
 
   try {
-    // Update the lati and longi fields inside serviceLocation
+    // Find the "manpower" user by their _id and userType
+    const updateFields = {};
+
+    if (lati !== undefined) {
+      updateFields['serviceLocation.lati'] = lati;
+    }
+
+    if (longi !== undefined) {
+      updateFields['serviceLocation.longi'] = longi;
+    }
+
+    if (siteLocation !== undefined) {
+      updateFields['siteLocation'] = siteLocation || ''
+    }
+
     const updatedUser = await User.findOneAndUpdate(
       {
+        _id: id,
         userType: 'manpower',
-        _id : id, // Find the "manpower" user by their email
       },
       {
-        $set: {
-          'siteLocation':siteLocation,
-          'serviceLocation.lati': lati,
-          'serviceLocation.longi': longi,
-        },
+        $set: updateFields,
       },
-      { new: true } // Return the updated document
+      { new: true }
     );
 
     if (!updatedUser) {
       return res.status(404).json({ error: 'Manpower user not found' });
     }
 
-   return res.json(updatedUser);
+    return res.json(updatedUser);
   } catch (err) {
     console.error(err);
-   return res.status(500).json({ error: 'Internal server error' });
+    return res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
+
+
 
 
 
