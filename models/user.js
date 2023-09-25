@@ -126,7 +126,7 @@ const UserSchema = new mongoose.Schema(
         }],
         agentName: String,
         agentAddress: String,
-        agentServiceLocation: String,
+        agentServiceLocation: {lati:Number, longi:Number},
         agentBusinessName: String,
         agentStrength: String,
         uploadaadhar: String,

@@ -107,8 +107,8 @@ exports.registrationthroughAdmin = async (req, res) => {
 
     const data = {
       agentName: req.body.agentName,
-      // agentAddress:req.body.agentAddress,
-      // agentServiceLocation:req.body.agentServiceLocation,
+      agentAddress:req.body.agentAddress,
+      agentServiceLocation:req.body.agentServiceLocation,
       // agentBusinessName:req.body.agentBusinessName,
       agentStrength:req.body.agentStrength,
       active: req.body.active,
@@ -118,12 +118,12 @@ exports.registrationthroughAdmin = async (req, res) => {
       createdAt: req.body.createdAt,
       state: req.body.state,
       city: req.body.city,
-      // GST_Number: req.body.GST_Number,
-      // registration_Number: req.body.registration_Number,
-      // pinCode: req.body.pinCode,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      pinCode: req.body.pinCode,
       // aadharCard: req.body.aadharCard, // Updated field
       // panCard: req.body.panCard, // Updated field,
-      // siteLocation: req.body.siteLocation,
+      siteLocation: req.body.siteLocation,
 
     }
 
@@ -143,6 +143,8 @@ exports.registrationthroughAdmin = async (req, res) => {
         id: userCreate._id,
         mobile: userCreate.mobile,
         agentName: userCreate.agentName,
+        agentAddress: userCreate.agentAddress,
+        agentServiceLocation:userCreate.agentServiceLocation,
         agentStrength:userCreate.agentStrength,
         active: userCreate.active,
         gender: userCreate.gender,
@@ -150,12 +152,12 @@ exports.registrationthroughAdmin = async (req, res) => {
         createdAt: userCreate.createdAt,
         state: userCreate.state,
         city: userCreate.city,
-        // GST_Number: userCreate.GST_Number,
-        // registration_Number: userCreate.registration_Number,
-        // pinCode: userCreate.pinCode,
+        GST_Number: userCreate.GST_Number,
+        registration_Number: userCreate.registration_Number,
+        pinCode: userCreate.pinCode,
         // aadharCard: userCreate.aadharCard,
         // panCard: userCreate.panCard,
-        // siteLocation: userCreate.siteLocation,
+        siteLocation: userCreate.siteLocation,
       }
 
       res.status(201).send({
