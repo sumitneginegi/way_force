@@ -563,7 +563,7 @@ exports.loginAgent = async (req, res) => {
       const user = await User.findById(agentId).lean();
   
       if (!user) {
-        res.status(404).json({ message: "Agent not found" });
+        return res.status(404).json({ message: "Agent not found" });
       }
   
       // Send a response with the user information
