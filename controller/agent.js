@@ -27,16 +27,35 @@ const authToken = "8c138751182cdc12e0e3886fed46581f";
 const twilioPhoneNumber = "+14708354405";
 const client = twilio(accountSid, authToken);
 
+
+exports.sendotpAgent = async (req, res) => {
+  console.log("hi");
+  try {
+    const { phoneNumber } = req.body
+
+    const otp = Math.floor(1000 + Math.random() * 9000)
+
+    res.status(200).json({ message: "OTP sent successfully", phoneNumber: phoneNumber, otp: otp });
+  }
+
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+}
+
+
+
 exports.registrationAgent = async (req, res) => {
   try {
-    const { mobile } = req.body
+    const { mobile ,otp } = req.body
 
     // res.status(200).json({ message: "OTP sent successfully" });
 
     var user = await User.findOne({ mobile: mobile, userType: "agent" })
     
     if (!user) {
-      const otp = Math.floor(1000 + Math.random() * 9000)
+      // const otp = Math.floor(1000 + Math.random() * 9000)
     
       // Create and send the SMS with the OTP
       // await client.messages.create({
@@ -48,7 +67,8 @@ exports.registrationAgent = async (req, res) => {
       // req.body.otp = OTP.generateOTP()
       // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
       // req.body.accountVerification = false
-      req.body.userType = "agent"
+      req.body.userType = "agent",
+      req.body.wallet = 100;
 
       // let referalUser = null;
 
@@ -82,12 +102,15 @@ exports.registrationAgent = async (req, res) => {
 
 
 
-
 exports.registrationthroughAdmin = async (req, res) => {
   try {
 
     const data = {
-      employerName: req.body.employerName,
+      agentName: req.body.agentName,
+      // agentAddress:req.body.agentAddress,
+      // agentServiceLocation:req.body.agentServiceLocation,
+      // agentBusinessName:req.body.agentBusinessName,
+      agentStrength:req.body.agentStrength,
       active: req.body.active,
       gender: req.body.gender,
       email: req.body.email,
@@ -95,18 +118,19 @@ exports.registrationthroughAdmin = async (req, res) => {
       createdAt: req.body.createdAt,
       state: req.body.state,
       city: req.body.city,
-      GST_Number: req.body.GST_Number,
-      registration_Number: req.body.registration_Number,
-      pinCode: req.body.pinCode,
-      aadharCard: req.body.aadharCard, // Updated field
-      panCard: req.body.panCard, // Updated field,
-      siteLocation: req.body.siteLocation,
+      // GST_Number: req.body.GST_Number,
+      // registration_Number: req.body.registration_Number,
+      // pinCode: req.body.pinCode,
+      // aadharCard: req.body.aadharCard, // Updated field
+      // panCard: req.body.panCard, // Updated field,
+      // siteLocation: req.body.siteLocation,
+
     }
 
-    var user = await User.findOne({ mobile: data.mobile, userType: "employer" })
+    var user = await User.findOne({ mobile: data.mobile, userType: "agent" })
 
     if (!user) {
-      req.body.userType = "employer"
+      req.body.userType = "agent"
 
 
       const userCreate = await User.create({
@@ -118,20 +142,20 @@ exports.registrationthroughAdmin = async (req, res) => {
       let obj = {
         id: userCreate._id,
         mobile: userCreate.mobile,
-        employerName: userCreate.employerName,
+        agentName: userCreate.agentName,
+        agentStrength:userCreate.agentStrength,
         active: userCreate.active,
         gender: userCreate.gender,
         email: userCreate.email,
-        mobile: userCreate.mobile,
         createdAt: userCreate.createdAt,
         state: userCreate.state,
         city: userCreate.city,
-        GST_Number: userCreate.GST_Number,
-        registration_Number: userCreate.registration_Number,
-        pinCode: userCreate.pinCode,
-        aadharCard: userCreate.aadharCard,
-        panCard: userCreate.panCard,
-        siteLocation: userCreate.siteLocation,
+        // GST_Number: userCreate.GST_Number,
+        // registration_Number: userCreate.registration_Number,
+        // pinCode: userCreate.pinCode,
+        // aadharCard: userCreate.aadharCard,
+        // panCard: userCreate.panCard,
+        // siteLocation: userCreate.siteLocation,
       }
 
       res.status(201).send({

@@ -1,5 +1,6 @@
 const express = require("express");
 const {
+  registrationthroughAdmin,
     registrationAgent,
     loginAgent,
     verifyOtpAgent,
@@ -7,6 +8,7 @@ const {
     getAgentById,
     listOfAllLeadByEmployer,
     getAllAgent,
+    sendotpAgent,
     detailInstantEmployer,
     getAllEmployer,
     getAllEmployerById,
@@ -44,10 +46,11 @@ const storage = new CloudinaryStorage({
 const upload = multer({ storage: storage });
 var cpUpload = upload.fields([{ name: 'aadhar', maxCount: 1 }, { name: 'pan', maxCount: 1 }]);
 
+router.post("/registrationthroughAdmin/Agent", registrationthroughAdmin);
 
 
 router.post("/registration/Agent", registrationAgent);
-// router.post("/sendotp/Employer", sendotpEmployer);
+router.post("/sendotp/Agent", sendotpAgent);
 // router.post("/signup", signupEmployer);
 router.post("/login/agent", loginAgent);
 router.post("/verifyOtp/Agent/:id", verifyOtpAgent);
