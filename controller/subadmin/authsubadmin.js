@@ -3,6 +3,15 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
 
+const reffralCode = async () => {
+    var digits = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    let OTP = "";
+    for (let i = 0; i < 9; i++) {
+      OTP += digits[Math.floor(Math.random() * 36)];
+    }
+    return OTP;
+  }
+
 
 
 exports.registrationSubAdmin = async (req, res) => {
@@ -91,3 +100,50 @@ exports.loginSubAdmin = async (req, res) => {
     res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+
+
+
+exports.updateSubAdmin = async (req, res) => {
+    try {
+        const { SubAdminName,gender,mobile,email, } = req.body;
+
+        let orderId = await reffralCode()
+        const user = await User.findById({_id:req.params.id});
+        if (!user) {
+            return res.status(404).send({ message: "user not found" });
+        }
+        user.SubAdminName = SubAdminName || user.SubAdminName;
+        user.orderId = orderId || user.orderId;
+        user.gender = gender || user.gender;
+        user.email = email || user.email;
+        user.mobile = mobile || user.mobile;
+        // if (req.body.password) {
+        //     user.password = bcrypt.hashSync(password, 8) || user.password;
+        // }
+        const updated = await user.save();
+        res.status(200).send({ message: "updated", data: updated });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send({
+            message: "internal server error " + err.message,
+        });
+    }
+  };
+
+
+
+  exports.getAllSubAdmin = async (req, res) => {
+  try {
+    const Subadmin = await User.find({userType:"subadmin"});
+
+    if (Subadmin.length === 0) {
+      return res.status(404).json({ error: "No SubAdmin data found." });
+    }
+
+    res.status(200).json({ success: true, data: Subadmin });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server error" });
+  }
+}
+  
