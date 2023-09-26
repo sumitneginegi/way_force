@@ -11,6 +11,9 @@ const ratingSchema = new mongoose.Schema({
     ref: "User", // Replace with the actual User model reference
     required: true,
   },
+  userType:{
+    type:String
+  },
   rating: {
     type: Number,
     required: true,

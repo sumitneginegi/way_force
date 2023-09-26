@@ -117,6 +117,7 @@ exports.getCommentOfEmployer = async (req, res) => {
         const userName = user.manpowerName || user.agentName; // Use the first non-empty value
         populatedComments.push({
           user: userName,
+          userType:user.userType,
           comment: rating.comment,
         });
       }
