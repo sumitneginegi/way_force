@@ -110,12 +110,13 @@ exports.getCommentOfEmployer = async (req, res) => {
 
     for (const rating of ratings) {
       // Find the user by ID and populate the 'name' field
-      const user = await User.findById(rating.user).select('manpowerName');
+      const user = await User.findById(rating.user)/*.select('manpowerName');*/
       console.log(user)
 
       if (user) {
+        const userName = user.manpowerName || user.agentName; // Use the first non-empty value
         populatedComments.push({
-          user: user.manpowerName,
+          user: userName,
           comment: rating.comment,
         });
       }
