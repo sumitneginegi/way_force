@@ -9,6 +9,7 @@ const {
     listOfAllLeadByEmployer,
     getAllAgent,
     sendotpAgent,
+    YourProfileUpdateAgent,
     detailInstantEmployer,
     getAllEmployer,
     getAllEmployerById,
@@ -60,6 +61,8 @@ router.put("/detail/DirectAgent/:id", cpUpload,detailDirectAgent);
 router.put("/listOfAllLeadByEmployer", listOfAllLeadByEmployer);
 router.get("/get/getAllAgent", getAllAgent);
 
+router.put("/profileAgent/:id", upload.fields([{ name: "profile", maxCount: 1 },]), YourProfileUpdateAgent);
+
 // router.put("/instant/detail/:id", detailInstantEmployer);
 // router.get("/getUsersBy/InstantOrDirect/:value", getUsersByInstantOrDirect);
 // router.get("/get/viewPostInShort",viewInShort)
@@ -78,5 +81,6 @@ router.get("/get/getAllAgent", getAllAgent);
 // // );
 
 // router.post("/verifyOtpByManpower/:manpowerid", verifyOtpByManpower);
+
 
 module.exports = router;
