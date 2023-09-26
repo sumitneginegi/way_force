@@ -19,7 +19,14 @@ const {
   updateManpowerLocation,
 } = require("../controller/ManPowerCtrl");
 
-const {verifyToken} = require("../middleware/auth")
+const verifyToken = require("../middleware/auth");
+
+// Define allowed roles for a specific API
+const allowedRoles1 = ["admin", "subadmin", "employer"];
+const allowedRoles2 = ["admin", "subadmin", "manpower"];
+const allowedRoles3 = ["admin", "subadmin", "agent"];
+const allowedRoles4 = ["admin", "subadmin"];
+const allowedRoles5 = ["admin"];
 
 const router = express.Router();
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
@@ -44,7 +51,7 @@ cloudinary.config({
 });
 
 
-router.post("/registrationthroughAdmin",verifyToken,  registrationManpowerAdmin);
+router.post("/registrationthroughAdmin",/*verifyToken.verifyToken(allowedRoles4), */ registrationManpowerAdmin);
 router.post("/registration/Manpower", registrationManpower);
 router.post("/sendotpManpower", sendotpManpower);
 router.post("/signup", signupManpower);

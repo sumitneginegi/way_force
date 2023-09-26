@@ -1,7 +1,7 @@
 const User = require("../models/user")
 const jwt = require("jsonwebtoken")
 
-exports.verifyToken = (req, res, next) => {
+exports.verifyToken = (allowedRoles) => async (req, res, next) => {
   const token =
     req.get("Authorization")?.split("Bearer ")[1] ||
     req.headers["x-access-token"]
@@ -28,7 +28,6 @@ exports.verifyToken = (req, res, next) => {
           message: "The user that this token belongs to does not exist",
         })
       }
-      const allowedRoles = ["manpower", "employer", "agent", "admin"];
 
       if (!allowedRoles.includes(user.userType)) {
         return res.status(403).send({

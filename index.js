@@ -28,6 +28,7 @@ const adminn  = require("./routes/admin/dashboard")
 const postVerificationn  = require("./routes/admin/postVerification")
 const excel = require("./routes/AdminRoutes")
 const rating = require("./routes/ratingRoute")
+const subadmin = require("./routes/subadmin/authsubadmin")
 // router.use("/paymentt",require("./payment"))
 
 
@@ -88,6 +89,7 @@ app.use("/api/v1/adminn",adminn);
 app.use("/api/v1/postVerificationn",postVerificationn);
 app.use("/api/v1/excel",excel);
 app.use("/api/v1/ratingg",rating)
+app.use("/api/v1/subadmin",subadmin)
 // router.use("/paymentt",require("./payment"))
 
 app.listen(PORT, () => {

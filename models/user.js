@@ -132,6 +132,7 @@ const UserSchema = new mongoose.Schema(
         uploadaadhar: String,
         uploadPanCard: String,
         AdminName: String,
+        SubAdminName:String,
         password: String,
         profile: String,
         averageRating: {

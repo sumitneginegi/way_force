@@ -40,8 +40,24 @@ const {
     updateManpowerToken
 } = require("../controller/employerCtrl");
 
-const {verifyToken} = require("../middleware/auth")
 const router = express.Router();
+
+const verifyToken = require("../middleware/auth");
+
+// Define allowed roles for a specific API
+const allowedRoles1 = ["admin", "subadmin", "employer"];
+const allowedRoles2 = ["admin", "subadmin", "manpower"];
+const allowedRoles3 = ["admin", "subadmin", "agent"];
+const allowedRoles4 = ["admin", "subadmin"];
+const allowedRoles5 = ["admin"];
+
+// // Use the middleware with the specific set of allowed roles
+// app.get("/api/specific-endpoint", verifyToken(allowedRolesForSpecificAPI), (req, res) => {
+//   // Your API logic here
+// });
+
+
+
 
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 
@@ -65,7 +81,7 @@ cloudinary.config({
 });
 
 
-router.post("/registrationthroughAdmin",verifyToken,  registrationthroughAdmin);
+router.post("/registrationthroughAdmin",verifyToken.verifyToken(allowedRoles4),  registrationthroughAdmin);
 //////////////////////////////////////////////////////////////////////////////
 
 router.post("/registration/Employer", registrationEmployer);
