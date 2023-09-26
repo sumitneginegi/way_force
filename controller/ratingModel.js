@@ -11,6 +11,11 @@ exports.createRating = async (req, res) => {
   try {
     const { user, target, rating, comment } = req.body;
 
+    // Check if user and target are the same
+    if (user === target) {
+      return res.status(400).json({ message: "User and target cannot be the same" });
+    }
+
     // Check if a rating from the same user to the same target already exists
     const existingRating = await Rating.findOne({ user, target });
 
@@ -75,7 +80,7 @@ async function updateEmployerRatings(target) {
 
     for (const rating of ratings) {
       // Find the user by ID and populate the 'name' field
-      const user = await User.findById(rating.user).select('employerName');
+      const user = await User.findById(rating.user)/*.select('employerName');*/
       console.log(user)
 
       if (user) {
@@ -114,7 +119,7 @@ exports.getCommentOfEmployer = async (req, res) => {
       console.log(user)
 
       if (user) {
-        const userName = user.manpowerName || user.agentName; // Use the first non-empty value
+        const userName = user.manpowerName || user.agentName || user.employerName // Use the first non-empty value
         populatedComments.push({
           user: userName,
           userType:user.userType,
