@@ -113,6 +113,8 @@ exports.updateSubAdmin = async (req, res) => {
         if (!user) {
             return res.status(404).send({ message: "user not found" });
         }
+
+
         user.SubAdminName = SubAdminName || user.SubAdminName;
         user.orderId = orderId || user.orderId;
         user.gender = gender || user.gender;
@@ -130,6 +132,7 @@ exports.updateSubAdmin = async (req, res) => {
         });
     }
   };
+
 
 
 
