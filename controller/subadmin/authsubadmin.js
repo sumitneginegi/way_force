@@ -159,7 +159,7 @@ exports.getSubAdminById = async (req, res) => {
     if (!SubAdmin) {
       return res.status(400).json({ error: "SubAdmin data not provided" });
     }
-   return res.status(201).json({ success: true, data: SubAdmin })
+   return res.status(200).json({ success: true, data: SubAdmin })
   } catch (err) {
     console.log(err)
    return res.status(500).json({ message: err.message });
