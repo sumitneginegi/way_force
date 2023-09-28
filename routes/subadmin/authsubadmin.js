@@ -15,6 +15,6 @@ router.get('/', subadminController.getAllSubAdmin)
 router.put('/:id', subadminController.updateSubAdmin)
 
 // // DELETE a city
-// router.delete('/:id', stateController.deleteState)
+router.get('/getSubAdminById/:id', subadminController.getSubAdminById)
 
 module.exports = router
