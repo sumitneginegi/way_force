@@ -16,10 +16,10 @@ const reffralCode = async () => {
 
 exports.registrationSubAdmin = async (req, res) => {
   try {
-    const { SubAdminName, email, password } = req.body;
+    const { SubAdminName, email, password,mobile } = req.body;
 
 
-    if (!SubAdminName || !email || !password) {
+    if (!SubAdminName || !email || !password || !mobile) {
       return res.status(400).json({ error: "All fields are required" });
     }
 
@@ -35,6 +35,7 @@ exports.registrationSubAdmin = async (req, res) => {
       const userCreate = await User.create({
         SubAdminName,
         email,
+        mobile,
         wallet : 0 ,
         password: hashedPassword, // Store the hashed password
         userType : "subadmin"
@@ -44,6 +45,7 @@ exports.registrationSubAdmin = async (req, res) => {
         id: userCreate._id,
         SubAdminName: userCreate.SubAdminName,
         email: userCreate.email,
+        mobile:userCreate.mobile,
         userType: req.body.userType
       };
 
