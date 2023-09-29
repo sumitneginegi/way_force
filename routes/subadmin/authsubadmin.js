@@ -17,4 +17,7 @@ router.put('/:id', subadminController.updateSubAdmin)
 // // DELETE a city
 router.get('/getSubAdminById/:id', subadminController.getSubAdminById)
 
+router.delete('/delete/SubAdmin/:id', subadminController.DeleteSubAdmin)
+// 
+
 module.exports = router
