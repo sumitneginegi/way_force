@@ -204,23 +204,31 @@ exports.detailDirectAgent = async (req, res) => {
   try {
     const id = req.params.id;
     let adhaar = req.files["aadhar"];
-      let pan = req.files["pan"];
+    let pan = req.files["pan"];
 
-      req.body.uploadaadhar = adhaar[0].path;
-      req.body.uploadPanCard = pan[0].path;
+    req.body.uploadaadhar = adhaar[0].path;
+    req.body.uploadPanCard = pan[0].path;
+
     const {
-        agentName,
-        agentAddress,
-        agentServiceLocation,
-        agentBusinessName,
-        GST_Number,
-        registration_Number,
-        agentStrength,
-        aadharCard,
-        panCard,
-        category,
-        gender
+      agentName,
+      agentAddress,
+      agentBusinessName,
+      GST_Number,
+      registration_Number,
+      agentStrength,
+      aadharCard,
+      panCard,
+      category,
+      gender
     } = req.body;
+
+    // Check if agentServiceLocation is present in req.body
+    if (!req.body.agentServiceLocation || !req.body.agentServiceLocation.lati || !req.body.agentServiceLocation.longi) {
+      return res.status(400).json({ error: "agentServiceLocation is missing or invalid" });
+    }
+
+    // Destructure lati and longi from req.body.agentServiceLocation
+    const { lati, longi } = req.body.agentServiceLocation;
 
     // Check if the user exists
     const Agent = await User.findById(id);
@@ -231,29 +239,30 @@ exports.detailDirectAgent = async (req, res) => {
     // Update the user's details
     Agent.agentName = agentName;
     Agent.agentAddress = agentAddress;
-    Agent.agentServiceLocation = agentServiceLocation;
+    Agent.agentServiceLocation = { lati, longi }; // Store lati and longi as an object
     Agent.agentBusinessName = agentBusinessName;
     Agent.GST_Number = GST_Number;
     Agent.registration_Number = registration_Number;
     Agent.agentStrength = agentStrength;
     Agent.aadharCard = aadharCard;
-    Agent.panCard = panCard; 
-    Agent.category =  category,
-    Agent.gender =  gender,
-    Agent.uploadaadhar = req.body.uploadaadhar,
-    Agent.uploadPanCard = req.body.uploadPanCard,
+    Agent.panCard = panCard;
+    Agent.category = category;
+    Agent.gender = gender;
+    Agent.uploadaadhar = req.body.uploadaadhar;
+    Agent.uploadPanCard = req.body.uploadPanCard;
 
     await Agent.save();
 
-    res
+    return res
       .status(200)
       .json({ message: "Details filled successfully", data: Agent });
-  
+
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Internal server error" });
+    return res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
 
 exports.updateFileAndDocumentVendor = async (req, res) => {
