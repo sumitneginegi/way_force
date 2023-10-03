@@ -2,13 +2,14 @@ const express = require("express");
 const {
   registrationthroughAdmin,
     registrationAgent,
+    sendotpAgent,
     loginAgent,
+    sendotpAgentLogin,
     verifyOtpAgent,
     detailDirectAgent,
     getAgentById,
     listOfAllLeadByEmployer,
     getAllAgent,
-    sendotpAgent,
     YourProfileUpdateAgent,
     detailInstantEmployer,
     getAllEmployer,
@@ -61,7 +62,7 @@ router.post("/registrationthroughAdmin/Agent",/*verifyToken.verifyToken(allowedR
 
 router.post("/registration/Agent", registrationAgent);
 router.post("/sendotp/Agent", sendotpAgent);
-// router.post("/signup", signupEmployer);
+router.post("/sendotpAgentLogin", sendotpAgentLogin);
 router.post("/login/agent", loginAgent);
 router.post("/verifyOtp/Agent/:id", verifyOtpAgent);
 // router.get("/getAll", getAllEmployer);

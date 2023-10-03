@@ -519,40 +519,105 @@ exports.getAllAgent = async (req, res) => {
 // }
 
 
+exports.sendotpAgentLogin = async (req, res) => {
+  console.log("hi");
+  try {
+    const { phoneNumber } = req.body
+
+    const otp = Math.floor(1000 + Math.random() * 9000)
+
+    const user = await User.findOneAndUpdate({ mobile: phoneNumber, userType: "agent" }, { otp: otp }, { new: true })
+    if (!user) {
+      return res.status(400).json({ message: "phone number not exist" });
+    }
+
+    return res.status(200).json({ message: "OTP sent successfully", otp: user.otp });
+  }
+
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+}
+
+
 
 exports.loginAgent = async (req, res) => {
-    try {
-      const { mobile } = req.body;
-      const user = await User.findOne({ mobile: mobile, userType: "agent" })
-      if (!user) {
-        return res.status(400).send({ msg: "not found" });
-      }
-      const userObj = {};
-      userObj.otp = OTP.generateOTP();/* (4, {
-        alphabets: false,
-        upperCase: false,
-        specialChar: false,
-      } */;
-      //   userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
-      //   userObj.accountVerification = false;
-      const updated = await User.findOneAndUpdate(
-        { mobile: mobile },
-        userObj,
-        { new: true }
-      );
-      let obj = {
-        id: updated._id,
-        otp: updated.otp,
-        mobile: updated.mobile,
-      };
-      res
-        .status(200)
-        .send({ status: 200, message: "logged in successfully", data: obj });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Server error" });
+  try {
+    const { mobile, otp } = req.body;
+
+    if (!mobile) {
+      return res
+        .status(400)
+        .json({ error: "Mobile number required" });
     }
+    const test = await User.findOne({ mobile: mobile, userType: "agent", });
+
+    if (test) {
+      const agent = await User.findOne({ mobile: mobile, userType: "agent", otp: otp });
+      if (!agent) {
+
+        return res.status(404).json({ error: "Otp is incorrect" });
+      }
+    }
+    else {
+      return res.status(404).json({ error: "agent not found" });
+    }
+
+    // employer.otp = otp
+    // employer.save()
+
+    const token = jwt.sign({ agentId: test._id }, process.env.JWT_SECRET);
+
+    res.status(200).json({
+      message: "Login successful",
+      data: {
+        token,
+        otp,
+        agent: test,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Something went wrong" });
   }
+}
+
+
+
+// exports.loginAgent = async (req, res) => {
+//     try {
+//       const { mobile } = req.body;
+//       const user = await User.findOne({ mobile: mobile, userType: "agent" })
+//       if (!user) {
+//         return res.status(400).send({ msg: "not found" });
+//       }
+//       const userObj = {};
+//       userObj.otp = OTP.generateOTP();/* (4, {
+//         alphabets: false,
+//         upperCase: false,
+//         specialChar: false,
+//       } */;
+//       //   userObj.otpExpiration = new Date(Date.now() + 5 * 60 * 1000);
+//       //   userObj.accountVerification = false;
+//       const updated = await User.findOneAndUpdate(
+//         { mobile: mobile },
+//         userObj,
+//         { new: true }
+//       );
+//       let obj = {
+//         id: updated._id,
+//         otp: updated.otp,
+//         mobile: updated.mobile,
+//       };
+//       res
+//         .status(200)
+//         .send({ status: 200, message: "logged in successfully", data: obj });
+//     } catch (error) {
+//       console.error(error);
+//       res.status(500).json({ message: "Server error" });
+//     }
+//   }
 
 
   exports.getAgentById = async (req, res) => {
