@@ -17,6 +17,7 @@ const {
   getManpowerWhoHaveApplied,
   getManpowerWhoHaveAppliedforInstantOrDirect,
   updateManpowerLocation,
+  getAllManpowerthroughCategory,
 } = require("../controller/ManPowerCtrl");
 
 const verifyToken = require("../middleware/auth");
@@ -76,6 +77,8 @@ router.delete("/delete/:manpowerId", DeleteManpower)
 router.get("/getManpowerWhoHave/Applied/:manpowerId", getManpowerWhoHaveApplied)
 router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAppliedforInstantOrDirect)
 router.put("/updateManpowerLocation/:id", updateManpowerLocation);
+
+router.get("/getAllManpowerthrough/Category/:category", getAllManpowerthroughCategory);
 
 
 ;

@@ -511,12 +511,38 @@ exports.YourProfileUpdate = async (req, res) => {
 exports.getAllManpower = async (req, res) => {
   try {
     const users = await User.find({ userType: "manpower" }).lean();
-    res.status(200).json({ message: "users fetched successfully", data: users });
+    if (!users) {
+     return res.status(404).json({ message: "User not found" });
+    }
+  return  res.status(200).json({ message: "users fetched successfully", data: users });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: err.message });
+   return res.status(500).json({ error: err.message });
   }
 }
+
+
+exports.getAllManpowerthroughCategory = async (req, res) => {
+  try {
+    const { category } = req.params; // Assuming you pass the category as a URL parameter
+
+    if (!category) {
+      return res.status(400).json({ message: "Category parameter is missing" });
+    }
+
+    const users = await User.find({ userType: "manpower", category }).lean();
+
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No manpower users found for the specified category" });
+    }
+
+    return res.status(200).json({ message: "Manpower users fetched successfully", data: users });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
+
 
 
 exports.getManpower = async (req, res) => {
