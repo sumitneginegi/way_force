@@ -733,14 +733,13 @@ exports.updateCategoryForManpower = async (req, res) => {
 
 exports.getManpowerthroughFilter = async (req, res) => {
   try {
-    const { userType, siteLocation, category } = req.query;
+    const { siteLocation, category } = req.query;
+    const userType = "manpower";
 
-    // Define query conditions based on request parameters
-    const queryConditions = {};
-
-    if (userType) {
-      queryConditions.userType = { $regex: new RegExp(userType, 'i') }; // Case-insensitive regex
-    }
+   // Define query conditions based on request parameters
+   const queryConditions = {
+    userType: { $regex: new RegExp(userType, 'i') }, // Case-insensitive regex
+  };
 
     if (siteLocation) {
       queryConditions.siteLocation = { $regex: new RegExp(siteLocation, 'i') };
