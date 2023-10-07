@@ -18,6 +18,8 @@ const {
   getManpowerWhoHaveAppliedforInstantOrDirect,
   updateManpowerLocation,
   getAllManpowerthroughCategory,
+  updateCategoryForManpower,
+  getManpowerthroughFilter
 } = require("../controller/ManPowerCtrl");
 
 const verifyToken = require("../middleware/auth");
@@ -79,6 +81,11 @@ router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAp
 router.put("/updateManpowerLocation/:id", updateManpowerLocation);
 
 router.get("/getAllManpowerthrough/Category/:category", getAllManpowerthroughCategory);
+router.put("/updateCategoryFor/Manpower", updateCategoryForManpower);
+
+router.get("/getManpowerthrough/Filter", getManpowerthroughFilter);
+
+
 
 
 ;

@@ -1221,7 +1221,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
 
     // Find the post within the employer's obj array by orderId
     const post = employer.obj.find((post) => post.orderId == orderId);
-console.log(post);
+    console.log(post);
     if (!post) {
       return res.status(400).json({ message: "orderId not found" });
     }

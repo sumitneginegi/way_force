@@ -565,6 +565,11 @@ exports.getManpower = async (req, res) => {
 }
 
 
+
+
+
+
+
 exports.DeleteManpower = async (req, res) => {
   const { manpowerId } = req.params;
   try {
@@ -704,8 +709,55 @@ exports.updateManpowerLocation = async (req, res) => {
 
 
 
+exports.updateCategoryForManpower = async (req, res) => {
+  try {
+    // Define the condition to find users with userType "manpower" and no category set
+    const condition = { userType: "manpower", category: { $exists: false } };
+
+    // Define the update operation (setting the category field)
+    const update = { $set: { category: "defaultCategory" } }; // Set the default category value
+
+    // Use updateMany to update documents that match the condition
+    const result = await User.updateMany(condition, update);
+
+    return res.status(200).json({ message: "Category field added to manpower users", updatedCount: result.nModified });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+};
 
 
 
 
+
+exports.getManpowerthroughFilter = async (req, res) => {
+  try {
+    const { userType, siteLocation, category } = req.query;
+
+    // Define query conditions based on request parameters
+    const queryConditions = {};
+
+    if (userType) {
+      queryConditions.userType = { $regex: new RegExp(userType, 'i') }; // Case-insensitive regex
+    }
+
+    if (siteLocation) {
+      queryConditions.siteLocation = { $regex: new RegExp(siteLocation, 'i') };
+    }
+
+    if (category) {
+      queryConditions.category = { $regex: new RegExp(category, 'i') };
+    }
+
+    // Find all manpowers based on the query conditions
+    const manpowers = await User.find(queryConditions).lean();
+
+    // Send a response with the matched manpowers
+    return res.status(200).json({ message: "Manpowers retrieved successfully", data: manpowers });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
 
