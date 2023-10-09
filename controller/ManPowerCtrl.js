@@ -512,12 +512,12 @@ exports.getAllManpower = async (req, res) => {
   try {
     const users = await User.find({ userType: "manpower" }).lean();
     if (!users) {
-     return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found" });
     }
-  return  res.status(200).json({ message: "users fetched successfully", data: users });
+    return res.status(200).json({ message: "users fetched successfully", data: users });
   } catch (err) {
     console.error(err);
-   return res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 }
 
@@ -736,10 +736,10 @@ exports.getManpowerthroughFilter = async (req, res) => {
     const { siteLocation, category } = req.query;
     const userType = "manpower";
 
-   // Define query conditions based on request parameters
-   const queryConditions = {
-    userType: { $regex: new RegExp(userType, 'i') }, // Case-insensitive regex
-  };
+    // Define query conditions based on request parameters
+    const queryConditions = {
+      userType: { $regex: new RegExp(userType, 'i') }, // Case-insensitive regex
+    };
 
     if (siteLocation) {
       queryConditions.siteLocation = { $regex: new RegExp(siteLocation, 'i') };
@@ -760,3 +760,33 @@ exports.getManpowerthroughFilter = async (req, res) => {
   }
 };
 
+
+
+exports.getAllManpowerUniqueCategory = async (req, res) => {
+  try {
+    const users = await User.find({ userType: "manpower" }).lean();
+
+    if (users.length === 0) {
+      return res.status(404).json({ message: "No manpower users found" });
+    }
+
+    // Create an object to store one user per unique category
+    const categoryUsers = {};
+
+    for (const user of users) {
+      if (!categoryUsers[user.category]) {
+        categoryUsers[user.category] = user;
+      }
+    }
+
+    // Convert the object values back to an array
+    const uniqueCategoryUsers = Object.values(categoryUsers);
+
+    // Send a response with one user per unique category
+    return res.status(200).json({ message: "Manpowers retrieved successfully", data: uniqueCategoryUsers });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
+};
