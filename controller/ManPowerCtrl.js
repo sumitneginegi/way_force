@@ -764,26 +764,14 @@ exports.getManpowerthroughFilter = async (req, res) => {
 
 exports.getAllManpowerUniqueCategory = async (req, res) => {
   try {
-    const users = await User.find({ userType: "manpower" }).lean();
+    const users = await User.find({ userType: "manpower" }).distinct("category");
 
     if (users.length === 0) {
       return res.status(404).json({ message: "No manpower users found" });
     }
 
-    // Create an object to store one user per unique category
-    const categoryUsers = {};
-
-    for (const user of users) {
-      if (!categoryUsers[user.category]) {
-        categoryUsers[user.category] = user;
-      }
-    }
-
-    // Convert the object values back to an array
-    const uniqueCategoryUsers = Object.values(categoryUsers);
-
-    // Send a response with one user per unique category
-    return res.status(200).json({ message: "Manpowers retrieved successfully", data: uniqueCategoryUsers });
+    // Send a response with the unique category names
+    return res.status(200).json({ message: "Unique category names retrieved successfully", data: users });
 
   } catch (err) {
     console.error(err);
