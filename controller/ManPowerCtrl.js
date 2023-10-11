@@ -522,9 +522,34 @@ exports.getAllManpower = async (req, res) => {
 }
 
 
+// exports.getAllManpowerthroughCategory = async (req, res) => {
+//   try {
+//     const { category } = req.params;
+
+//     if (!category) {
+//       return res.status(400).json({ message: "Category parameter is missing" });
+//     }
+
+//     const users = await User.find({ userType: "manpower", category }).lean();
+
+//     if (!users || users.length === 0) {
+//       return res.status(404).json({ message: "No manpower users found for the specified category", data: null });
+//     }
+
+//     return res.status(200).send({ message: "Manpower users fetched successfully", data: users });
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ message: "Internal server error", error: err.message, data: null });
+//   }
+// };
+
+
+const haversine = require('haversine');
+
 exports.getAllManpowerthroughCategory = async (req, res) => {
   try {
     const { category } = req.params;
+    const { _id } = req.query; // Example: current_location=23.476,35.657
 
     if (!category) {
       return res.status(400).json({ message: "Category parameter is missing" });
@@ -536,12 +561,39 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
       return res.status(404).json({ message: "No manpower users found for the specified category", data: null });
     }
 
-    return res.status(200).send({ message: "Manpower users fetched successfully", data: users });
+    // Parse the current_location query parameter
+    const [current_lati, current_longi] = current_location.split(',').map(parseFloat);
+
+    // Adjust employer's current location
+    const employer = users.find(user => user.userType === 'employer');
+    if (employer) {
+      employer.current_lati = current_lati;
+      employer.current_longi = current_longi;
+    }
+
+    // Calculate distances and add them to each manpower user
+    users
+      .filter(user => user.userType === 'manpower')
+      .forEach(user => {
+        if (user.lati && user.longi) {
+          const manpowerLocation = { latitude: user.lati, longitude: user.longi };
+          const employerLocation = { latitude: current_lati, longitude: current_longi };
+          user.distance = haversine(manpowerLocation, employerLocation, { unit: 'km' });
+        } else {
+          user.distance = null;
+        }
+      });
+
+    // Sort manpower users by distance
+    users.sort((a, b) => (a.distance < b.distance ? -1 : 1));
+
+    return res.status(200).send({ message: "Manpower users fetched and sorted successfully", data: users });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal server error", error: err.message, data: null });
   }
 };
+
 
 
 

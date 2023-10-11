@@ -224,6 +224,9 @@ exports.updateEmployer = async (req, res) => {
       registration_Number: req.body.registration_Number,
       aadharCard: req.body.aadharCard, // Updated field
       panCard: req.body.panCard, // Updated field
+      current_lati:req.body.current_lati,
+      current_longi:req.body.current_longi,
+      current_location:req.body.current_location
     };
 
     const updatedEmployer = await User.findByIdAndUpdate(employerId, updatedData, { new: true });
@@ -1397,3 +1400,47 @@ exports.updateWalletForEmployers = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+
+// Define the PUT API route to update lati, longi, and siteLocation for a specific "manpower" user
+exports.updateEmployerLocation = async (req, res) => {
+  const {  current_location,current_lati,current_longi } = req.body;
+  const id = req.params.id;
+
+  try {
+    // Find the "manpower" user by their _id and userType
+    const updateFields = {};
+
+    if (current_lati !== undefined) {
+      updateFields['current_lati'] = current_lati;
+    }
+
+    if (current_longi !== undefined) {
+      updateFields['current_longi'] = current_longi;
+    }
+
+    if (current_location !== undefined) {
+      updateFields['current_location'] = current_location || ''
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        _id: id,
+        userType: 'employer',
+      },
+      {
+        $set: updateFields,
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'employer user not found' });
+    }
+
+    return res.json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};

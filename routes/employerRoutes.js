@@ -37,7 +37,8 @@ const {
     YourProfileUpdateEmployer,
     updateLatAndLong,
     updateWalletForEmployers,
-    updateManpowerToken
+    updateManpowerToken,
+    updateEmployerLocation
 } = require("../controller/employerCtrl");
 
 const router = express.Router();
@@ -128,5 +129,6 @@ router.put("/update/LatAndLong/:orderId", updateLatAndLong);
 router.post("/verifyOtpByManpower/:manpowerid", verifyOtpByManpower);
 router.put("/updateWalletForEmployers", updateWalletForEmployers);
 router.put("/update/ManpowerToken/:manpowerId", updateManpowerToken);
+router.put("/update/EmployerLocation/:id", updateEmployerLocation);
 
 module.exports = router;

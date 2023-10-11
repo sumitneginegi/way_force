@@ -60,6 +60,9 @@ const UserSchema = new mongoose.Schema(
         registration_Number: String,
         lati: String,
         longi: String,
+        current_lati: String,
+        current_longi: String,
+        current_location:String,
         instantOrdirect: String,
         otpSendToEmployer: String,
 
