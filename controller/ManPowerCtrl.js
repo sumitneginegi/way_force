@@ -536,8 +536,8 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
       return res.status(404).json({ message: "No manpower users found for the specified category" });
     }
 
-    // return res.status(200).json({ message: "Manpower users fetched successfully", data: users });
-    return res.status(200).json(  users );
+     return res.status(200).json({ message: "Manpower users fetched successfully", data: users });
+    // return res.status(200).json(  users );
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message });
