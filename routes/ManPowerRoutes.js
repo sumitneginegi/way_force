@@ -81,7 +81,7 @@ router.get("/getManpowerWhoHave/Applied/:manpowerId", getManpowerWhoHaveApplied)
 router.get("/getManpowerWhoHaveAppliedfor/InstantOrDirect", getManpowerWhoHaveAppliedforInstantOrDirect)
 router.put("/updateManpowerLocation/:id", updateManpowerLocation);
 
-router.get("/getAllManpowerthrough/Category/:category", getAllManpowerthroughCategory);
+router.get("/getAllManpowerthrough/Category/:category/:employerid", getAllManpowerthroughCategory);
 router.put("/updateCategoryFor/Manpower", updateCategoryForManpower);
 
 router.get("/getManpowerthrough/Filter", getManpowerthroughFilter);

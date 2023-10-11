@@ -7,6 +7,7 @@ const twilio = require("twilio");
 // var newOTP = require("otp-generators");
 const User = require("../models/user")
 const mongoose = require("mongoose");
+const haversine = require('haversine');
 
 
 const accountSid = "AC0f17e37b275ea67e2e66d289b3a0ef84";
@@ -544,55 +545,59 @@ exports.getAllManpower = async (req, res) => {
 // };
 
 
-const haversine = require('haversine');
-
 exports.getAllManpowerthroughCategory = async (req, res) => {
   try {
-    const { category } = req.params;
-    const { _id } = req.query; // Example: current_location=23.476,35.657
+    const { category, employerid } = req.params;
 
-    if (!category) {
-      return res.status(400).json({ message: "Category parameter is missing" });
+    if (!category || !employerid) {
+      return res.status(400).json({ message: "Category or _id parameter is missing" });
     }
 
-    const users = await User.find({ userType: "manpower", category }).lean();
-
-    if (!users || users.length === 0) {
-      return res.status(404).json({ message: "No manpower users found for the specified category", data: null });
+    const employer = await User.findById(employerid).lean();
+    if (!employer || employer.userType !== 'employer') {
+      return res.status(404).json({ message: "Employer not found with the specified _id" });
     }
+    // Extract the current_lati and current_longi from the employer's data
+    const current_lati = employer.current_lati;
+    const current_longi = employer.current_longi;
 
-    // Parse the current_location query parameter
-    const [current_lati, current_longi] = current_location.split(',').map(parseFloat);
-
-    // Adjust employer's current location
-    const employer = users.find(user => user.userType === 'employer');
-    if (employer) {
-      employer.current_lati = current_lati;
-      employer.current_longi = current_longi;
-    }
-
+    const manpowerUsers = await User.find({ userType: "manpower", category }).lean();
+    console.log(manpowerUsers);
     // Calculate distances and add them to each manpower user
-    users
-      .filter(user => user.userType === 'manpower')
-      .forEach(user => {
-        if (user.lati && user.longi) {
-          const manpowerLocation = { latitude: user.lati, longitude: user.longi };
-          const employerLocation = { latitude: current_lati, longitude: current_longi };
-          user.distance = haversine(manpowerLocation, employerLocation, { unit: 'km' });
-        } else {
-          user.distance = null;
-        }
-      });
+    manpowerUsers.forEach(user => {
+      if (user.serviceLocation && user.serviceLocation.lati && user.serviceLocation.longi) {
+        const manpowerLocation = {
+          latitude: user.serviceLocation.lati,
+          longitude: user.serviceLocation.longi,
+        };
+        const employerLocation = { latitude: current_lati, longitude: current_longi };
+        user.distance = haversine(manpowerLocation, employerLocation, { unit: 'km' });
+        console.log(user.distance);
+      } else {
+        user.distance = null;
+      }
+    });
 
-    // Sort manpower users by distance
-    users.sort((a, b) => (a.distance < b.distance ? -1 : 1));
+    // Sort manpower users by distance in ascending order
+    manpowerUsers.sort((a, b) => {
+      if (a.distance < b.distance) {
+        return -1;
+      }
+      if (a.distance > b.distance) {
+        return 1;
+      }
+      return 0;
+    });
 
-    return res.status(200).send({ message: "Manpower users fetched and sorted successfully", data: users });
+    return res.status(200).send({ message: "Manpower users fetched and sorted successfully", data: manpowerUsers });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "Internal server error", error: err.message, data: null });
   }
 };
+
+
+
 
 
 
