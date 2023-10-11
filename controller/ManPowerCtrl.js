@@ -524,7 +524,7 @@ exports.getAllManpower = async (req, res) => {
 
 exports.getAllManpowerthroughCategory = async (req, res) => {
   try {
-    const { category } = req.params; // Assuming you pass the category as a URL parameter
+    const { category } = req.params;
 
     if (!category) {
       return res.status(400).json({ message: "Category parameter is missing" });
@@ -533,14 +533,13 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
     const users = await User.find({ userType: "manpower", category }).lean();
 
     if (!users || users.length === 0) {
-      return res.status(404).json({ message: "No manpower users found for the specified category" });
+      return res.status(404).json({ message: "No manpower users found for the specified category", data: null });
     }
 
-     return res.status(200).json({ message: "Manpower users fetched successfully", data: users });
-    // return res.status(200).json(  users );
+    return res.status(200).json({ message: "Manpower users fetched successfully", data: users });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ error: err.message });
+    return res.status(500).json({ message: "Internal server error", error: err.message, data: null });
   }
 };
 
