@@ -18,78 +18,233 @@ const client = twilio(accountSid, authToken);
 
 
 
+// exports.registrationManpowerAdmin = async (req, res) => {
+//   try {
+
+//     const data = {
+//       manpowerName: req.body.manpowerName,
+//       address: {
+//         state: req.body.state,
+//         city: req.body.city,
+//         country: req.body.country,
+//         pinCode: req.body.pinCode,
+//         landmark: req.body.landmark,
+//         postOffice: req.body.postOffice,
+//         line: req.body.line,
+//         village: req.body.village,
+//         block: req.body.block
+//       },
+//       education: [
+//         {
+//           educationType: req.body.educationType,
+//           degree: req.body.degree,
+//           yearOfPassing: req.body.yearOfPassing
+//         },
+//         {
+//           educationType: req.body.educationType,
+//           degree: req.body.degree,
+//           yearOfPassing: req.body.yearOfPassing
+//         }
+//       ],
+//       age: req.body.age,
+//       gender: req.body.gender,
+//       dob: req.body.dob,
+//       email: req.body.email,
+//       language: [],
+//       bio: req.body.bio,
+//       experience: req.body.experience,
+//       minSalary: req.body.minSalary,
+//       maxSalary: req.body.maxSalary,
+//       jobType: req.body.jobType,
+//       siteLocation: req.body.siteLocation,
+//       serviceLocation: {
+//         lati: req.body.lati,
+//         longi: req.body.longi
+//       },
+//       documents: [
+//         {
+//           documentName: req.body.documentName,
+//           documentNumber: req.body.documentNumber,
+//           documentImage: req.body.documentImage
+//         },
+//         {
+//           documentName: req.body.documentName,
+//           documentNumber: req.body.documentNumber,
+//           documentImage: req.body.documentImage
+//         }
+//       ]
+//     }
+
+
+//     var user = await User.findOne({ mobile: data.mobile, userType: "manpower" })
+
+//     if (user) {
+//       return res.json({ status: 409, message: "Already Exit" });
+//     } else {
+//       req.body.userType = "manpower"
+
+
+//       const userCreate = await User.create({
+//         data,
+//         ...req.body
+//       })
+
+//       let obj = {
+//         id: userCreate._id,
+//         mobile: userCreate.mobile,
+//         manpowerName: data.manpowerName,
+//         address: {
+//           state: data.address.state,
+//           city: data.address.city,
+//           country: data.address.country,
+//           pinCode: data.address.pinCode,
+//           landmark: data.address.landmark,
+//           postOffice: data.address.postOffice,
+//           line: data.address.line,
+//           village: data.address.village,
+//           block: data.address.block,
+//         },
+//         education: [
+//           {
+//             educationType: data.education[0].educationType,
+//             degree: data.education[0].degree,
+//             yearOfPassing: data.education[0].yearOfPassing,
+//           },
+//           {
+//             educationType: data.education[1].educationType,
+//             degree: data.education[1].degree,
+//             yearOfPassing: data.education[1].yearOfPassing,
+//           },
+//         ],
+//         age: data.age,
+//         gender: data.gender,
+//         dob: data.dob,
+//         email: data.email,
+//         language: data.language,
+//         bio: data.bio,
+//         experience: data.experience,
+//         minSalary: data.minSalary,
+//         maxSalary: data.maxSalary,
+//         jobType: data.jobType,
+//         siteLocation: data.siteLocation,
+//         serviceLocation: {
+//           lati: data.serviceLocation.lati,
+//           longi: data.serviceLocation.longi,
+//         },
+//         documents: [
+//           {
+//             documentName: data.documents[0].documentName,
+//             documentNumber: data.documents[0].documentNumber,
+//             documentImage: data.documents[0].documentImage,
+//           },
+//           {
+//             documentName: data.documents[1].documentName,
+//             documentNumber: data.documents[1].documentNumber,
+//             documentImage: data.documents[1].documentImage,
+//           },
+//         ]
+//       }
+
+
+//       return res.status(201).send({
+//         status: 200,
+//         message: "Registered successfully ",
+//         data: obj
+//       })
+//     }
+
+//   } catch (error) {
+//     console.error(error)
+//     res.status(500).json({ message: "Server error" });
+//   }
+// }
+
+
 exports.registrationManpowerAdmin = async (req, res) => {
   try {
-
     const data = {
       manpowerName: req.body.manpowerName,
-      active: req.body.active,
+      mobile:req.body.mobile,
+      address: {
+        state: req.body.state,
+        city: req.body.city,
+        country: req.body.country,
+        pinCode: req.body.pinCode,
+        landmark: req.body.landmark,
+        postOffice: req.body.postOffice,
+        line: req.body.line,
+        village: req.body.village,
+        block: req.body.block,
+      },
+      education: [], // Initialize an empty array for education
+      age: req.body.age,
       gender: req.body.gender,
+      dob: req.body.dob,
       email: req.body.email,
-      mobile: req.body.mobile,
-      createdAt: req.body.createdAt,
-      state: req.body.state,
-      city: req.body.city,
-      GST_Number: req.body.GST_Number,
-      registration_Number: req.body.registration_Number,
-      pinCode: req.body.pinCode,
-      aadharCard: req.body.aadharCard, // Updated field
-      panCard: req.body.panCard, // Updated field,
-      serviceLocation: req.body.serviceLocation,
-      landmark: req.body.landmark,
-      block: req.body.block,
-      education: req.body.education,
-      skills: req.body.skills,
+      language: [],
+      bio: req.body.bio,
+      experience: req.body.experience,
+      minSalary: req.body.minSalary,
+      maxSalary: req.body.maxSalary,
+      jobType: req.body.jobType,
+      siteLocation: req.body.siteLocation,
+      serviceLocation: {
+        lati: req.body.latitude,
+        longi: req.body.longitude,
+      },
+      documents: [], // Initialize an empty array for documents
+      category: req.body.category,
+      workingDays: req.body.workingDays,
+      workingHours: req.body.workingHours,
+      uploadPanCard: req.body.uploadPanCard,
+      panCard: req.body.panCard,
+      uploadAadharCard: req.body.uploadAadharCard,
+      aadharCard: req.body.aadharCard,
+      profile: req.body.profile,
+      skills: req.body.skills, // An array of skill references
+    };
+
+    // Add education and documents objects to the arrays
+    for (let i = 0; i < req.body.education.length; i++) {
+      data.education.push({
+        educationType: req.body.education[i].educationType,
+        degree: req.body.education[i].degree,
+        yearOfPassing: req.body.education[i].yearOfPassing,
+      });
     }
 
-    var user = await User.findOne({ mobile: data.mobile, userType: "manpower" })
+    for (let i = 0; i < req.body.documents.length; i++) {
+      data.documents.push({
+        documentName: req.body.documents[i].documentName,
+        documentNumber: req.body.documents[i].documentNumber,
+        documentImage: req.body.documents[i].documentImage,
+      });
+    }
+
+    var user = await User.findOne({ mobile: data.mobile, userType: "manpower" });
 
     if (user) {
-      return res.json({ status: 409, message: "Already Exit" });
+      return res.json({ status: 409, message: "Already Exists" });
     } else {
-      req.body.userType = "manpower"
-
+      req.body.userType = "manpower";
 
       const userCreate = await User.create({
-        data,
-        ...req.body
-      })
+        ...data,
+        ...req.body,
+      });
 
-      let obj = {
-        id: userCreate._id,
-        mobile: userCreate.mobile,
-        manpowerName: userCreate.manpowerName,
-        active: userCreate.active,
-        gender: userCreate.gender,
-        email: userCreate.email,
-        mobile: userCreate.mobile,
-        createdAt: userCreate.createdAt,
-        state: userCreate.state,
-        city: userCreate.city,
-        GST_Number: userCreate.GST_Number,
-        registration_Number: userCreate.registration_Number,
-        pinCode: userCreate.pinCode,
-        aadharCard: userCreate.aadharCard,
-        panCard: userCreate.panCard,
-        serviceLocation: userCreate.serviceLocation,
-        landmark: userCreate.landmark,
-        block: userCreate.block,
-        education: userCreate.education,
-        skills: userCreate.skills,
-      }
-
-      res.status(201).send({
+      return res.status(201).send({
         status: 200,
-        message: "Registered successfully ",
-        data: obj
-      })
+        message: "Registered successfully",
+        data: userCreate,
+      });
     }
-
   } catch (error) {
-    console.error(error)
+    console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
+
 
 
 exports.registrationManpower = async (req, res) => {
@@ -272,7 +427,7 @@ exports.detailSignup = async (req, res) => {
 
     await manPower.save();
 
-    res
+    return res
       .status(200)
       .json({ message: "Details filled successfully", data: manPower });
   } catch (error) {
@@ -599,9 +754,6 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
 
 
 
-
-
-
 exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
 
@@ -620,10 +772,6 @@ exports.getManpower = async (req, res) => {
     return res.status(500).json({ error: err.message });
   }
 }
-
-
-
-
 
 
 

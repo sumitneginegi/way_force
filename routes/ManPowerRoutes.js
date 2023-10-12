@@ -20,7 +20,7 @@ const {
   getAllManpowerthroughCategory,
   updateCategoryForManpower,
   getManpowerthroughFilter,
-  getAllManpowerUniqueCategory
+  getAllManpowerUniqueCategory,
 } = require("../controller/ManPowerCtrl");
 
 const verifyToken = require("../middleware/auth");
@@ -55,7 +55,7 @@ cloudinary.config({
 });
 
 
-router.post("/registrationthroughAdmin",/*verifyToken.verifyToken(allowedRoles4), */ registrationManpowerAdmin);
+router.post("/registrationManpowerAdmin",/*verifyToken.verifyToken(allowedRoles4), */ registrationManpowerAdmin);
 router.post("/registration/Manpower", registrationManpower);
 router.post("/sendotpManpower", sendotpManpower);
 router.post("/signup", signupManpower);

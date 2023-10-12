@@ -92,7 +92,8 @@ const UserSchema = new mongoose.Schema(
         language: [String],
         bio: String,
         experience: Number,
-        skills: [{ type: Schema.Types.ObjectId }],
+        // skills: [{ type: Schema.Types.ObjectId }],
+        skills:[{type:String}],
         jobType: { type: String },
         serviceLocation: {lati:Number, longi:Number},
         documents: [
