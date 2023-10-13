@@ -1271,19 +1271,21 @@ exports.findManpowerthroughRadius = async (req, res) => {
         },
         notification: {
           title: `Lead for ${category}`, // Corrected title property
-          body: `Description: ${job_desc}
-            Location: ${siteLocation}
-            Category: ${category}
-            Explain Your Work: ${explainYourWork}
-            Date: ${date}
-          `, // Include post details in the body
+          body: `hello`
+          
+          // Description: ${job_desc}
+            // Location: ${siteLocation}
+            // Category: ${category}
+            // Explain Your Work: ${explainYourWork}
+            // Date: ${date}
+          , // Include post details in the body
         },
         token: manpower.token,
-        // payload: {
-        //   employerName: employer.employerName,
-        //   employerMobile: employer.mobile,
-        //   postDetails: post,
-        // },
+        data: {
+          employerName: employer.employerName,
+          employerMobile: employer.mobile,
+          postDetails: `${post.category}, ${post.job_desc} , ${post.siteLocation},  ${post.category}, ${post.explainYourWork},${post.date}`,
+        },
       };
 
       try {
