@@ -205,20 +205,35 @@ exports.registrationManpowerAdmin = async (req, res) => {
     };
 
     // Add education and documents objects to the arrays
-    for (let i = 0; i < req.body.education.length; i++) {
-      data.education.push({
-        educationType: req.body.education[i].educationType,
-        degree: req.body.education[i].degree,
-        yearOfPassing: req.body.education[i].yearOfPassing,
-      });
+    // for (let i = 0; i < req.body.education.length; i++) {
+    //   data.education.push({
+    //     educationType: req.body.education[i].educationType,
+    //     degree: req.body.education[i].degree,
+    //     yearOfPassing: req.body.education[i].yearOfPassing,
+    //   });
+    // }
+
+    if (req.body.education && Array.isArray(req.body.education)) {
+      for (let i = 0; i < req.body.education.length; i++) {
+        data.education.push({
+          educationType: req.body.education[i].educationType,
+          degree: req.body.education[i].degree,
+          yearOfPassing: req.body.education[i].yearOfPassing,
+        });
+      }
+    } else {
+      return res.status(400).json({ message: "Invalid education data" });
     }
 
-    for (let i = 0; i < req.body.documents.length; i++) {
-      data.documents.push({
-        documentName: req.body.documents[i].documentName,
-        documentNumber: req.body.documents[i].documentNumber,
-        documentImage: req.body.documents[i].documentImage,
-      });
+
+    if (req.body.documents && Array.isArray(req.body.documents)) {
+      data.documents = req.body.documents.map(doc => ({
+        documentName: doc.documentName,
+        documentNumber: doc.documentNumber,
+        documentImage: doc.documentImage,
+      }));
+    } else {
+      return res.status(400).json({ message: "Invalid document data" });
     }
 
     var user = await User.findOne({ mobile: data.mobile, userType: "manpower" });

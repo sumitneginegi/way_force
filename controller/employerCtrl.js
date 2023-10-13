@@ -1279,6 +1279,11 @@ exports.findManpowerthroughRadius = async (req, res) => {
           `, // Include post details in the body
         },
         token: manpower.token,
+        // payload: {
+        //   employerName: employer.employerName,
+        //   employerMobile: employer.mobile,
+        //   postDetails: post,
+        // },
       };
 
       try {

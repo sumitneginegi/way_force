@@ -72,10 +72,10 @@ exports.createBookingByEmployer = async (req, res) => {
 
     const savedBooking = await newBooking.save()
 
-    res.status(201).json({ message: 'Booking created successfully', data: savedBooking });
+   return res.status(201).json({ message: 'Booking created successfully', data: savedBooking });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+   return res.status(500).json({ error: 'Something went wrong' });
   }
 }
 
