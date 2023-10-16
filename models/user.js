@@ -34,6 +34,7 @@ const UserSchema = new mongoose.Schema(
             type: String,
             default: "false"
         },
+        statusOfApply:{type:String,default:"false"},
         manpowerId: [{
             type: objectId,
             ref: "User",

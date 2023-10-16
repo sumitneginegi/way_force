@@ -1,114 +1,86 @@
 const BookingByEmployer = require('../models/bookingByEmployer');
 
-exports.createBookingByEmployer = async (req, res) => {
-  try {
-    const {
-      EmployerId,
-      manpowerId,
-      amount_per_hour,
-      payment,
-      workDetails,
-      workDurationInYear,
-      date,
-      workLocation,
-      startDate,
-    } = req.body
+// exports.createBookingByEmployer = async (req, res) => {
+//   try {
+//     const {
+//       EmployerId,
+//       manpowerId,
+//       // amount_per_hour,
+//       payment,
+//       workDetails,
+//       workDurationInYear,
+//       date,
+//       workLocation,
+//       startDate,
+//     } = req.body
 
-    // const existingBooking = await BookingByEmployer.findOne({ EmployerId, manpowerId });
-    const existingBooking = await BookingByEmployer.findOne({
-            $and: [
-              { EmployerId: EmployerId },
-              { manpowerId: manpowerId }
-            ]
-          })
+//     // const existingBooking = await BookingByEmployer.findOne({ EmployerId, manpowerId });
+//     const existingBooking = await BookingByEmployer.findOne({
+//             $and: [
+//               { EmployerId: EmployerId },
+//               { manpowerId: manpowerId }
+//             ]
+//           })
 
-    if (existingBooking) {
-      // Check if work duration in years has been completed from the start date
-      const today = new Date();
-      const startDateObj = new Date(startDate);
-      const diffInYears = Math.floor((today - startDateObj) / (365 * 24 * 60 * 60 * 1000));
+//     if (existingBooking) {
+//       // Check if work duration in years has been completed from the start date
+//       const today = new Date();
+//       const startDateObj = new Date(startDate);
+//       const diffInYears = Math.floor((today - startDateObj) / (365 * 24 * 60 * 60 * 1000));
 
-      if (diffInYears >= workDurationInYear) {
-        // If work duration in years has been completed, delete the existing data
-        // await BookingByEmployer.deleteOne({ EmployerId, manpowerId });
-        await BookingByEmployer.deleteOne({
-          $and: [
-            { EmployerId: EmployerId },
-            { manpowerId: manpowerId }
-          ]
-        })
+//       if (diffInYears >= workDurationInYear) {
+//         // If work duration in years has been completed, delete the existing data
+//         // await BookingByEmployer.deleteOne({ EmployerId, manpowerId });
+//         await BookingByEmployer.deleteOne({
+//           $and: [
+//             { EmployerId: EmployerId },
+//             { manpowerId: manpowerId }
+//           ]
+//         })
 
-        // Create a new booking with the updated details
-        const newBooking = new BookingByEmployer({
-          EmployerId,
-          manpowerId,
-          amount_per_hour,
-          payment,
-          workDetails,
-          workDurationInYear,
-          date,
-          workLocation,
-          startDate,
-        });
+//         // Create a new booking with the updated details
+//         const newBooking = new BookingByEmployer({
+//           EmployerId,
+//           manpowerId,
+//           amount_per_hour,
+//           payment,
+//           workDetails,
+//           workDurationInYear,
+//           date,
+//           workLocation,
+//           startDate,
+//         });
 
-        const savedBooking = await newBooking.save()
-        return res.status(201).json({ message: 'Booking updated successfully', data: savedBooking });
-      } else {
-        return res.status(409).json({ error: 'Work duration not completed yet' });
-      }
-    }
+//         const savedBooking = await newBooking.save()
+//         return res.status(201).json({ message: 'Booking updated successfully', data: savedBooking });
+//       } else {
+//         return res.status(409).json({ error: 'Work duration not completed yet' });
+//       }
+//     }
 
-    const newBooking = new BookingByEmployer({
-      EmployerId,
-      manpowerId,
-      amount_per_hour,
-      payment,
-      workDetails,
-      workDurationInYear,
-      date,
-      workLocation,
-      startDate,
-    })
+//     const newBooking = new BookingByEmployer({
+//       EmployerId,
+//       manpowerId,
+//       amount_per_hour,
+//       payment,
+//       workDetails,
+//       workDurationInYear,
+//       date,
+//       workLocation,
+//       startDate,
+//     })
 
-    const savedBooking = await newBooking.save()
+//     const savedBooking = await newBooking.save()
 
-   return res.status(201).json({ message: 'Booking created successfully', data: savedBooking });
-  } catch (error) {
-    console.error(error);
-   return res.status(500).json({ error: 'Something went wrong' });
-  }
-}
-
-
-exports.calculateTimeDifference = (startTime, endTime) => {
-  // const start = new Date(startTime);
-  // const end = new Date(endTime);
-  console.log(start);
-  const timeDifferenceInMs = endTime - startTime;
-  const hours = Math.floor(timeDifferenceInMs / (1000 * 60 * 60));
-  const minutes = Math.floor((timeDifferenceInMs % (1000 * 60 * 60)) / (1000 * 60));
-
-  return { hours, minutes };
-}
+//    return res.status(201).json({ message: 'Booking created successfully', data: savedBooking });
+//   } catch (error) {
+//     console.error(error);
+//    return res.status(500).json({ error: 'Something went wrong' });
+//   }
+// }
 
 
 
-exports.calculateTimeDifferenceController = async (req, res) => {
-  try {
-    const { startTime, endTime } = req.body;
-
-    if (!startTime || !endTime) {
-      return res.status(400).json({ error: "Both startTime and endTime are required" });
-    }
-
-    const timeDifference = exports.calculateTimeDifference(startTime, endTime);
-
-    return res.status(200).json({ timeDifference });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: "Internal server error" });
-  }
-}
 
 
 
@@ -141,6 +113,37 @@ exports.getBookingByManpower = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong' });
   }
 }
+
+
+// exports.calculateTimeDifference = (startTime, endTime) => {
+//   // const start = new Date(startTime);
+//   // const end = new Date(endTime);
+//   console.log(start);
+//   const timeDifferenceInMs = endTime - startTime;
+//   const hours = Math.floor(timeDifferenceInMs / (1000 * 60 * 60));
+//   const minutes = Math.floor((timeDifferenceInMs % (1000 * 60 * 60)) / (1000 * 60));
+
+//   return { hours, minutes };
+// }
+
+
+
+// exports.calculateTimeDifferenceController = async (req, res) => {
+//   try {
+//     const { startTime, endTime } = req.body;
+
+//     if (!startTime || !endTime) {
+//       return res.status(400).json({ error: "Both startTime and endTime are required" });
+//     }
+
+//     const timeDifference = exports.calculateTimeDifference(startTime, endTime);
+
+//     return res.status(200).json({ timeDifference });
+//   } catch (err) {
+//     console.error(err);
+//     return res.status(500).json({ error: "Internal server error" });
+//   }
+// }
 
 
 
@@ -215,3 +218,47 @@ exports.deleteBooking = async (req, res) => {
 }
 
 
+
+exports.createBookingByEmployer = async (req, res) => {
+  try {
+    const {
+      employerId,
+      manpowerId,
+      agentId, // Add agentId
+      // amountPerHour,
+      payment,
+      workDetails,
+      workDurationInYear,
+      date,
+      workLocation,
+      startDate,
+    } = req.body;
+
+    const existingBooking = await BookingByEmployer.findOne({
+      employerId,
+      manpowerId,
+      agentId, // Check for agentId as well
+    });
+
+
+    const newBooking = new BookingByEmployer({
+      employerId,
+      manpowerId,
+      agentId, // Include agentId in the new booking
+      // amountPerHour,
+      payment,
+      workDetails,
+      workDurationInYear,
+      date,
+      workLocation,
+      startDate,
+    });
+
+    const savedBooking = await newBooking.save();
+
+    return res.status(201).json({ message: 'Booking created or updated successfully', data: savedBooking });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Something went wrong' });
+  }
+};

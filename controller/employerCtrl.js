@@ -311,7 +311,7 @@ exports.detailDirectEmployer = async (req, res) => {
       lati: req.body.lati,
       longi: req.body.longi,
       startTime: req.body.startTime,
-      endTime: req.body.endTime
+      endTime: req.body.endTime,
 
     }
 
@@ -888,7 +888,7 @@ function generateOTP() {
 
 exports.generateAndSaveOTP = async (req, res) => {
   try {
-    const { orderId, manpowerId } = req.body;
+    const { orderId, manpowerId,statusOfApply } = req.body;
 
     // Find the employer
     const employer = await User.findOne({ "obj.orderId": orderId });
@@ -908,7 +908,7 @@ exports.generateAndSaveOTP = async (req, res) => {
       return res.status(404).json({ error: "Post not found." });
     }
 
-
+    const post = employer.obj[postIndex];
     if (!postIndex.manpower || !Array.isArray(postIndex.manpower)) {
       postIndex.manpower = [] // Initialize manpower as an empty array if it doesn't exist
     }
@@ -920,6 +920,9 @@ exports.generateAndSaveOTP = async (req, res) => {
 
     // Generate the OTP
     const otp = generateOTP();
+
+   // Update the statusOfApply for the specific post inside the obj array
+   employer.obj[postIndex].statusOfApply = statusOfApply;
 
     // Save the OTP in employer's document
     employer.obj[postIndex].otpSendToEmployer = otp;
@@ -941,7 +944,17 @@ exports.generateAndSaveOTP = async (req, res) => {
     // Here you can trigger the sending of OTP to both manpower and employer if needed.
     // For example, you can send OTP via SMS or email to their mobile numbers or email addresses.
 
-    res.status(200).json({ message: "OTP generated and saved successfully.", man: employer });
+ // Create a response object with the updated post and employer data
+ const response = {
+  updatedPost: post,
+  employerData: {
+    employerName: employer.obj[postIndex].employerName,
+    // Add other employer data fields as needed
+  },
+};
+
+
+    res.status(200).json({ message: "OTP generated and saved successfully.", man: response });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
@@ -1268,29 +1281,29 @@ exports.findManpowerthroughRadius = async (req, res) => {
         data: {
           userType: manpower.userType, // Custom data
           _id: manpower._id ? manpower._id.toString() : "",
+          employerName: employer.employerName,
+          employerMobile: employer.mobile,
+          postDetails: `${category}, ${job_desc}, ${siteLocation}, ${category}, ${explainYourWork}, ${date}`,
         },
         notification: {
           title: `Lead for ${category}`, // Corrected title property
-          body: `hello`
-          
+          body: `hello`,          
           // Description: ${job_desc}
             // Location: ${siteLocation}
             // Category: ${category}
             // Explain Your Work: ${explainYourWork}
             // Date: ${date}
-          , // Include post details in the body
+           // Include post details in the body
         },
         token: manpower.token,
-        data: {
-          employerName: employer.employerName,
-          employerMobile: employer.mobile,
-          postDetails: `${post.category}, ${post.job_desc} , ${post.siteLocation},  ${post.category}, ${post.explainYourWork},${post.date}`,
-        },
+       
       };
 
       try {
         const response = await admin.messaging().send(message);
         console.log('Successfully sent message:', response);
+        console.log("------------------");
+        // console.log('data:', response.data);
       } catch (error) {
         console.error('Error sending message:', error);
       }
@@ -1451,3 +1464,51 @@ exports.updateEmployerLocation = async (req, res) => {
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
+
+exports.getStatusOfOrderId = async (req, res) => {
+  try {
+    const orderId = req.query.orderId;
+    // Aggregate pipeline to extract desired fields from the 'obj' array
+    const aggregationPipeline = [
+      { $unwind: "$obj" },
+      // Match documents with userType: "employer" and obj.orderId: orderId
+      { $match: { userType: "employer", "obj.orderId": orderId } },
+      // Match documents with userType: "employer"
+      // Project the desired fields from each job object, including the manpower array
+      {
+        $project: {
+          _id: 1, // Include the fields you need from the employer outside the obj array
+          employerName: 1,
+          job_desc: "$obj.job_desc",
+          siteLocation: "$obj.siteLocation",
+          no_Of_opening: "$obj.no_Of_opening",
+          fullTime: "$obj.fullTime",
+          maxiSalary: "$obj.maxSalary",
+          miniSalary: "$obj.miniSalary",
+          workingDays: "$obj.workingDays",
+          workingHours: "$obj.workingHours",
+          date: "$obj.date",
+          skills: "$obj.skills",
+          instantOrdirect: "$obj.instantOrdirect",
+          orderId: "$obj.orderId",
+          mobile: 1,
+          startTime: "$obj.startTime",
+          endTime: "$obj.endTime",
+          manpower: "$obj.manpower", // Include the manpower array
+          statusOfApply:"$obj.statusOfApply"
+        }
+      }
+    ];
+    // Execute the aggregation pipeline
+    const result = await User.aggregate(aggregationPipeline).exec();
+   return res.status(200).send({ data: result });
+  } catch (error) {
+    console.error(error);
+  return  res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+
+

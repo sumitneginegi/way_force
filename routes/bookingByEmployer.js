@@ -9,7 +9,7 @@ bookingRouter.post('/', /*Auth*/  createBookingByEmployer)
 bookingRouter.get('/getBookingByEmployer/:employerId', /*Auth*/  getBookingByEmployer)
 bookingRouter.get('/getBookingByManpower/:manpowerId', /*Auth*/  getBookingByManpower)
 bookingRouter.delete('/delete/deleteBooking/:Bookingg', /*Auth*/  deleteBooking)
- bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)
+//  bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)
 // bookingRouter.get('/getbookingsbyId/:id', /*Auth*/  getbookingsbyId)
 // // bookingRouter.get('/timer', /*Auth*/  timer)
 
