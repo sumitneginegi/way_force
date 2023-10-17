@@ -223,9 +223,7 @@ exports.createBookingByEmployer = async (req, res) => {
   try {
     const {
       employerId,
-      manpowerId,
-      agentId, // Add agentId
-      // amountPerHour,
+      userId,
       payment,
       workDetails,
       workDurationInYear,
@@ -234,31 +232,44 @@ exports.createBookingByEmployer = async (req, res) => {
       startDate,
     } = req.body;
 
+    console.log(req.body);
+
+    if (employerId === userId) {
+      return res.status(400).json({ error: "Employers cannot book themselves." });
+    }
+
+    // Check if a booking already exists for the same employer and user
     const existingBooking = await BookingByEmployer.findOne({
       employerId,
-      manpowerId,
-      agentId, // Check for agentId as well
+      userId,
     });
 
+    if (existingBooking) {
+      return res.status(400).json({ error: "This user is already booked by the same employer." });
+    }
 
+    // Create a new booking
     const newBooking = new BookingByEmployer({
       employerId,
-      manpowerId,
-      agentId, // Include agentId in the new booking
-      // amountPerHour,
+      userId,
       payment,
       workDetails,
       workDurationInYear,
       date,
       workLocation,
       startDate,
+      // lati: req.body.lati, // Use lati from work location
+      // longi: req.body.longi, // Use longi from work location
     });
 
     const savedBooking = await newBooking.save();
 
-    return res.status(201).json({ message: 'Booking created or updated successfully', data: savedBooking });
+    return res.status(201).json({
+      message: "Booking created successfully",
+      data: savedBooking,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ error: 'Something went wrong' });
+    return res.status(500).json({ error: "Something went wrong" });
   }
-};
+}

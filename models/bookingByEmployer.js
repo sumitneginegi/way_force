@@ -2,9 +2,8 @@ const mongoose = require("mongoose");
 const objectid = mongoose.Schema.Types.ObjectId;
 const bookingSchema = mongoose.Schema(
   {
-    EmployerId: { type: objectid, ref: "User" },
-    manpowerId: { type: objectid, ref: "User" },
-    agentId: { type: objectid, ref: "User" },
+    employerId: { type: objectid, ref: "User" },
+    userId: { type: objectid, ref: "User" },
     Status: {
       type: String,
       default: "pending",
@@ -53,14 +52,15 @@ const bookingSchema = mongoose.Schema(
     },
     startDate: {
       type: String
-    }
+    },
 
     // start_time: { type: String },
     // end_time: { type: String },
     // now_schedule: { type: String },
     // rewards: { type: String },
     // timer: { type: String },
-    // location: {type: String}
+    lati:{type:String},
+    longi:{type:String}
   },
   {
     timestamps: true,
