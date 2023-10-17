@@ -6,8 +6,8 @@ const bookingRouter = express.Router()
 
 // //CUSTOMER
 bookingRouter.post('/', /*Auth*/  createBookingByEmployer)
-bookingRouter.get('/getBookingByEmployer/:employerId', /*Auth*/  getBookingByEmployer)
-bookingRouter.get('/getBookingByManpower/:manpowerId', /*Auth*/  getBookingByManpower)
+bookingRouter.get('/get/BookingByEmployer/:employerId', /*Auth*/  getBookingByEmployer)
+bookingRouter.get('/get/BookingByManpower/:manpowerId', /*Auth*/  getBookingByManpower)
 bookingRouter.delete('/delete/deleteBooking/:Bookingg', /*Auth*/  deleteBooking)
 //  bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)
 // bookingRouter.get('/getbookingsbyId/:id', /*Auth*/  getbookingsbyId)

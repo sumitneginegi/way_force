@@ -86,17 +86,20 @@ const BookingByEmployer = require('../models/bookingByEmployer');
 
 exports.getBookingByEmployer = async (req, res) => {
   try {
-    const employerId = req.params.employerId;
-
     // Find bookings by EmployerId
-    const bookings = await BookingByEmployer.find({ EmployerId: employerId });
+    const bookings = await BookingByEmployer.find({ employerId: req.params.employerId });
+
+    if (!bookings || bookings.length==0) {
+      return res.status(404).json({ error: 'No bookings found for this employer.' });
+    }
 
     res.status(200).json({ data: bookings });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Something went wrong' });
+  return  res.status(500).json({ error: 'Something went wrong' });
   }
-}
+};
+
 
 
 

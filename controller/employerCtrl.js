@@ -224,9 +224,9 @@ exports.updateEmployer = async (req, res) => {
       registration_Number: req.body.registration_Number,
       aadharCard: req.body.aadharCard, // Updated field
       panCard: req.body.panCard, // Updated field
-      current_lati:req.body.current_lati,
-      current_longi:req.body.current_longi,
-      current_location:req.body.current_location
+      current_lati: req.body.current_lati,
+      current_longi: req.body.current_longi,
+      current_location: req.body.current_location
     };
 
     const updatedEmployer = await User.findByIdAndUpdate(employerId, updatedData, { new: true });
@@ -380,7 +380,7 @@ exports.detailInstantEmployer = async (req, res) => {
     }
 
     // Deduct the job posting price from the wallet balance
-    user.wallet-= jobPostingPrice;
+    user.wallet -= jobPostingPrice;
 
     // Push the new document into the documents array
     user.obj.push(data);
@@ -888,7 +888,7 @@ function generateOTP() {
 
 exports.generateAndSaveOTP = async (req, res) => {
   try {
-    const { orderId, manpowerId,statusOfApply } = req.body;
+    const { orderId, manpowerId, statusOfApply } = req.body;
 
     // Find the employer
     const employer = await User.findOne({ "obj.orderId": orderId });
@@ -921,8 +921,8 @@ exports.generateAndSaveOTP = async (req, res) => {
     // Generate the OTP
     const otp = generateOTP();
 
-   // Update the statusOfApply for the specific post inside the obj array
-   employer.obj[postIndex].statusOfApply = statusOfApply;
+    // Update the statusOfApply for the specific post inside the obj array
+    employer.obj[postIndex].statusOfApply = statusOfApply;
 
     // Save the OTP in employer's document
     employer.obj[postIndex].otpSendToEmployer = otp;
@@ -944,14 +944,14 @@ exports.generateAndSaveOTP = async (req, res) => {
     // Here you can trigger the sending of OTP to both manpower and employer if needed.
     // For example, you can send OTP via SMS or email to their mobile numbers or email addresses.
 
- // Create a response object with the updated post and employer data
- const response = {
-  updatedPost: post,
-  employerData: {
-    employerName: employer.obj[postIndex].employerName,
-    // Add other employer data fields as needed
-  },
-};
+    // Create a response object with the updated post and employer data
+    const response = {
+      updatedPost: post,
+      employerData: {
+        employerName: employer.obj[postIndex].employerName,
+        // Add other employer data fields as needed
+      },
+    };
 
 
     res.status(200).json({ message: "OTP generated and saved successfully.", man: response });
@@ -1201,8 +1201,8 @@ exports.updateManpowerToken = async (req, res) => {
     const { newToken } = req.body;
 
     // Find the manpower by manpowerId
-    const manpower = await User.findById({_id:req.params.manpowerId});
-console.log(manpower);
+    const manpower = await User.findById({ _id: req.params.manpowerId });
+    console.log(manpower);
     if (!manpower || manpower.userType !== "manpower") {
       return res.status(400).json({ message: "Invalid manpower ID" });
     }
@@ -1213,7 +1213,7 @@ console.log(manpower);
     // Save the updated manpower document
     await manpower.save();
 
-    return res.status(200).json({ message: "Token updated successfully",data:manpower });
+    return res.status(200).json({ message: "Token updated successfully", data: manpower });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal server error" });
@@ -1225,7 +1225,7 @@ console.log(manpower);
 
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
-    const { employerId, orderId, radiusInKm , category } = req.body;
+    const { employerId, orderId, radiusInKm, category, body } = req.body;
 
     // Find the employer by employerId
     const employer = await User.findById(employerId);
@@ -1249,7 +1249,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
       explainYourWork,
       date
     } = post;
-  
+
     // Extract the post's latitude and longitude
     const { lati, longi } = post;
 
@@ -1281,22 +1281,28 @@ exports.findManpowerthroughRadius = async (req, res) => {
         data: {
           userType: manpower.userType, // Custom data
           _id: manpower._id ? manpower._id.toString() : "",
-          employerName: employer.employerName,
-          employerMobile: employer.mobile,
-          postDetails: `${category}, ${job_desc}, ${siteLocation}, ${category}, ${explainYourWork}, ${date}`,
+          // employer:employer._id,
+          // employerName: employer.employerName,
+          // employerMobile: employer.mobile,
+          payload: `employer:${employer._id},employerName: ${employer.employerName},employerMobile: ${employer.mobile},category:${category}, job_desc:${job_desc},siteLocation:${siteLocation},explainYourWork:${explainYourWork}, date:${date}`,
         },
         notification: {
           title: `Lead for ${category}`, // Corrected title property
-          body: `hello`,          
-          // Description: ${job_desc}
-            // Location: ${siteLocation}
-            // Category: ${category}
-            // Explain Your Work: ${explainYourWork}
-            // Date: ${date}
-           // Include post details in the body
+          body: body,
         },
+        // payload: {
+        //   employer : `${employer._id}`,
+        //   employerName: `${employer.employerName}`,
+        //   employerMobile: `${employer.mobile}`,
+        //   category:`${category}`,
+        //    job_desc:`${job_desc}`,
+        //    siteLocation:`${siteLocation}`,
+        //    explainYourWork:`${explainYourWork}`,
+        //     date:`${date}`
+        // },
+        
         token: manpower.token,
-       
+
       };
 
       try {
@@ -1315,7 +1321,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
-};
+}
 
 
 
@@ -1340,6 +1346,50 @@ function getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {
 function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
+
+
+
+exports.sendNotificationToParticularManpower = async (req, res) => {
+  try {
+    const { manpowerId, message } = req.body;
+
+    // Find the manpower user by their ID
+    const manpowerUser = await User.findById(manpowerId);
+    console.log(manpowerUser);
+    if (!manpowerUser || manpowerUser.userType !== "manpower") {
+      return res.status(400).json({ message: "Invalid manpower ID or not a manpower user" });
+    }
+
+    // Create a notification message with the desired content
+    const notificationMessage = {
+      data: {
+        userType: manpowerUser.userType, // Custom data
+        _id: manpowerUser._id ? manpowerUser._id.toString() : "",
+        // employerName: employer.employerName,
+        //   employerMobile: employer.mobile,
+        //   postDetails: `${category}, ${job_desc}, ${siteLocation}, ${category}, ${explainYourWork}, ${date}`,
+      },
+      notification: {
+        title: "Custom Notification Title",
+        body: message, // Custom notification message
+      },
+      token: manpowerUser.token, // The device registration ID (token) of the manpower user
+    };
+
+    try {
+      const response = await admin.messaging().send(notificationMessage);
+      console.log('Successfully sent message:', response);
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+
+    return res.status(200).json({ message: "Notification sent successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
+}
+
 
 
 
@@ -1424,7 +1474,7 @@ exports.updateWalletForEmployers = async (req, res) => {
 
 // Define the PUT API route to update lati, longi, and siteLocation for a specific "manpower" user
 exports.updateEmployerLocation = async (req, res) => {
-  const {  current_location,current_lati,current_longi } = req.body;
+  const { current_location, current_lati, current_longi } = req.body;
   const id = req.params.id;
 
   try {
@@ -1497,16 +1547,16 @@ exports.getStatusOfOrderId = async (req, res) => {
           startTime: "$obj.startTime",
           endTime: "$obj.endTime",
           manpower: "$obj.manpower", // Include the manpower array
-          statusOfApply:"$obj.statusOfApply"
+          statusOfApply: "$obj.statusOfApply"
         }
       }
     ];
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-   return res.status(200).send({ data: result });
+    return res.status(200).send({ data: result });
   } catch (error) {
     console.error(error);
-  return  res.status(500).json({ error: "Internal Server Error" });
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
