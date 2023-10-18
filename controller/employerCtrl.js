@@ -1348,32 +1348,30 @@ function deg2rad(deg) {
 }
 
 
-
-exports.sendNotificationToParticularManpower = async (req, res) => {
+exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
   try {
-    const { manpowerId, message } = req.body;
+    const { senderId, receiverId, body, title,category,job_desc,siteLocation,explainYourWork,date } = req.body;
 
-    // Find the manpower user by their ID
-    const manpowerUser = await User.findById(manpowerId);
-    console.log(manpowerUser);
-    if (!manpowerUser || manpowerUser.userType !== "manpower") {
-      return res.status(400).json({ message: "Invalid manpower ID or not a manpower user" });
+    // Find the sender and receiver users by their IDs
+    const senderUser = await User.findById(senderId);
+    const receiverUser = await User.findById(receiverId);
+
+    if (!senderUser || !receiverUser) {
+      return res.status(400).json({ message: "Invalid sender or receiver ID" });
     }
 
     // Create a notification message with the desired content
     const notificationMessage = {
       data: {
-        userType: manpowerUser.userType, // Custom data
-        _id: manpowerUser._id ? manpowerUser._id.toString() : "",
-        // employerName: employer.employerName,
-        //   employerMobile: employer.mobile,
-        //   postDetails: `${category}, ${job_desc}, ${siteLocation}, ${category}, ${explainYourWork}, ${date}`,
+        senderId: senderUser._id ? senderUser._id.toString() : "",
+        receiverId: receiverUser._id ? receiverUser._id.toString() : "",
+        payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},job_desc:${job_desc},siteLocation:${siteLocation},explainYourWork:${explainYourWork}, date:${date}`,        
       },
       notification: {
-        title: "Custom Notification Title",
-        body: message, // Custom notification message
+        title: title,
+        body: body,
       },
-      token: manpowerUser.token, // The device registration ID (token) of the manpower user
+      token: receiverUser.token,
     };
 
     try {
@@ -1381,6 +1379,7 @@ exports.sendNotificationToParticularManpower = async (req, res) => {
       console.log('Successfully sent message:', response);
     } catch (error) {
       console.error('Error sending message:', error);
+      return res.status(500).json({ message: "Failed to send notification" });
     }
 
     return res.status(200).json({ message: "Notification sent successfully" });
@@ -1389,6 +1388,9 @@ exports.sendNotificationToParticularManpower = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 }
+
+
+
 
 
 

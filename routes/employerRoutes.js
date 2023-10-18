@@ -32,7 +32,7 @@ const {
 
     registrationthroughAdmin,
     findManpowerthroughRadius,
-    sendNotificationToParticularManpower,
+    sendNotificationToParticularManpowerOrEmployer,
     getPostByEmployerIdAndOrderId,
     getCountOfPostsByEmployerIdAndInstantOrDirect,
     YourProfileUpdateEmployer,
@@ -116,7 +116,7 @@ router.get("/get/getPostsByEmployerId/:id", getPostsByEmployerId)
 
 
 router.post("/findManpower", findManpowerthroughRadius)
-router.post("/findParticularManpower", sendNotificationToParticularManpower)
+router.post("/findParticularManpowerOrEmployer", sendNotificationToParticularManpowerOrEmployer)
 router.get("/getPostByEmployerId/OrderId", getPostByEmployerIdAndOrderId)
 router.get("/getCountOfPostsByEmployerId/InstantOrDirect", getCountOfPostsByEmployerIdAndInstantOrDirect)
 
