@@ -220,8 +220,6 @@ exports.deleteBooking = async (req, res) => {
   }
 }
 
-
-
 exports.createBookingByEmployer = async (req, res) => {
   try {
     const {
@@ -239,16 +237,6 @@ exports.createBookingByEmployer = async (req, res) => {
 
     if (employerId === userId) {
       return res.status(400).json({ error: "Employers cannot book themselves." });
-    }
-
-    // Check if a booking already exists for the same employer and user
-    const existingBooking = await BookingByEmployer.findOne({
-      employerId,
-      userId,
-    });
-
-    if (existingBooking) {
-      return res.status(400).json({ error: "This user is already booked by the same employer." });
     }
 
     // Create a new booking
