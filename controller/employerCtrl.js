@@ -1284,7 +1284,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
           // employer:employer._id,
           // employerName: employer.employerName,
           // employerMobile: employer.mobile,
-          payload: `employer:${employer._id},employerName: ${employer.employerName},employerMobile: ${employer.mobile},category:${category}, job_desc:${job_desc},siteLocation:${siteLocation},explainYourWork:${explainYourWork}, date:${date}`,
+          payload: `employer:${employer._id},employerName: ${employer.employerName},employerMobile: ${employer.mobile},category:${category},orderId:${orderId}, job_desc:${job_desc},siteLocation:${siteLocation},lati:${manpower.serviceLocation.lati},longi:${manpower.serviceLocation.longi},explainYourWork:${explainYourWork}, date:${date}`,
         },
         notification: {
           title: `Lead for ${category}`, // Corrected title property
@@ -1300,9 +1300,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
         //    explainYourWork:`${explainYourWork}`,
         //     date:`${date}`
         // },
-        
         token: manpower.token,
-
       };
 
       try {
@@ -1549,7 +1547,9 @@ exports.getStatusOfOrderId = async (req, res) => {
           startTime: "$obj.startTime",
           endTime: "$obj.endTime",
           manpower: "$obj.manpower", // Include the manpower array
-          statusOfApply: "$obj.statusOfApply"
+          statusOfApply: "$obj.statusOfApply",
+          lati:"$obj.lati",
+          longi:"$obj.longi"
         }
       }
     ];
