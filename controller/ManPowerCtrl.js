@@ -327,7 +327,7 @@ exports.sendotpManpower = async (req, res) => {
     const otp = Math.floor(1000 + Math.random() * 9000);
 
 
-    if (!phoneNumber) {
+    if (!req.body) {
       return res.status(404).json({ error: "phoneNumber not given" });
     }
     // // Check if a user with the provided mobile number and userType "employer" already exists
