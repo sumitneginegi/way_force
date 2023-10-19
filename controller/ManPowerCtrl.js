@@ -504,6 +504,7 @@ exports.detailSignup = async (req, res) => {
     const {
       manpowerName,
       mobile,
+      otp,
       state,
       city,
       country,
@@ -547,6 +548,7 @@ exports.detailSignup = async (req, res) => {
 
       const newUser = await User.create({
         mobile: mobile,
+        otp:otp,
         userType: "manpower",
         wallet: 100,
         manpowerName: manpowerName,
