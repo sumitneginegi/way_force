@@ -168,18 +168,21 @@ exports.registrationEmployer = async (req, res) => {
 exports.sendotpEmployer = async (req, res) => {
   console.log("hi");
   try {
-    const { phoneNumber } = req.body
+    const { phoneNumber } = req.body;
 
-    const otp = Math.floor(1000 + Math.random() * 9000)
+    // Generate a random 4-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
 
-    res.status(200).json({ message: "OTP sent successfully", phoneNumber: phoneNumber, otp: otp });
+
+    return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
+
   }
-
   catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
-}
+};
+
 
 
 
@@ -1222,7 +1225,6 @@ exports.updateManpowerToken = async (req, res) => {
 
 
 
-
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
     const { employerId, orderId, radiusInKm, category, body } = req.body;
@@ -1348,7 +1350,7 @@ function deg2rad(deg) {
 
 exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
   try {
-    const { senderId, receiverId, body, title,category,job_desc,siteLocation,explainYourWork,date } = req.body;
+    const { senderId, receiverId, body, title, category, job_desc, siteLocation, explainYourWork, date } = req.body;
 
     // Find the sender and receiver users by their IDs
     const senderUser = await User.findById(senderId);
@@ -1363,7 +1365,7 @@ exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
       data: {
         senderId: senderUser._id ? senderUser._id.toString() : "",
         receiverId: receiverUser._id ? receiverUser._id.toString() : "",
-        payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},job_desc:${job_desc},siteLocation:${siteLocation},explainYourWork:${explainYourWork}, date:${date}`,        
+        payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},job_desc:${job_desc},siteLocation:${siteLocation},explainYourWork:${explainYourWork}, date:${date}`,
       },
       notification: {
         title: title,
@@ -1548,8 +1550,8 @@ exports.getStatusOfOrderId = async (req, res) => {
           endTime: "$obj.endTime",
           manpower: "$obj.manpower", // Include the manpower array
           statusOfApply: "$obj.statusOfApply",
-          lati:"$obj.lati",
-          longi:"$obj.longi"
+          lati: "$obj.lati",
+          longi: "$obj.longi"
         }
       }
     ];
@@ -1561,6 +1563,9 @@ exports.getStatusOfOrderId = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
 
 
 

@@ -323,16 +323,34 @@ exports.sendotpManpower = async (req, res) => {
   console.log("hi");
   try {
     const { phoneNumber } = req.body
+// Generate a random 4-digit OTP
+const otp = Math.floor(1000 + Math.random() * 9000);
 
-    const otp = Math.floor(1000 + Math.random() * 9000)
+// Check if a user with the provided mobile number and userType "employer" already exists
+const user = await User.findOne({ mobile: phoneNumber, userType: "manpower" });
 
-    res.status(200).json({ message: "OTP sent successfully", phoneNumber: phoneNumber, otp: otp });
+if (!user) {
+  // If the user doesn't exist, create a new user with the provided details
+  req.body.userType = "manpower";
+  req.body.wallet = 100;
 
+  const userCreate = await User.create({
+    mobile: phoneNumber,
+    otp: otp,
+    ...req.body
+  });
+
+  return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
+} else {
+  // If a user with the same mobile number and userType "employer" exists, return an error
+  return res.status(400).json({ message: "User already exists" });
+}
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
+
 
 exports.signupManpower = async (req, res) => {
   try {
