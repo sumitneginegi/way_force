@@ -164,7 +164,7 @@ exports.registrationManpowerAdmin = async (req, res) => {
   try {
     const data = {
       manpowerName: req.body.manpowerName,
-      mobile:req.body.mobile,
+      mobile: req.body.mobile,
       address: {
         state: req.body.state,
         city: req.body.city,
@@ -214,26 +214,26 @@ exports.registrationManpowerAdmin = async (req, res) => {
     // }
 
     // if (req.body.education && Array.isArray(req.body.education)) {
-      for (let i = 0; i < req.body.education.length; i++) {
-        data.education.push({
-          educationType: req.body.education[i].educationType,
-          degree: req.body.education[i].degree,
-          yearOfPassing: req.body.education[i].yearOfPassing,
-        });
-      }
+    for (let i = 0; i < req.body.education.length; i++) {
+      data.education.push({
+        educationType: req.body.education[i].educationType,
+        degree: req.body.education[i].degree,
+        yearOfPassing: req.body.education[i].yearOfPassing,
+      });
+    }
     // } else {
     //   return res.status(400).json({ message: "Invalid education data" });
     // }
 
 
     // if (req.body.documents && Array.isArray(req.body.documents)) {
-      for (let i = 0; i < req.body.documents.length; i++) {
-        data.documents.push({
-          documentName: req.body.documents[i].documentName,
-          documentNumber: req.body.documents[i].documentNumber,
-          documentImage: req.body.documents[i].documentImage,
-        });
-      }
+    for (let i = 0; i < req.body.documents.length; i++) {
+      data.documents.push({
+        documentName: req.body.documents[i].documentName,
+        documentNumber: req.body.documents[i].documentNumber,
+        documentImage: req.body.documents[i].documentImage,
+      });
+    }
     // } else {
     //   return res.status(400).json({ message: "Invalid document data" });
     // }
@@ -258,7 +258,7 @@ exports.registrationManpowerAdmin = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-   return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -323,28 +323,32 @@ exports.sendotpManpower = async (req, res) => {
   console.log("hi");
   try {
     const { phoneNumber } = req.body
-// Generate a random 4-digit OTP
-const otp = Math.floor(1000 + Math.random() * 9000);
+    // Generate a random 4-digit OTP
+    const otp = Math.floor(1000 + Math.random() * 9000);
 
-// Check if a user with the provided mobile number and userType "employer" already exists
-const user = await User.findOne({ mobile: phoneNumber, userType: "manpower" });
 
-if (!user) {
-  // If the user doesn't exist, create a new user with the provided details
-  req.body.userType = "manpower";
-  req.body.wallet = 100;
+    if (!phoneNumber) {
+      return res.status(404).json({ error: "phoneNumber not given" });
+    }
+    // // Check if a user with the provided mobile number and userType "employer" already exists
+    // const user = await User.findOne({ mobile: phoneNumber, userType: "manpower" });
 
-  const userCreate = await User.create({
-    mobile: phoneNumber,
-    otp: otp,
-    ...req.body
-  });
+    // if (!user) {
+    //   // If the user doesn't exist, create a new user with the provided details
+    //   req.body.userType = "manpower";
+    //   req.body.wallet = 100;
 
-  return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
-} else {
-  // If a user with the same mobile number and userType "employer" exists, return an error
-  return res.status(400).json({ message: "User already exists" });
-}
+    //   const userCreate = await User.create({
+    //     mobile: phoneNumber,
+    //     otp: otp,
+    //     ...req.body
+    //   });
+
+    return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
+    // } else {
+    //   // If a user with the same mobile number and userType "employer" exists, return an error
+    //   return res.status(400).json({ message: "User already exists" });
+    // }
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
@@ -407,69 +411,203 @@ exports.verifyOtp = async (req, res) => {
 }
 
 
+
+// exports.detailSignup = async (req, res) => {
+//   try {
+    
+//     const data = {
+//       manpowerName: req.body.manpowerName,
+//       mobile: req.body.mobile,
+//       address: {
+//         state: req.body.state,
+//         city: req.body.city,
+//         country: req.body.country,
+//         pinCode: req.body.pinCode,
+//         landmark: req.body.landmark,
+//         postOffice: req.body.postOffice,
+//         line: req.body.line,
+//         village: req.body.village,
+//         block: req.body.block,
+//       },
+//       education: [], // Initialize an empty array for education
+//       age: req.body.age,
+//       gender: req.body.gender,
+//       dob: req.body.dob,
+//       email: req.body.email,
+//       language: [],
+//       bio: req.body.bio,
+//       experience: req.body.experience,
+//       minSalary: req.body.minSalary,
+//       maxSalary: req.body.maxSalary,
+//       jobType: req.body.jobType,
+//       siteLocation: req.body.siteLocation,
+//       serviceLocation: {
+//         lati: req.body.latitude,
+//         longi: req.body.longitude,
+//       },
+//       documents: [], // Initialize an empty array for documents
+//       category: req.body.category,
+//       workingDays: req.body.workingDays,
+//       workingHours: req.body.workingHours,
+//       uploadPanCard: req.body.uploadPanCard,
+//       panCard: req.body.panCard,
+//       uploadAadharCard: req.body.uploadAadharCard,
+//       aadharCard: req.body.aadharCard,
+//       profile: req.body.profile,
+//       skills: req.body.skills, // An array of skill references
+//     };
+
+//     // Check if a user with the provided mobile number and userType "manpower" already exists
+//     const existingUser = await User.findOne({ mobile: mobile, userType: "manpower" });
+
+//     if (!existingUser) {
+//       // If the user doesn't exist, create a new user with the provided details
+//       const newUser = await User.create({
+//         mobile: mobile,
+//         userType: "manpower",
+//         wallet: 100, // You can set the initial wallet balance here
+//         manpowerName: manpowerName,
+//         address: address,
+//         education: education,
+//         age: age,
+//         gender: gender,
+//         dob: dob,
+//         language: language,
+//         bio: bio,
+//         experience: experience,
+//         minSalary: minSalary,
+//         maxSalary: maxSalary,
+//         skills: skills,
+//         jobType: jobType,
+//         serviceLocation: serviceLocation,
+//         documents: documents,
+//         city: city,
+//         state: state,
+//         email: email,
+//         siteLocation: siteLocation,
+//         category: category,
+//       });
+
+//       return res.status(200).json({ message: "Details filled and user created successfully", data: newUser });
+//     } else {
+//       return res.status(200).json({ message: "Already Details"});
+//     }
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ error: "Something went wrong" });
+//   }
+// };
+
+
 exports.detailSignup = async (req, res) => {
   try {
-    const id = req.params.id;
     const {
       manpowerName,
-      address,
-      education,
+      mobile,
+      state,
+      city,
+      country,
+      pinCode,
+      landmark,
+      postOffice,
+      line,
+      village,
+      block,
       age,
       gender,
       dob,
-      language,
+      email,
       bio,
       experience,
       minSalary,
       maxSalary,
-      skills,
-      city,
-      state,
       jobType,
-      serviceLocation,
+      siteLocation,
+      latitude,
+      longitude,
+      category,
+      workingDays,
+      workingHours,
+      uploadPanCard,
+      panCard,
+      uploadAadharCard,
+      aadharCard,
+      profile,
+      skills,
+      education,
       documents,
-      email,
-      siteLocation
+      language,
     } = req.body;
 
-    // Check if the user exists
-    const manPower = await User.findById(id);
-    if (!manPower) {
-      return res.status(404).json({ error: "User not found" });
+    // Check if a user with the provided mobile number and userType "manpower" already exists
+    const existingUser = await User.findOne({ mobile: mobile, userType: "manpower" });
+
+    if (!existingUser) {
+      // If the user doesn't exist, create a new user with the provided details
+
+      const newUser = await User.create({
+        mobile: mobile,
+        userType: "manpower",
+        wallet: 100,
+        manpowerName: manpowerName,
+        address: {
+          state: state,
+          city: city,
+          country: country,
+          pinCode: pinCode,
+          landmark: landmark,
+          postOffice: postOffice,
+          line: line,
+          village: village,
+          block: block,
+        },
+        education: education.map((edu) => ({
+          educationType: edu.educationType,
+          degree: edu.degree,
+          yearOfPassing: edu.yearOfPassing,
+        })),
+        age: age,
+        gender: gender,
+        dob: dob,
+        email: email,
+        language: language,
+        bio: bio,
+        experience: experience,
+        minSalary: minSalary,
+        maxSalary: maxSalary,
+        skills: skills,
+        jobType: jobType,
+        serviceLocation: {
+          lati: latitude,
+          longi: longitude,
+        },
+        documents: documents.map((doc) => ({
+          documentName: doc.documentName,
+          documentNumber: doc.documentNumber,
+          documentImage: doc.documentImage,
+        })),
+        category: category,
+        workingDays: workingDays,
+        workingHours: workingHours,
+        uploadPanCard: uploadPanCard,
+        panCard: panCard,
+        uploadAadharCard: uploadAadharCard,
+        aadharCard: aadharCard,
+        profile: profile,
+      });
+
+      return res.status(200).json({ message: "Details filled and user created successfully", data: newUser });
+    } else {
+      return res.status(200).json({ message: "Already Details" });
     }
-
-    // Update the user's details
-    manPower.manpowerName = manpowerName;
-    manPower.address = address;
-    manPower.education = education;
-    manPower.age = age;
-    manPower.gender = gender;
-    manPower.dob = dob;
-    manPower.language = language;
-    manPower.bio = bio;
-    manPower.experience = experience;
-    manPower.miniSalary = minSalary;
-    manPower.maxSalary = maxSalary;
-    manPower.skills = skills;
-    manPower.jobType = jobType;
-    manPower.serviceLocation = serviceLocation;
-    manPower.documents = documents;
-    manPower.city = city;
-    manPower.state = state;
-    manPower.email = email;
-    manPower.siteLocation = siteLocation
-    // manPower.otp = OTP.generateOTP();
-
-    await manPower.save();
-
-    return res
-      .status(200)
-      .json({ message: "Details filled successfully", data: manPower });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Something went wrong" });
   }
-}
+};
+
+
+
 
 
 exports.workDetails = async (req, res) => {

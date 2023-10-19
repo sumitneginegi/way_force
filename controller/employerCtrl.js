@@ -169,19 +169,15 @@ exports.sendotpEmployer = async (req, res) => {
   console.log("hi");
   try {
     const { phoneNumber } = req.body;
-
     // Generate a random 4-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
-
-
     return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
-
   }
   catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
-};
+}
 
 
 
@@ -364,7 +360,8 @@ exports.detailInstantEmployer = async (req, res) => {
       orderId: orderId,
       employerName: req.body.employerName,
       startTime: req.body.startTime,
-      endTime: req.body.endTime
+      endTime: req.body.endTime,
+      workingHours: req.body.workingHours,
     }
 
     const user = await User.findById(req.params.id);
@@ -1566,6 +1563,25 @@ exports.getStatusOfOrderId = async (req, res) => {
 
 
 
+
+
+exports.updateCategoryForEmployer = async (req, res) => {
+  try {
+    // Define the condition to find users with userType "manpower" and no category set
+    const condition = { userType: "employer", token: { $exists: false } };
+
+    // Define the update operation (setting the category field)
+    const update = { $set: { token: "defaulttoken" } }; // Set the default category value
+
+    // Use updateMany to update documents that match the condition
+    const result = await User.updateMany(condition, update);
+
+    return res.status(200).json({ message: "Category field added to employer users", updatedCount: result.nModified });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+};
 
 
 

@@ -62,7 +62,8 @@ router.post("/signup", signupManpower);
 router.post("/login", loginManpower);
 router.post("/sendotpManpower/Login", sendotpManpowerLogin);
 router.post("/verify/otp/:id", verifyOtp);
-router.put("/fill/details/:id",/*auth.verifyToken,*/ detailSignup);
+// router.put("/fill/details/:id",/*auth.verifyToken,*/ detailSignup);
+router.post("/fill/details",/*auth.verifyToken,*/ detailSignup);
 router.post("/work-details/:id", workDetails);
 router.put(
   "/upload/documents/:id",

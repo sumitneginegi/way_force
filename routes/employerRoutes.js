@@ -40,7 +40,8 @@ const {
     updateWalletForEmployers,
     updateManpowerToken,
     updateEmployerLocation,
-    getStatusOfOrderId
+    getStatusOfOrderId,
+    updateCategoryForEmployer
 } = require("../controller/employerCtrl");
 
 const router = express.Router();
@@ -134,6 +135,6 @@ router.put("/updateWalletForEmployers", updateWalletForEmployers);
 router.put("/update/ManpowerToken/:manpowerId", updateManpowerToken);
 router.put("/update/EmployerLocation/:id", updateEmployerLocation);
 router.get("/get/getStatusOfOrderId", getStatusOfOrderId);
-
+router.put("/update/updateCategoryForEmployer", updateCategoryForEmployer);
 
 module.exports = router;
