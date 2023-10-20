@@ -604,7 +604,7 @@ exports.detailSignup = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: "Something went wrong" });
+   return res.status(500).json({ error: "Something went wrong" });
   }
 };
 
