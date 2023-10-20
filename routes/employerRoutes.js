@@ -39,6 +39,7 @@ const {
     updateLatAndLong,
     updateWalletForEmployers,
     updateManpowerToken,
+    updateEmployerToken,
     updateEmployerLocation,
     getStatusOfOrderId,
     updateCategoryForEmployer
@@ -133,6 +134,7 @@ router.put("/update/LatAndLong/:orderId", updateLatAndLong);
 router.post("/verifyOtpByManpower/:manpowerid", verifyOtpByManpower);
 router.put("/updateWalletForEmployers", updateWalletForEmployers);
 router.put("/update/ManpowerToken/:manpowerId", updateManpowerToken);
+router.put("/update/EmployerToken/:employerId", updateEmployerToken);
 router.put("/update/EmployerLocation/:id", updateEmployerLocation);
 router.get("/get/getStatusOfOrderId", getStatusOfOrderId);
 router.put("/update/updateCategoryForEmployer", updateCategoryForEmployer);

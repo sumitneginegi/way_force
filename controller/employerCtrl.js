@@ -1222,6 +1222,33 @@ exports.updateManpowerToken = async (req, res) => {
 
 
 
+exports.updateEmployerToken = async (req, res) => {
+  try {
+    const { newToken } = req.body;
+
+    // Find the manpower by manpowerId
+    const employer = await User.findById({ _id: req.params.employerId });
+    console.log(employer);
+    if (!employer || employer.userType !== "employer") {
+      return res.status(400).json({ message: "Invalid employer ID" });
+    }
+
+    // Update the token field for the manpower
+    employer.token = newToken;
+
+    // Save the updated manpower document
+    await employer.save();
+
+    return res.status(200).json({ message: "Token updated successfully", data: employer });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
 exports.findManpowerthroughRadius = async (req, res) => {
   try {
     const { employerId, orderId, radiusInKm, category, body } = req.body;
