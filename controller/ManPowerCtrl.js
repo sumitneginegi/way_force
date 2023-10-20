@@ -600,7 +600,7 @@ exports.detailSignup = async (req, res) => {
 
       return res.status(200).json({ message: "Details filled and user created successfully", data: newUser });
     } else {
-      return res.status(200).json({ message: "Already Details" });
+      return res.status(404).json({ message: "Already Details" });
     }
   } catch (error) {
     console.log(error);
