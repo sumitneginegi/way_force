@@ -1,5 +1,5 @@
 const BookingByEmployer = require('../models/bookingByEmployer');
-
+const User = require("../models/user")
 // exports.createBookingByEmployer = async (req, res) => {
 //   try {
 //     const {
@@ -220,6 +220,9 @@ exports.deleteBooking = async (req, res) => {
   }
 }
 
+
+
+
 exports.createBookingByEmployer = async (req, res) => {
   try {
     const {
@@ -264,3 +267,40 @@ exports.createBookingByEmployer = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong" });
   }
 }
+
+
+
+
+exports.getEmployersWhoBookedManpower = async (req, res) => {
+  try {
+    const manpowerUserId = req.params.manpowerUserId;
+
+    // Find all bookings for the specified manpower user
+    const bookings = await BookingByEmployer.find({ userId: manpowerUserId });
+
+    // Initialize an array to store employer data
+    // const employers = [];
+
+    // for (const booking of bookings) {
+    //   // Retrieve employer details for each booking
+    //   const employer = await User.findById(booking.employerId);
+
+    //   if (employer) {
+    //     // Exclude the 'obj' field from the employer data
+    //     employer.obj = undefined;
+    //     employers.push(employer);
+    //   }
+    // }
+
+    return res.status(200).json({
+      message: "List of employers who have booked the manpower user",
+      count: bookings.length,
+      bookings: bookings,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+
