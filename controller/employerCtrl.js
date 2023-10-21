@@ -1395,12 +1395,14 @@ exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
 
     if (senderRole === 'manpower') {
       // Manpower
+     
       notificationMessage = {
         data: {
           senderId: senderUser._id ? senderUser._id.toString() : "",
           receiverId: receiverUser._id ? receiverUser._id.toString() : "",
           payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},siteLocation:${siteLocation}`,
-          manpowerDetails: `Manpower-specific details here`,
+          // manpowerDetails: `Manpower-specific details here`,
+          
         },
         notification: {
           title: title,
@@ -1409,16 +1411,17 @@ exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
         token: receiverUser.token,
       };
     } else if (senderRole === 'employer') {
-
+      
   // Find the specific object in the 'obj' array with the matching 'orderId'
   const obj = senderUser.obj.find((item) => item.orderId === orderId);
+  console.log(obj);
   if (!obj) {
     return res.status(400).json({ message: "No matching 'orderId' found in the 'obj' array" });
   }
 
   // Extract the relevant fields from the found 'obj' object
-  // const { siteLocation, job_desc, explainYourWork, date } = obj;
-  const { lati,longi } = obj;
+  const { siteLocation, job_desc, explainYourWork, date,lati,longi } = obj;
+  // const { lati,longi } = obj;
 
       //employer 
       notificationMessage = {
