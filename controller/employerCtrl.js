@@ -1372,9 +1372,11 @@ function deg2rad(deg) {
 }
 
 
+
+
 exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
   try {
-    const { senderId, receiverId, body, title, category, job_desc, siteLocation, explainYourWork, date } = req.body;
+    const { senderId, receiverId, body, title, category, job_desc, siteLocation, explainYourWork, date,orderId } = req.body;
 
     // Find the sender and receiver users by their IDs
     const senderUser = await User.findById(senderId);
@@ -1384,19 +1386,56 @@ exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
       return res.status(400).json({ message: "Invalid sender or receiver ID" });
     }
 
-    // Create a notification message with the desired content
-    const notificationMessage = {
-      data: {
-        senderId: senderUser._id ? senderUser._id.toString() : "",
-        receiverId: receiverUser._id ? receiverUser._id.toString() : "",
-        payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},job_desc:${job_desc},siteLocation:${siteLocation},explainYourWork:${explainYourWork}, date:${date}`,
-      },
-      notification: {
-        title: title,
-        body: body,
-      },
-      token: receiverUser.token,
-    };
+    // Check the role of the sender (manpower or employer)
+    const senderRole = senderUser.userType; // Assuming you have a 'userType' field in your User model
+
+
+    // Create a notification message with the desired content based on the sender's role
+    let notificationMessage;
+
+    if (senderRole === 'manpower') {
+      // Manpower
+      notificationMessage = {
+        data: {
+          senderId: senderUser._id ? senderUser._id.toString() : "",
+          receiverId: receiverUser._id ? receiverUser._id.toString() : "",
+          payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},siteLocation:${siteLocation}`,
+          manpowerDetails: `Manpower-specific details here`,
+        },
+        notification: {
+          title: title,
+          body: body,
+        },
+        token: receiverUser.token,
+      };
+    } else if (senderRole === 'employer') {
+
+  // Find the specific object in the 'obj' array with the matching 'orderId'
+  const obj = senderUser.obj.find((item) => item.orderId === orderId);
+  if (!obj) {
+    return res.status(400).json({ message: "No matching 'orderId' found in the 'obj' array" });
+  }
+
+  // Extract the relevant fields from the found 'obj' object
+  // const { siteLocation, job_desc, explainYourWork, date } = obj;
+  const { lati,longi } = obj;
+
+      //employer 
+      notificationMessage = {
+        data: {
+          senderId: senderUser._id ? senderUser._id.toString() : "",
+          receiverId: receiverUser._id ? receiverUser._id.toString() : "",
+          payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},job_desc:${job_desc},explainYourWork:${explainYourWork}, date:${date},orderId:${orderId},siteLocation:${siteLocation},lati:${lati},longi:${longi}`,
+        },
+        notification: {
+          title: title,
+          body: body,
+        },
+        token: receiverUser.token,
+      };
+    } else {
+      return res.status(500).json({ message: "notification is not from manpower or employer" });
+    }
 
     try {
       const response = await admin.messaging().send(notificationMessage);
