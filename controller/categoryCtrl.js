@@ -6,7 +6,8 @@ exports.createCategory = async (req, res) => {
     const { name, price, status } = req.body;
 
     // Check if a category with the same name already exists
-    const existing = await Category.find({ name: { $regex: new RegExp(name, 'i') }});
+    const existing = await Category.findOne({ name: { $regex: new RegExp(name, 'i') } });
+
     if (existing) {
       return res.status(409).json({ error: "Category already in use" });
     }
@@ -21,12 +22,13 @@ exports.createCategory = async (req, res) => {
     // Save the category to the database
     await category.save();
 
-   return res.status(201).json({ message: "Category created successfully", data: category });
+    return res.status(201).json({ message: "Category created successfully", data: category });
   } catch (error) {
     console.error(error);
-   return res.status(500).json({ error: "Something went wrong" });
+    return res.status(500).json({ error: "Something went wrong" });
   }
 };
+
 
 
 exports.getAllCategories = async (req, res) => {
