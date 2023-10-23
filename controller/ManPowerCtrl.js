@@ -2,6 +2,8 @@ const ManPower = require("../models/ManPowerModel")
 const OTP = require("../config/OTP-Generate")
 const Employerr = require("../models/employerModel")
 const Category = require("../models/categoryModel")
+const stateModel = require('../models/state');
+const cityModel = require('../models/selectcity');
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const twilio = require("twilio");
@@ -415,7 +417,7 @@ exports.verifyOtp = async (req, res) => {
 
 // exports.detailSignup = async (req, res) => {
 //   try {
-    
+
 //     const data = {
 //       manpowerName: req.body.manpowerName,
 //       mobile: req.body.mobile,
@@ -545,24 +547,41 @@ exports.detailSignup = async (req, res) => {
     const existingUser = await User.findOne({ mobile: mobile, userType: "manpower" });
 
     if (!existingUser) {
-   // Find the category ID based on the category name
-   const categoryObject = await Category.findOne({ name: { $regex: new RegExp(category, 'i') }});
+      // Find the category ID based on the category name
+      const categoryObject = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
 
-   if (!categoryObject) {
-     return res.status(404).json({ message: "Category not found" });
-   }
+      if (!categoryObject) {
+        return res.status(404).json({ message: "Category not found" });
+      }
+
+
+       // Find the state by name
+    const stateData = await stateModel.findOne({ state: { $regex: new RegExp(state, 'i') } });
+
+    if (!stateData) {
+      return res.status(400).json({ message: 'State not found' });
+    }
+
+    // Check if the city belongs to the specified state
+    const cityData = await cityModel.findOne({ selectcity: { $regex: new RegExp(city, 'i') }, state: stateData._id });
+
+    if (!cityData) {
+      return res.status(400).json({ message: 'City does not belong to the specified state' });
+    }
 
       // If the user doesn't exist, create a new user with the provided details
 
       const newUser = await User.create({
         mobile: mobile,
-        otp:otp,
+        otp: otp,
         userType: "manpower",
         wallet: 100,
         manpowerName: manpowerName,
         address: {
-          state: state,
-          city: city,
+          // state: state,
+          // city: city,
+          state: stateData._id,
+          city: cityData._id,
           country: country,
           pinCode: pinCode,
           landmark: landmark,
@@ -613,7 +632,7 @@ exports.detailSignup = async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-   return res.status(600).json({ error: "Something went wrong" });
+    return res.status(600).json({ error: "Something went wrong" });
   }
 };
 
@@ -942,8 +961,8 @@ exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
 
   try {
-     // Check if a user with the given userId exists in the database and populate the 'category' field
-     const user = await User.findById(manpowerId).populate('category').lean();
+    // Check if a user with the given userId exists in the database and populate the 'category' field
+    const user = await User.findById(manpowerId).populate('category').lean();
 
     if (!user) {
       res.status(404).json({ message: "User not found" });

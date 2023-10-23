@@ -9,7 +9,10 @@ const UserSchema = new mongoose.Schema(
         email: String,
         otp: String,
         job_desc: String,
-        city: String,
+        city: {
+            type: mongoose.Schema.Types.String,
+            ref: 'city',
+        },
         siteLocation: String,
         employmentType: {
             type: String,
@@ -21,10 +24,6 @@ const UserSchema = new mongoose.Schema(
             type: mongoose.Schema.Types.String,  // Ensure that the type is String, as you mentioned it's stored as a string
             ref: 'Category',  // Make sure it references the 'Category' model
           },
-        manpowerCategory:{
-            type:objectId,
-            ref:"Category"
-        },
         no_Of_opening: String,
         fullTime: {
             type: String,
@@ -63,7 +62,10 @@ const UserSchema = new mongoose.Schema(
             default: "pending"
         },
         /////////////////////////////
-        state: String,
+        state: {
+        type: mongoose.Schema.Types.String, 
+        ref: 'state',  
+      },
         pinCode: String,
         GST_Number: String,
         registration_Number: String,

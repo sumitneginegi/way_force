@@ -3,12 +3,23 @@ const stateModel = require('../models/state');
 exports.createState = async (req, res) => {
   try {
     const { state } = req.body;
+
+    // Use a case-insensitive regex to check if a similar state name already exists
+    const existingState = await stateModel.findOne({ state: { $regex: new RegExp(state, 'i') } });
+
+    if (existingState) {
+      return res.status(400).json({ message: "State already exists" });
+    }
+
     const newstate = await stateModel.create({ state });
-    res.status(201).json(newstate);
+   return res.status(201).json(newstate);
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    console.log(err)
+   return res.status(400).json({ message: err.message });
   }
 };
+
+
 
 exports.getState = async (req, res) => {
   try {

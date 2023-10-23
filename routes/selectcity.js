@@ -15,4 +15,6 @@ router.put('/:id', cityController.updateCity);
 // DELETE a city
 router.delete('/:id', cityController.deleteCity);
 
+router.get('/get/getCityBySelectCity/:selectcity', cityController.getCityBySelectCity);
+
 module.exports = router;
