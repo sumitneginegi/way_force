@@ -16,7 +16,15 @@ const UserSchema = new mongoose.Schema(
             enum: ["manpower", "agent"],
             default: "manpower",
         },
-        category: String,
+        // category: String,
+        category: {
+            type: mongoose.Schema.Types.String,  // Ensure that the type is String, as you mentioned it's stored as a string
+            ref: 'Category',  // Make sure it references the 'Category' model
+          },
+        manpowerCategory:{
+            type:objectId,
+            ref:"Category"
+        },
         no_Of_opening: String,
         fullTime: {
             type: String,

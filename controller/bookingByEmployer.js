@@ -81,9 +81,6 @@ const User = require("../models/user")
 
 
 
-
-
-
 exports.getBookingByEmployer = async (req, res) => {
   try {
     // Find bookings by EmployerId

@@ -5,11 +5,15 @@ const categorySchema = new mongoose.Schema({
       type: String,
       required: [true, "name Category Required"],
   },
+  price:{
+    type:String
+  }
 //   images: [{
 //       img: {
 //           type: String
 //       }
-//   }],
+//   }]
+,
   status: {
       type: String,
       enum: ["Active", "Block"],

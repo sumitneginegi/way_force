@@ -1,6 +1,7 @@
 const ManPower = require("../models/ManPowerModel")
 const OTP = require("../config/OTP-Generate")
 const Employerr = require("../models/employerModel")
+const Category = require("../models/categoryModel")
 const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const twilio = require("twilio");
@@ -544,6 +545,13 @@ exports.detailSignup = async (req, res) => {
     const existingUser = await User.findOne({ mobile: mobile, userType: "manpower" });
 
     if (!existingUser) {
+   // Find the category ID based on the category name
+   const categoryObject = await Category.findOne({ name: { $regex: new RegExp(category, 'i') }});
+
+   if (!categoryObject) {
+     return res.status(404).json({ message: "Category not found" });
+   }
+
       // If the user doesn't exist, create a new user with the provided details
 
       const newUser = await User.create({
@@ -588,7 +596,8 @@ exports.detailSignup = async (req, res) => {
           documentNumber: doc.documentNumber,
           documentImage: doc.documentImage,
         })),
-        category: category,
+        // category: category,
+        category: categoryObject._id, // Save the category ID
         workingDays: workingDays,
         workingHours: workingHours,
         uploadPanCard: uploadPanCard,
@@ -933,8 +942,8 @@ exports.getManpower = async (req, res) => {
   const { manpowerId } = req.params;
 
   try {
-    // Check if a user with the given userId exists in the database
-    const user = await User.findById(manpowerId).lean();
+     // Check if a user with the given userId exists in the database and populate the 'category' field
+     const user = await User.findById(manpowerId).populate('category').lean();
 
     if (!user) {
       res.status(404).json({ message: "User not found" });

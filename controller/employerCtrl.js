@@ -182,7 +182,6 @@ exports.sendotpEmployer = async (req, res) => {
 
 
 
-
 exports.verifyOtpEmployer = async (req, res) => {
   try {
     const { otp } = req.body;
