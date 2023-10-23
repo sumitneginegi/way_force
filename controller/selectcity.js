@@ -62,6 +62,12 @@ exports.getCityBystateId = async (req, res) => {
 
 
 
+
+
+
+
+
+
 exports.getCityBySelectCity = async (req, res) => {
   try {
     
@@ -100,3 +106,31 @@ exports.deleteCity = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+
+
+exports.getCitiesByStateName = async (req, res) => {
+  try {
+    const { stateName } = req.params;
+
+    // Find the state by name
+    const state = await stateModel.findOne({ state: { $regex: new RegExp(stateName, 'i') } });
+
+    if (!state) {
+      return res.status(404).json({ message: 'State not found' });
+    }
+
+    // Find all cities related to the specified state ID
+    const cities = await cityModel.find({ state: state._id });
+
+    if (!cities || cities.length === 0) {
+      return res.status(404).json({ message: 'Cities not found in the specified state' });
+    }
+
+    return res.status(200).json({ message: 'Cities found in the specified state', data: cities });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
