@@ -1282,7 +1282,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
     const manpowerWithinRadius = await User.find({
       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
-      "category": category
+      "category":  { $regex: new RegExp(category, 'i') }
     }).lean();
 
     // console.log(manpowerWithinRadius);

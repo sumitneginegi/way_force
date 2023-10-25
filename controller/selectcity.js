@@ -61,13 +61,6 @@ exports.getCityBystateId = async (req, res) => {
 }
 
 
-
-
-
-
-
-
-
 exports.getCityBySelectCity = async (req, res) => {
   try {
     
@@ -106,7 +99,6 @@ exports.deleteCity = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 
 exports.getCitiesByStateName = async (req, res) => {
