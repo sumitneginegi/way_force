@@ -11,6 +11,7 @@ const bcrypt = require("bcryptjs")
 const jwt = require("jsonwebtoken")
 const mongoose = require('mongoose');
 const Notification = require('../models/notification');
+const Category = require('../models/categoryModel'); // Import your Category model
 
 const io = require('socket.io')(); // Import the Socket.io instance (make sure it's the same instance as in your main server file)
 
@@ -620,18 +621,38 @@ exports.getAllEmployer = async (req, res) => {
 }
 
 
+  exports.getAllEmployerById = async (req, res) => {
+    const employerId = req.params.id;
+  
+    try {
+      const employer = await User.findById(employerId).lean();
+  
+      if (!employer) {
+        return res.status(404).json({ message: "Employer not found" });
+      }
+  
+      // Iterate through the 'obj' array and fetch the associated 'Category' data for each object
+    for (const obj of employer.obj) {
+      const categoryId = obj.category;
 
-exports.getAllEmployerById = async (req, res) => {
-  try {
-    const Employer = await User.findOne({ _id: req.params.id })
-    if (!Employer) {
-      return res.status(400).json({ error: "Employer data not provided" });
+      // Check if categoryId is a valid MongoDB ObjectID
+      if (mongoose.Types.ObjectId.isValid(categoryId)) {
+        const category = await Category.findById(categoryId).lean();
+        obj.category = category;
+      } else {
+        // If categoryId is not a valid ObjectID, ignore it or handle it as needed
+        // obj.category = null; // You can set it to null or any other value to indicate it's not a valid category
+      }
     }
-    res.status(201).json({ success: true, data: Employer })
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  
+      res.status(200).json({ success: true, data: employer });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
   }
-}
+  
+
 
 
 // Assuming you have already required the necessary modules and defined the User model
@@ -651,9 +672,9 @@ exports.getPostsByEmployerId = async (req, res) => {
     const posts = employer.obj;
 
     // Respond with the extracted posts
-    res.status(200).json({ success: true, data: posts });
+   return res.status(200).json({ success: true, data: posts });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+   return res.status(500).json({ message: err.message });
   }
 }
 
@@ -1284,8 +1305,8 @@ exports.findManpowerthroughRadius = async (req, res) => {
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
       "category":  { $regex: new RegExp(category, 'i') }
     }).lean();
-
-    // console.log(manpowerWithinRadius);
+    console.log(manpowerWithinRadius);
+    console.log("-------------------");
 
 
     const filteredManpower = manpowerWithinRadius.filter((manpower) => {
