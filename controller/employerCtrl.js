@@ -1299,11 +1299,24 @@ exports.findManpowerthroughRadius = async (req, res) => {
     // Extract the post's latitude and longitude
     const { lati, longi } = post;
 
+
+    
+    // Find the category with the provided name
+    const categoryData = await Category.findOne({ name: category });
+
+    if (!categoryData) {
+      return res.status(400).json({ message: "Category not found" });
+    }
+
     // Find manpower within the specified radius
     const manpowerWithinRadius = await User.find({
       "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
       "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
-      "category":  { $regex: new RegExp(category, 'i') }
+      // "category":  { $regex: new RegExp(category, 'i') }
+      $or: [
+        { category: categoryData ? categoryData._id : null }, // Check by category name and get ID
+        { category: categoryData ? { $regex: new RegExp(categoryData.name, 'i') } : { $regex: new RegExp(category, 'i') } }, // Check by category name
+      ],
     }).lean();
     console.log(manpowerWithinRadius);
     console.log("-------------------");
@@ -1330,7 +1343,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
           // employer:employer._id,
           // employerName: employer.employerName,
           // employerMobile: employer.mobile,
-          payload: `employer:${employer._id},employerName: ${employer.employerName},employerMobile: ${employer.mobile},category:${category},orderId:${orderId}, job_desc:${job_desc},siteLocation:${siteLocation},lati:${manpower.serviceLocation.lati},longi:${manpower.serviceLocation.longi},explainYourWork:${explainYourWork}, date:${date}`,
+          payload: `employer:${employer._id},employerName: ${employer.employerName},employerMobile: ${employer.mobile},category:${categoryData.name || category},orderId:${orderId}, job_desc:${job_desc},siteLocation:${siteLocation},lati:${manpower.serviceLocation.lati},longi:${manpower.serviceLocation.longi},explainYourWork:${explainYourWork}, date:${date}`,
         },
         notification: {
           title: `Lead for ${category}`, // Corrected title property
