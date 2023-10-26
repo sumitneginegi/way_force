@@ -223,3 +223,9 @@ exports.addMoneyToWallet = async (req, res) => {
 
 
 
+
+//---------------------PAYMENT FOR INSTANT HIRE --------------------------------------------------//
+
+
+
+

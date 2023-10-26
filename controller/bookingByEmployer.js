@@ -292,8 +292,6 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
     // }
 
     return res.status(200).json({
-      message: "List of employers who have booked the manpower user",
-      count: bookings.length,
       bookings: bookings,
     });
   } catch (error) {
