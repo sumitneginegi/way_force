@@ -60,7 +60,8 @@ const bookingSchema = mongoose.Schema(
     // rewards: { type: String },
     // timer: { type: String },
     lati:{type:String},
-    longi:{type:String}
+    longi:{type:String},
+    instantOrdirect: String,
   },
   {
     timestamps: true,

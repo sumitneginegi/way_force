@@ -231,6 +231,7 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
+      
     } = req.body;
 
     console.log(req.body);
@@ -249,6 +250,7 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
+      instantOrdirect:"Direct"  //{ $regex: new RegExp(category, 'i') }
       // lati: req.body.lati, // Use lati from work location
       // longi: req.body.longi, // Use longi from work location
     });
