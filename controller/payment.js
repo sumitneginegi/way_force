@@ -5,6 +5,7 @@ const id = uuid.v4();
 const paymentModel = require("../models/payment");
 const bookingModel = require("../models/bookingByEmployer");
 const userModel = require("../models/user");
+const Category = require("../models/categoryModel");
 
 // const Razorpay = new razerpay({
 //   key_id: "",
@@ -35,16 +36,16 @@ exports.CreatePaymentOrder = async (req, res) => {
       paymentMethod,
     } = req.body;
 
-    const bookingData = await paymentModel.findOne({ bookingId:bookingId });
+    const bookingData = await paymentModel.findOne({ bookingId: bookingId });
 
-        if (bookingData ) {
-          return res.status(500).json({
-            message: "Booking  already their",
-          });
-        }
-    
+    if (bookingData) {
+      return res.status(500).json({
+        message: "Booking  already their",
+      });
+    }
+
     let orderId = await reffralCode()
-    
+
     // You can add validation for the input data if required
     // For example, check if required fields are present, validate the amount, etc.
 
@@ -78,7 +79,7 @@ exports.CreatePaymentOrder = async (req, res) => {
     const savedPayment = await newPayment.save();
 
     // Send the Razorpay order id to the client
-    res.status(201).json({ orderId: orderId});
+    res.status(201).json({ orderId: orderId });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to create payment" });
@@ -90,7 +91,7 @@ exports.GetAllPayments = async (req, res) => {
   try {
     const Data = await paymentModel.find()
 
-    if (!Data || Data.length==0) {
+    if (!Data || Data.length == 0) {
       return res.status(500).json({
         message: "payment data not present",
       });
@@ -104,8 +105,8 @@ exports.GetAllPayments = async (req, res) => {
 
 exports.GetAllPaymentsById = async (req, res) => {
   try {
-    const Data = await paymentModel.findById({_id:req.params.id})
-    if (!Data || Data.length==0) {
+    const Data = await paymentModel.findById({ _id: req.params.id })
+    if (!Data || Data.length == 0) {
       return res.status(500).json({
         message: "payment data not present",
       });
@@ -157,14 +158,14 @@ exports.deletePayment = async (req, res) => {
 }
 
 
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Replace with your Stripe secret key
+//const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY); // Replace with your Stripe secret key
 
 
 exports.addMoneyToWallet = async (req, res) => {
   try {
     const { employerId, amount, paymentMethod, stripeToken } = req.body;
 
-      //  /*Create a new Payment record for the wallet recharge*/
+    //  /*Create a new Payment record for the wallet recharge*/
     const payment = new paymentModel({
       employerId,
       amount,
@@ -227,5 +228,109 @@ exports.addMoneyToWallet = async (req, res) => {
 //---------------------PAYMENT FOR INSTANT HIRE --------------------------------------------------//
 
 
+
+exports.createPaymentforInstant = async (req, res) => {
+
+  try {
+    const { orderId, startTime, endTime } = req.body
+    // Find the employer by employerId
+    const employer = await userModel.findOne({ 'obj.orderId': orderId });
+
+    if (!employer || employer.userType !== 'employer') {
+      return res.status(404).json({ error: 'Invalid employer or order ID' });
+    }
+
+    // Find the order object by orderId
+    const order = employer.obj.find((order) => order.orderId === orderId);
+
+    if (!order) {
+      return res.status(404).json({ error: 'Order ID not found' });
+    }
+
+    // Extract the category from the order object, which can be either a name or an ID
+    const category = order.category;
+
+    if (!category) {
+      return { error: 'Category not provided in the order' };
+    }
+
+    // Try to find the category by name first
+    let categoryData = await Category.findOne({ name: category });
+
+    // If categoryData is not found, try finding by ID
+    if (!categoryData) {
+      categoryData = await Category.findById(category);
+      console.log(categoryData.price);
+    }
+
+    if (!categoryData) {
+      return { error: 'Category not found' };
+    }
+
+    // Calculate the time difference in hours
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const timeDifferenceInHours = Math.floor((end - start) / (1000 * 60 * 60));
+
+
+    // Get the working hours from the order
+    const workingHours = parseFloat(order.workingHours);
+
+    let totalPayment = 0;
+
+    if (timeDifferenceInHours <= workingHours) {
+      // If the difference is within working hours, use the category price
+      totalPayment = categoryData.price;
+    } else {
+      // If the difference is more, calculate extra hours
+      const extraHours = timeDifferenceInHours - workingHours;
+      // Calculate extra payment based on extra hours
+      const extraPayment = extraHours * 200; // Assuming Rs. 200 per extra hour
+
+      // Ensure that categoryData.price and extraPayment are treated as numbers
+      const categoryPrice = parseFloat(categoryData.price);
+      const extraPaymentAmount = parseFloat(extraPayment);
+
+      // Calculate the total payment by adding extra payment to the category price
+      totalPayment = categoryPrice + extraPaymentAmount;
+
+    }
+
+
+    // Include employer mobile in the response
+    const employerMobile = employer.mobile;
+    const employerName = employer.employerName;
+
+
+    // Find the index of the order in the 'obj' array
+const orderIndex = employer.obj.findIndex((order) => order.orderId === orderId);
+
+if (orderIndex === -1) {
+  return res.status(404).json({ error: 'Order ID not found' });
+}
+
+// Create an object with the fields to update
+const updateFields = {
+  $set: {
+    'obj.$.paymentStatus': 'Paid', // Set payment status to 'Paid' or any desired status
+    'obj.$.totalPayment': totalPayment, // Update the total payment
+  }
+};
+
+// Update the specific fields within the 'obj' array
+await userModel.findOneAndUpdate(
+  { 'obj.orderId': orderId },
+  updateFields,
+  { new: true } // This option returns the updated document
+);
+
+// You can also save the updated employer object if needed
+// await employer.save();
+ return res.status(200).json({ data: totalPayment, employerMobile,employerName });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}
 
 

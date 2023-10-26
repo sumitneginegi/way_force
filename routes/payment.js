@@ -10,12 +10,8 @@ paymentRouter.get('/Get/PaymentsById/:id', payment.GetAllPaymentsById)
 paymentRouter.get('/Get/GetAllPaymentsByEmployerId/:id', payment.GetAllPaymentsByEmployerId)
 paymentRouter.delete('/delete/deletePayment/:id', payment.deletePayment)
 
+//-----------------------PAYMENT OF INSTANT-------------------------------//
 
-// //admin
-// paymentRouter.get('/GetPaymentsById/:id', payment.GetPaymentsById)
-// paymentRouter.get('/users/getAllPayments', payment.getAllPayments)
-// paymentRouter.get('/GetPaymentsByUserId/:user', payment.GetPaymentsByUserIdAdmin)
-// paymentRouter.put('/changeStatusbyidByAdmin/:id', /*Auth*/ payment.changeStatusbyidByAdmin)
-
+paymentRouter.post('/create/PaymentforInstant', payment.createPaymentforInstant),
 
 module.exports = paymentRouter;

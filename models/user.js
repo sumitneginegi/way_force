@@ -164,6 +164,11 @@ const UserSchema = new mongoose.Schema(
           },
        token:{
             type:String
+          },
+       totalPayment:Number,
+       paymentStatus:{
+            type:String,
+            default:"false"
           }
 
     },
