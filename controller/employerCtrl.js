@@ -1308,16 +1308,17 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return res.status(400).json({ message: "Category not found" });
     }
 
-    // Find manpower within the specified radius
-    const manpowerWithinRadius = await User.find({
-      "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
-      "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
-      // "category":  { $regex: new RegExp(category, 'i') }
-      $or: [
-        { category: categoryData ? categoryData._id : null }, // Check by category name and get ID
-        { category: categoryData ? { $regex: new RegExp(categoryData.name, 'i') } : { $regex: new RegExp(category, 'i') } }, // Check by category name
-      ],
-    }).lean();
+// Find manpower within the specified radius
+const manpowerWithinRadius = await User.find({
+  "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
+  "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
+  userType: 'manpower', // Add this condition to filter by userType
+  $or: [
+    { category: categoryData ? categoryData._id : null }, // Check by category name and get ID
+    { category: categoryData ? { $regex: new RegExp(categoryData.name, 'i') } : { $regex: new RegExp(category, 'i') } }, // Check by category name
+  ],
+}).lean();
+
     console.log(manpowerWithinRadius);
     console.log("-------------------");
 
