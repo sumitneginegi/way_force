@@ -46,10 +46,7 @@ const bookingSchema = mongoose.Schema(
         type: String
       }
     },
-    acceptOrDecline: {
-      type: String,
-      default: "false"
-    },
+        
     startDate: {
       type: String
     },

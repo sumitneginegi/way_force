@@ -388,6 +388,7 @@ exports.signupManpower = async (req, res) => {
   }
 }
 
+
 exports.verifyOtp = async (req, res) => {
   try {
     const { otp } = req.body;
@@ -637,9 +638,6 @@ exports.detailSignup = async (req, res) => {
 };
 
 
-
-
-
 exports.workDetails = async (req, res) => {
   try {
     const manpowerId = req.params.id;
@@ -733,6 +731,7 @@ exports.workDetails = async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 }
+
 
 exports.manpowerDocument = async (req, res) => {
   try {
@@ -1070,8 +1069,6 @@ exports.getManpowerWhoHaveAppliedforInstantOrDirect = async (req, res) => {
 }
 
 
-
-
 // Define the PUT API route to update lati, longi, and siteLocation for a specific "manpower" user
 exports.updateManpowerLocation = async (req, res) => {
   const { lati, longi, siteLocation } = req.body;
@@ -1134,8 +1131,6 @@ exports.updateCategoryForManpower = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
-
-
 
 
 

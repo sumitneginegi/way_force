@@ -1060,47 +1060,78 @@ exports.scheduled_Jobs = async (req, res) => {
   }
 }
 
+,
 
 
 exports.upadtePostByStatusOfCompletion = async (req, res) => {
-  try {
-    const orderId = req.params.orderId;
-    const { startTime, endTime, statusOfCompletion } = req.body;
-
-    // Find the employer based on userType and update the post
-    const updatedUser = await User.findOneAndUpdate(
-      { userType: 'employer', 'obj.orderId': orderId },
-      {
-        $set: {
-          'obj.$.startTime': startTime,
-          'obj.$.endTime': endTime,
-          'obj.$.statusOfCompletion': statusOfCompletion,
+    try {
+      const orderId = req.params.orderId;
+      const { startTime, endTime, statusOfCompletion } = req.body;
+  
+      // Find the employer based on userType and update the post
+      const updatedUser = await User.findOneAndUpdate(
+        { userType: 'employer', 'obj.orderId': orderId },
+        {
+          $set: {
+            'obj.$.startTime': startTime,
+            'obj.$.endTime': endTime,
+            'obj.$.statusOfCompletion': statusOfCompletion,
+          },
         },
-      },
-      { new: true }
-    );
+        { new: true }
+      );
+  
+      if (!updatedUser) {
+        return res.status(404).json({ msg: 'Post not found for the given orderId' });
+      }
+  
+      // Extract the updated object from the obj array
+      const updatedObj = updatedUser.obj.find((post) => post.orderId === orderId);
+  
+      if (!updatedObj) {
+        return res.status(404).json({ msg: 'Updated post not found for the given orderId' });
+      }
+  
+      const employerMobile = updatedUser.mobile;
+      const id = updatedUser._id;
 
-    if (!updatedUser) {
-      return res.status(404).json({ msg: 'Post not found for the given orderId' });
+      res.status(200).json({ msg: 'Post updated successfully', data: updatedObj, employerMobile,id });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ msg: 'An error occurred', error: error.message });
     }
-
-    res.status(200).json({ msg: 'Post updated successfully', data: updatedUser });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ msg: 'An error occurred', error: error.message });
   }
-}
+  
 
 
 
 
 exports.getCompletedPosts = async (req, res) => {
   try {
-
     const completed = req.query.completion;
+    const startTime = req.query.startTime;
+    const endTime = req.query.endTime;
+
+    const matchCriteria = {};
+
+    // Check if completion status is provided and add it to the match criteria
+    if (completed) {
+      matchCriteria['obj.statusOfCompletion'] = completed;
+    }
+
+    // Check if start time is provided and add it to the match criteria
+    if (startTime) {
+      matchCriteria['obj.startTime'] = { $gte: new Date(startTime) };
+    }
+
+    // Check if end time is provided and add it to the match criteria
+    if (endTime) {
+      matchCriteria['obj.endTime'] = { $lte: new Date(endTime) };
+    }
+
     const completedPosts = await User.aggregate([
       { $unwind: '$obj' },
-      { $match: { 'obj.statusOfCompletion': completed } },
+      { $match: matchCriteria },
       { $project: { _id: 0, 'obj': 1 } }
     ]);
 
@@ -1108,12 +1139,13 @@ exports.getCompletedPosts = async (req, res) => {
       return res.status(404).json({ msg: 'No completed posts found' });
     }
 
-    res.status(200).json({ msg: 'Completed posts retrieved successfully', data: completedPosts });
+   return res.status(200).json({ msg: 'Completed posts retrieved successfully', data: completedPosts });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ msg: 'An error occurred', error: error.message });
+   return res.status(500).json({ msg: 'An error occurred', error: error.message });
   }
 }
+
 
 
 
@@ -1622,13 +1654,19 @@ exports.updateEmployerLocation = async (req, res) => {
 exports.getStatusOfOrderId = async (req, res) => {
   try {
     const orderId = req.query.orderId;
+
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
       { $unwind: "$obj" },
       // Match documents with userType: "employer" and obj.orderId: orderId
-      { $match: { userType: "employer", "obj.orderId": orderId } },
-      // Match documents with userType: "employer"
-      // Project the desired fields from each job object, including the manpower array
+      {
+        $match: {
+          userType: "employer",
+          $or: [
+            { "obj.orderId": orderId }, // Make orderId optional
+          ]
+        }
+      },  // Match documents with userType: "employer"
       {
         $project: {
           _id: 1, // Include the fields you need from the employer outside the obj array
@@ -1655,15 +1693,15 @@ exports.getStatusOfOrderId = async (req, res) => {
         }
       }
     ];
+
     // Execute the aggregation pipeline
     const result = await User.aggregate(aggregationPipeline).exec();
-    return res.status(200).send({ data: result });
+    return res.status(200).json({ data: result });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 
 
