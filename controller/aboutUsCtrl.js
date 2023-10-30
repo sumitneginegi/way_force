@@ -3,24 +3,27 @@ const AboutUs = require("../models/aboutUsModel");
 const create = async (req, res) => {
   try {
     const aboutUs = await AboutUs.create(req.body);
-    return res.status(200).json({message:"About us created successfully", aboutUs});
+    return res.status(200).json({ message: "About us created successfully", aboutUs });
   } catch (err) {
     console.error(err);
-    return res.status(500).json({ message: err.message});
+    return res.status(500).json({ message: err.message });
   }
 };
+
+
 const getAboutUs = async (req, res) => {
   try {
     const aboutUs = await AboutUs.find().lean();
-    if (!aboutUs) {
+    if (!aboutUs || aboutUs.length === 0) {
       return res.status(404).json("About us not found");
     }
-return res.status(200).json( "About us retrieved successfully", aboutUs);
+    return res.status(200).json({ message: "About us retrieved successfully", data: aboutUs });
   } catch (error) {
-    console.error;
-    return createResponse(res, 500, "Internal server error");
+    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 const updateAboutUs = async (req, res) => {
@@ -37,14 +40,17 @@ const updateAboutUs = async (req, res) => {
     }
     const updatedAboutUs = await aboutUs.save();
     return res.status(200).json({
-      message:"About us updated successfully",
-      data:updatedAboutUs
+      message: "About us updated successfully",
+      data: updatedAboutUs
     });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
+
+
 const deleteAboutUs = async (req, res) => {
   try {
     const aboutUs = await AboutUs.findByIdAndDelete(req.params.id);
