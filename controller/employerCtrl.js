@@ -213,10 +213,10 @@ exports.updateEmployer = async (req, res) => {
 
   try {
 
-    let front = req.files["aadhar"];
-    let back = req.files["pan"]
-    req.body.aadhar = front[0].path;
-    req.body.pc = back[0].path;
+    // let front = req.files["aadhar"];
+    // let back = req.files["pan"]
+    // req.body.aadhar = front[0].path;
+    // req.body.pc = back[0].path;
 
     const updatedData = {
       employerName: req.body.employerName,
