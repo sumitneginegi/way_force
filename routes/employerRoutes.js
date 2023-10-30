@@ -67,12 +67,12 @@ const allowedRoles5 = ["admin"];
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
-cloudinary.config({ cloud_name: "dll8hqaqn", api_key: "813184186261365", api_secret: "Mo813W_sjpO1c_E1ujytrpyr6qA", });
+cloudinary.config({ cloud_name: "dn9a9vunu", api_key: "797383573924537", api_secret: "zDdxM3LtLHwX5N8lD_PUGs4Hn_E", });
 const storage = new CloudinaryStorage({
         cloudinary: cloudinary, params: { folder: "images/image", allowed_formats: ["jpg", "jpeg", "png", "PNG", "xlsx", "xls", "pdf", "PDF"], },
-});
-const upload = multer({ storage: storage });
-var cpUpload = upload.fields([{ name: 'aadhar', maxCount: 1 },{name:'pan',maxCount:1}]);
+})
+const upload = multer({ storage: storage })
+var cpUpload = upload.fields([{ name: 'aadhar', maxCount: 1 },{name:'pan',maxCount:1}])
 
 
 
