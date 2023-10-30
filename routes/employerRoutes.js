@@ -64,28 +64,24 @@ const allowedRoles5 = ["admin"];
 
 
 
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
-
 const multer = require("multer");
+const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
-
+cloudinary.config({ cloud_name: "dsi1yv3xi", api_key: "813184186261365", api_secret: "Mo813W_sjpO1c_E1ujytrpyr6qA", });
 const storage = new CloudinaryStorage({
-  cloudinary: cloudinary,
-  params: {
-    folder: "images/image",
-    allowed_formats: ["jpg", "jpeg", "png", "PNG", "xlsx", "xls", "pdf", "PDF"],
-  },
+        cloudinary: cloudinary, params: { folder: "images/image", allowed_formats: ["jpg", "jpeg", "png", "PNG", "xlsx", "xls", "pdf", "PDF"], },
 });
 const upload = multer({ storage: storage });
 var cpUpload = upload.fields([{ name: 'aadhar', maxCount: 1 },{name:'pan',maxCount:1}]);
 
 
-cloudinary.config({
-  cloud_name: "dsi1yv3xi",
-  api_key: "343572995738873",
-  api_secret: "wrcHAy3wkDu8jhv0UHYlMpYmdDQ",
-});
 
+
+// cloudinary.config({ 
+//   cloud_name: 'dll8hqaqn', 
+//   api_key: '813184186261365', 
+//   api_secret: 'Mo813W_sjpO1c_E1ujytrpyr6qA' 
+// });
 
 router.post("/registrationthroughAdmin",verifyToken.verifyToken(allowedRoles4),  registrationthroughAdmin);
 //////////////////////////////////////////////////////////////////////////////
