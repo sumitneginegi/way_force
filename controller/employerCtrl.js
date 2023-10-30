@@ -208,9 +208,8 @@ exports.verifyOtpEmployer = async (req, res) => {
 
 
 exports.updateEmployer = async (req, res) => {
+  console.log("hi");
   const employerId = req.params.id;
-
-
 
   try {
 
