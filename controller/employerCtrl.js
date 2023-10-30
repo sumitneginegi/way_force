@@ -246,7 +246,33 @@ exports.updateEmployer = async (req, res) => {
       return res.status(404).json({ msg: 'Employer not found' });
     }
 
-    return res.status(200).json({ updatedEmployer });
+    const responseEmployer = {
+      employerName: updatedEmployer.employerName,
+      active: updatedEmployer.active,
+      gender: updatedEmployer.gender,
+      email: updatedEmployer.email,
+      createdAt: updatedEmployer.createdAt,
+      state: updatedEmployer.state,
+      city: updatedEmployer.city,
+      GST_Number: updatedEmployer.GST_Number,
+      registration_Number: updatedEmployer.registration_Number,
+      aadharCard: updatedEmployer.aadharCard,
+      panCard: updatedEmployer.panCard,
+      current_lati: updatedEmployer.current_lati,
+      current_longi: updatedEmployer.current_longi,
+      current_location: updatedEmployer.current_location,
+      main_Address: updatedEmployer.main_Address,
+      about: updatedEmployer.about,
+      pinCode: updatedEmployer.pinCode,
+      uploadaadhar: updatedEmployer.aadhar,
+      uploadPanCard: updatedEmployer.pc,
+      // Add other properties you want to include
+    };
+
+    return res.status(200).json(responseEmployer);
+
+
+    // return res.status(200).json({ updatedEmployer });
   } catch (err) {
     console.error(err)
     res.status(500).json({ msg: 'An error occurred', error: err.message });
