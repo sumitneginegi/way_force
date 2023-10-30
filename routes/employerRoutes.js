@@ -77,6 +77,7 @@ const storage = new CloudinaryStorage({
   },
 });
 const upload = multer({ storage: storage });
+var cpUpload = upload.fields([{ name: 'aadhar', maxCount: 1 },{name:'pan',maxCount:1}]);
 
 
 cloudinary.config({
@@ -97,7 +98,7 @@ router.post("/sendotpEmployerLogin", sendotpEmployerLogin);
 router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
-router.put("/update/Employer/:id", updateEmployer);
+router.put("/update/Employer/:id",cpUpload, updateEmployer);
 router.put("/update/fillEmployerDetails/:id", fillEmployerDetails);
 router.put("/direct/detail/:id", detailDirectEmployer);
 router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);

@@ -210,7 +210,15 @@ exports.verifyOtpEmployer = async (req, res) => {
 exports.updateEmployer = async (req, res) => {
   const employerId = req.params.id;
 
+
+
   try {
+
+    let front = req.files["aadhar"];
+    let back = req.files["pan"]
+    req.body.aadhar = front[0].path;
+    req.body.pc = back[0].path;
+
     const updatedData = {
       employerName: req.body.employerName,
       active: req.body.active,
@@ -227,7 +235,10 @@ exports.updateEmployer = async (req, res) => {
       current_longi: req.body.current_longi,
       current_location: req.body.current_location,
       main_Address:req.body.main_Address,
-      about:req.body.about
+      about:req.body.about,
+      pinCode:req.body.pinCode,
+      uploadaadhar: req.body.aadhar,
+      uploadPanCard: req.body.pc,
     };
 
     const updatedEmployer = await User.findByIdAndUpdate(employerId, updatedData, { new: true });
