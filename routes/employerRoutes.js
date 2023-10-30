@@ -67,7 +67,7 @@ const allowedRoles5 = ["admin"];
 const multer = require("multer");
 const { CloudinaryStorage } = require("multer-storage-cloudinary");
 const cloudinary = require("cloudinary").v2;
-cloudinary.config({ cloud_name: "dsi1yv3xi", api_key: "813184186261365", api_secret: "Mo813W_sjpO1c_E1ujytrpyr6qA", });
+cloudinary.config({ cloud_name: "dll8hqaqn", api_key: "813184186261365", api_secret: "Mo813W_sjpO1c_E1ujytrpyr6qA", });
 const storage = new CloudinaryStorage({
         cloudinary: cloudinary, params: { folder: "images/image", allowed_formats: ["jpg", "jpeg", "png", "PNG", "xlsx", "xls", "pdf", "PDF"], },
 });
