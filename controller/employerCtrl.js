@@ -225,7 +225,9 @@ exports.updateEmployer = async (req, res) => {
       panCard: req.body.panCard, // Updated field
       current_lati: req.body.current_lati,
       current_longi: req.body.current_longi,
-      current_location: req.body.current_location
+      current_location: req.body.current_location,
+      main_Address:req.body.main_Address,
+      about:req.body.about
     };
 
     const updatedEmployer = await User.findByIdAndUpdate(employerId, updatedData, { new: true });

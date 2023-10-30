@@ -169,6 +169,12 @@ const UserSchema = new mongoose.Schema(
        paymentStatus:{
             type:String,
             default:"false"
+          },
+          main_Address:{
+            type:String
+          },
+          about:{
+            type:String
           }
 
     },
