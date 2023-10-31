@@ -6,6 +6,7 @@ const paymentModel = require("../models/payment");
 const bookingModel = require("../models/bookingByEmployer");
 const userModel = require("../models/user");
 const Category = require("../models/categoryModel");
+const moment = require('moment');
 
 // const Razorpay = new razerpay({
 //   key_id: "",
@@ -242,7 +243,7 @@ exports.createPaymentforInstant = async (req, res) => {
 
     // Find the order object by orderId
     const order = employer.obj.find((order) => order.orderId === orderId);
-    
+
     if (!order) {
       return res.status(404).json({ error: 'Order ID not found' });
     }
@@ -256,7 +257,7 @@ exports.createPaymentforInstant = async (req, res) => {
 
     // Try to find the category by name first
     let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
-   
+
     // If categoryData is not found, try finding by ID
     if (!categoryData) {
       categoryData = await Category.findById(category);
@@ -267,16 +268,20 @@ exports.createPaymentforInstant = async (req, res) => {
       return { error: 'Category not found' };
     }
 
-    // Calculate the time difference in hours
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    const timeDifferenceInHours = Math.floor((end - start) / (1000 * 60 * 60));
-    console.log(start);
-    console.log(end);
+
+    // Parse the startTime and endTime using moment
+    const startMoment = moment(startTime, 'YYYY-MM-DD HH:mm');
+    const endMoment = moment(endTime, 'YYYY-MM-DD HH:mm');
+
+    // Calculate the time difference using moment's diff method
+    const timeDifferenceInMilliseconds = endMoment.diff(startMoment);
+    const timeDifferenceInHours = moment.duration(timeDifferenceInMilliseconds).asHours();
+    console.log(timeDifferenceInHours)
+
 
     // Get the working hours from the order
     const workingHours = parseFloat(order.workingHours);
-    
+
     let totalPayment = 0;
 
     if (timeDifferenceInHours <= workingHours) {
@@ -304,30 +309,43 @@ exports.createPaymentforInstant = async (req, res) => {
 
 
     // Find the index of the order in the 'obj' array
-const orderIndex = employer.obj.findIndex((order) => order.orderId === orderId);
+    const orderIndex = employer.obj.findIndex((order) => order.orderId === orderId);
 
-if (orderIndex === -1) {
-  return res.status(404).json({ error: 'Order ID not found' });
-}
+    if (orderIndex === -1) {
+      return res.status(404).json({ error: 'Order ID not found' });
+    }
 
-// Create an object with the fields to update
-const updateFields = {
-  $set: {
-    'obj.$.paymentStatus': 'Paid', // Set payment status to 'Paid' or any desired status
-    'obj.$.totalPayment': totalPayment, // Update the total payment
-  }
-};
+    // Create an object with the fields to update
+    const updateFields = {
+      $set: {
+        'obj.$.paymentStatus': 'Paid', // Set payment status to 'Paid' or any desired status
+        'obj.$.totalPayment': totalPayment, // Update the total payment
+        'obj.$.startTime': startTime,
+        'obj.$.endTime': endTime
+      }
+    };
 
-// Update the specific fields within the 'obj' array
-await userModel.findOneAndUpdate(
-  { 'obj.orderId': orderId },
-  updateFields,
-  { new: true } // This option returns the updated document
-);
+    // Update the specific fields within the 'obj' array
+    const updatedOrder = await userModel.findOneAndUpdate(
+      { 'obj.orderId': orderId },
+      updateFields,
+      { new: true } // This option returns the updated document
+    );
 
-// You can also save the updated employer object if needed
-// await employer.save();
- return res.status(200).json({ msg: 'Rs. 200 per extra hour',total: totalPayment, employerMobile,employerName ,order,categoryData});
+    if (!updatedOrder) {
+      return res.status(404).json({ error: 'Order ID not found' });
+    }
+
+    // Access the specific updated order from the 'obj' array
+    const updatedOrderData = updatedOrder.obj.find((order) => order.orderId === orderId);
+
+    if (!updatedOrderData) {
+      return res.status(404).json({ error: 'Order ID data not found' });
+    }
+
+    // You can also save the updated employer object if needed
+    // await employer.save();
+    return res.status(200).json({ msg: 'Rs. 200 per extra hour', total: totalPayment, employerMobile, employerName, updatedOrderData, categoryData });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
