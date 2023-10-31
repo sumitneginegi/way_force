@@ -13,5 +13,6 @@ paymentRouter.delete('/delete/deletePayment/:id', payment.deletePayment)
 //-----------------------PAYMENT OF INSTANT-------------------------------//
 
 paymentRouter.post('/create/PaymentforInstant', payment.createPaymentforInstant),
+paymentRouter.put('/put/updatePaymentStatus/:orderId', payment.updatePaymentStatus),
 
 module.exports = paymentRouter;

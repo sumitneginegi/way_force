@@ -318,7 +318,7 @@ exports.createPaymentforInstant = async (req, res) => {
     // Create an object with the fields to update
     const updateFields = {
       $set: {
-        'obj.$.paymentStatus': 'Paid', // Set payment status to 'Paid' or any desired status
+        'obj.$.paymentStatus': 'pending', // Set payment status to 'Paid' or any desired status
         'obj.$.totalPayment': totalPayment, // Update the total payment
         'obj.$.startTime': startTime,
         'obj.$.endTime': endTime
@@ -353,3 +353,26 @@ exports.createPaymentforInstant = async (req, res) => {
 }
 
 
+
+
+exports.updatePaymentStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+
+    // Update the payment status for the specified orderId
+    const updatedOrder = await userModel.findOneAndUpdate(
+      { 'obj.orderId': orderId },
+      { paymentStatus: 'Paid' },
+      { new: true } // This option returns the updated document
+    );
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: 'Order ID not found' });
+    }
+
+    return res.status(200).json(updatedOrder);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}

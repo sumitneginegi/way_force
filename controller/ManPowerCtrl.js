@@ -918,7 +918,27 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
     const current_lati = employer.current_lati;
     const current_longi = employer.current_longi;
 
-    const manpowerUsers = await User.find({ userType: "manpower", category }).lean();
+
+ // Try to find the category by name first
+ let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
+
+ // If categoryData is not found, try finding by ID
+ if (!categoryData) {
+   categoryData = await Category.findById(category);
+   console.log(categoryData.price);
+ }
+
+ if (!categoryData) {
+   return { error: 'Category not found' };
+ }
+
+    const manpowerUsers = await User.find({
+      userType: "manpower",
+      $or: [
+        { category: { $regex: new RegExp(categoryData.name, 'i') } },
+        { category: categoryData._id },
+      ],
+    }).lean();
     console.log(manpowerUsers);
     // Calculate distances and add them to each manpower user
     manpowerUsers.forEach(user => {
