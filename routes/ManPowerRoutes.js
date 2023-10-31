@@ -21,6 +21,7 @@ const {
   updateCategoryForManpower,
   getManpowerthroughFilter,
   getAllManpowerUniqueCategory,
+  updateManpowerById
 } = require("../controller/ManPowerCtrl");
 
 const verifyToken = require("../middleware/auth");
@@ -87,6 +88,7 @@ router.put("/updateCategoryFor/Manpower", updateCategoryForManpower);
 
 router.get("/getManpowerthrough/Filter", getManpowerthroughFilter);
 router.get("/getAllManpower/UniqueCategory", getAllManpowerUniqueCategory);
+router.put("/updateManpowerById/:id", updateManpowerById);
 
 
 

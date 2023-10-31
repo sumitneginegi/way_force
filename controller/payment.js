@@ -369,16 +369,16 @@ exports.updatePaymentStatus = async (req, res) => {
       return res.status(404).json({ error: 'Order ID not found' });
     }
 
-  // Find the specific updated data object inside the 'obj' array
-  const updatedDataObject = updatedOrder.obj.find((order) => order.orderId === orderId);
+    // Find the specific updated data object inside the 'obj' array
+    const updatedDataObject = updatedOrder.obj.find((order) => order.orderId === orderId);
 
-  if (!updatedDataObject) {
-    return res.status(404).json({ error: 'Data object not found' });
+    if (!updatedDataObject) {
+      return res.status(404).json({ error: 'Data object not found' });
+    }
+
+    return res.status(200).json({ updatedData: updatedDataObject });
   }
-
-  return res.status(200).json({  updatedData: updatedDataObject });
-}
-catch (error) {
+  catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
