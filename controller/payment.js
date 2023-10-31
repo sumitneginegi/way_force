@@ -242,7 +242,7 @@ exports.createPaymentforInstant = async (req, res) => {
 
     // Find the order object by orderId
     const order = employer.obj.find((order) => order.orderId === orderId);
-
+    
     if (!order) {
       return res.status(404).json({ error: 'Order ID not found' });
     }
@@ -255,8 +255,8 @@ exports.createPaymentforInstant = async (req, res) => {
     }
 
     // Try to find the category by name first
-    let categoryData = await Category.findOne({ name: category });
-
+    let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
+   
     // If categoryData is not found, try finding by ID
     if (!categoryData) {
       categoryData = await Category.findById(category);
@@ -271,11 +271,12 @@ exports.createPaymentforInstant = async (req, res) => {
     const start = new Date(startTime);
     const end = new Date(endTime);
     const timeDifferenceInHours = Math.floor((end - start) / (1000 * 60 * 60));
-
+    console.log(start);
+    console.log(end);
 
     // Get the working hours from the order
     const workingHours = parseFloat(order.workingHours);
-
+    
     let totalPayment = 0;
 
     if (timeDifferenceInHours <= workingHours) {
