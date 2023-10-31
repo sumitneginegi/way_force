@@ -354,7 +354,6 @@ exports.createPaymentforInstant = async (req, res) => {
 
 
 
-
 exports.updatePaymentStatus = async (req, res) => {
   try {
     const { orderId } = req.params;
@@ -362,7 +361,7 @@ exports.updatePaymentStatus = async (req, res) => {
     // Update the payment status for the specified orderId
     const updatedOrder = await userModel.findOneAndUpdate(
       { 'obj.orderId': orderId },
-      { paymentStatus: 'Paid' },
+      { $set: { 'obj.$.paymentStatus': 'Paid' } }, // Use $set to update the paymentStatus
       { new: true } // This option returns the updated document
     );
 
@@ -370,9 +369,18 @@ exports.updatePaymentStatus = async (req, res) => {
       return res.status(404).json({ error: 'Order ID not found' });
     }
 
-    return res.status(200).json(updatedOrder);
-  } catch (error) {
+  // Find the specific updated data object inside the 'obj' array
+  const updatedDataObject = updatedOrder.obj.find((order) => order.orderId === orderId);
+
+  if (!updatedDataObject) {
+    return res.status(404).json({ error: 'Data object not found' });
+  }
+
+  return res.status(200).json({  updatedData: updatedDataObject });
+}
+catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
