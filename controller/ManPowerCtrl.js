@@ -939,14 +939,25 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
         { category: categoryData._id },
       ],
     }).lean();
-    console.log(manpowerUsers);
+   
 
-// Modify manpowerUsers to replace category IDs with category names
+// // Modify manpowerUsers to replace category IDs with category names
+// for (const user of manpowerUsers) {
+//   if (user.category === categoryData._id) {
+//     user.category = categoryData.name;
+//   }
+// }
+
+
+   // Modify manpowerUsers to replace category IDs with category names
 for (const user of manpowerUsers) {
-  if (user.category === categoryData._id) {
-    user.category = categoryData.name;
+  if (typeof user.category === 'string' && new RegExp(category, 'i').test(user.category)) { // Check if category is a string (name)
+    user.category = user.category; // Keep it as it is (name)
+  } else if (user.category === categoryData._id.toString()) { // Check if category is an ObjectId
+    user.category = categoryData.name; // Replace with category name
   }
 }
+
 
     // Calculate distances and add them to each manpower user
     manpowerUsers.forEach(user => {
@@ -982,87 +993,6 @@ for (const user of manpowerUsers) {
     return res.status(500).json({ message: "Internal server error", error: err.message, data: null });
   }
 };
-
-
-
-exports.getAllManpowerthroughCategory2 = async (req, res) => {
-  try {
-    const { category, employerid } = req.params;
-
-    if (!category || !employerid) {
-      return res.status(400).json({ message: "Category or _id parameter is missing" });
-    }
-
-    const employer = await User.findById(employerid).lean();
-    if (!employer || employer.userType !== 'employer') {
-      return res.status(404).json({ message: "Employer not found with the specified _id" });
-    }
-    // Extract the current_lati and current_longi from the employer's data
-    const current_lati = employer.current_lati;
-    const current_longi = employer.current_longi;
-
-    // Try to find the category by name first
-    let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
-
-    // If categoryData is not found, try finding by ID
-    if (!categoryData) {
-      categoryData = await Category.findById(category);
-    }
-
-    if (!categoryData) {
-      return { error: 'Category not found' };
-    }
-
-    const manpowerUsers = await User.find({
-      userType: "manpower",
-      $or: [
-        { category: { $regex: new RegExp(categoryData.name, 'i') } },
-        { category: categoryData._id },
-      ],
-    }).lean();
-
-    // Modify manpowerUsers to replace category IDs with category names
-    for (const user of manpowerUsers) {
-      if (user.category === categoryData._id) {
-        user.category = categoryData.name;
-      }
-    }
-
-    // Calculate distances and add them to each manpower user
-    manpowerUsers.forEach(user => {
-      if (user.serviceLocation && user.serviceLocation.lati && user.serviceLocation.longi) {
-        const manpowerLocation = {
-          latitude: user.serviceLocation.lati,
-          longitude: user.serviceLocation.longi,
-        };
-        const employerLocation = { latitude: current_lati, longitude: current_longi };
-        user.distance = haversine(manpowerLocation, employerLocation, { unit: 'km' });
-      } else {
-        user.distance = null;
-      }
-    });
-
-    // Sort manpower users by distance in ascending order
-    manpowerUsers.sort((a, b) => {
-      if (a.distance < b.distance) {
-        return -1;
-      }
-      if (a.distance > b.distance) {
-        return 1;
-      }
-      return 0;
-    });
-
-    return res.status(200).send({ message: "Manpower users fetched and sorted successfully", data: manpowerUsers });
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ message: "Internal server error", error: err.message, data: null });
-  }
-};
-
-
-
-
 
 
 
