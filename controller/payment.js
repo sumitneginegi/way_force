@@ -327,7 +327,7 @@ await userModel.findOneAndUpdate(
 
 // You can also save the updated employer object if needed
 // await employer.save();
- return res.status(200).json({ data: totalPayment, employerMobile,employerName });
+ return res.status(200).json({ msg: 'Rs. 200 per extra hour',total: totalPayment, employerMobile,employerName ,order,categoryData});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
