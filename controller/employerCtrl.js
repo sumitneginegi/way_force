@@ -1691,20 +1691,6 @@ exports.getStatusOfOrderId = async (req, res) => {
   try {
     const orderId = req.query.orderId;
 
-
-//     // Try to find the category by name first
-//  let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
-
-//  // If categoryData is not found, try finding by ID
-//  if (!categoryData) {
-//    categoryData = await Category.findById(category);
-//    console.log(categoryData.price);
-//  }
-
-//  if (!categoryData) {
-//    return { error: 'Category not found' };
-//  }
-
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
       { $unwind: "$obj" },
@@ -1746,32 +1732,30 @@ exports.getStatusOfOrderId = async (req, res) => {
           totalPayment: "$obj.totalPayment",
         }
       },
-      // Lookup additional data from the Category model
-      {
-        $lookup: {
-          from: "categories", // Replace with the actual collection name
-          localField: "category", // Field in your current collection
-          foreignField: "_id", // Field in the Category model
-          as: "categoryData" // Name of the output field
-        }
-      },
-      // Unwind the result of the lookup (in case there are multiple matches)
-      {
-        $unwind: "$categoryData"
-      },
-      // Project the fields you need from the Category model
-      {
-        $project: {
-          // ...otherFieldsFromPreviousProjection,
-          name: "$categoryData.name",
-          price: "$categoryData.price"
-        }
-      }
+      
     ];
 
-    // Execute the aggregation pipeline
-    const result = await User.aggregate(aggregationPipeline).exec();
-    return res.status(200).json({ data: result });
+// Execute the aggregation pipeline to extract the 'category' field
+const pipelineResult = await User.aggregate(aggregationPipeline).exec();
+
+if (pipelineResult.length === 0) {
+  return res.status(400).json({ error: 'No documents found' });
+}
+
+// Extract the 'category' field from the pipeline result
+const categoryValue = pipelineResult[0].category;
+
+// Use the 'category' field to construct the query for Category.findOne
+let categoryData = await Category.findOne({ name: { $regex: new RegExp(categoryValue, 'i') } });
+
+// If categoryData is not found, try finding by ID
+if (!categoryData) {
+  categoryData = await Category.findById(categoryValue);
+}
+
+// Continue with the aggregation pipeline
+const result = await User.aggregate(aggregationPipeline).exec();
+return res.status(200).json({ data: result, categoryData });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
