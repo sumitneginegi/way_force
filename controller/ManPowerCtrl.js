@@ -329,30 +329,16 @@ exports.sendotpManpower = async (req, res) => {
     // Generate a random 4-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
 
+    // Check if a user with the provided mobile number and userType "manpower" already exists
+    const existingUser = await User.findOne({ mobile: phoneNumber, userType: "manpower" });
 
-    if (!req.body) {
-      return res.status(404).json({ error: "phoneNumber not given" });
+    if (!existingUser) {
+      return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
     }
-    // // Check if a user with the provided mobile number and userType "employer" already exists
-    // const user = await User.findOne({ mobile: phoneNumber, userType: "manpower" });
+    return res.status(404).json({ error: "data already exists" });
 
-    // if (!user) {
-    //   // If the user doesn't exist, create a new user with the provided details
-    //   req.body.userType = "manpower";
-    //   req.body.wallet = 100;
-
-    //   const userCreate = await User.create({
-    //     mobile: phoneNumber,
-    //     otp: otp,
-    //     ...req.body
-    //   });
-
-    return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
-    // } else {
-    //   // If a user with the same mobile number and userType "employer" exists, return an error
-    //   return res.status(400).json({ message: "User already exists" });
-    // }
-  } catch (err) {
+  }
+  catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
@@ -556,19 +542,19 @@ exports.detailSignup = async (req, res) => {
       }
 
 
-       // Find the state by name
-    const stateData = await stateModel.findOne({ state: { $regex: new RegExp(state, 'i') } });
+      // Find the state by name
+      const stateData = await stateModel.findOne({ state: { $regex: new RegExp(state, 'i') } });
 
-    if (!stateData) {
-      return res.status(400).json({ message: 'State not found' });
-    }
+      if (!stateData) {
+        return res.status(400).json({ message: 'State not found' });
+      }
 
-    // Check if the city belongs to the specified state
-    const cityData = await cityModel.findOne({ selectcity: { $regex: new RegExp(city, 'i') }, state: stateData._id });
+      // Check if the city belongs to the specified state
+      const cityData = await cityModel.findOne({ selectcity: { $regex: new RegExp(city, 'i') }, state: stateData._id });
 
-    if (!cityData) {
-      return res.status(400).json({ message: 'City does not belong to the specified state' });
-    }
+      if (!cityData) {
+        return res.status(400).json({ message: 'City does not belong to the specified state' });
+      }
 
       // If the user doesn't exist, create a new user with the provided details
 
@@ -919,18 +905,18 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
     const current_longi = employer.current_longi;
 
 
- // Try to find the category by name first
- let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
+    // Try to find the category by name first
+    let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
 
- // If categoryData is not found, try finding by ID
- if (!categoryData) {
-   categoryData = await Category.findById(category);
-   console.log(categoryData.price);
- }
+    // If categoryData is not found, try finding by ID
+    if (!categoryData) {
+      categoryData = await Category.findById(category);
+      console.log(categoryData.price);
+    }
 
- if (!categoryData) {
-   return { error: 'Category not found' };
- }
+    if (!categoryData) {
+      return { error: 'Category not found' };
+    }
 
     const manpowerUsers = await User.find({
       userType: "manpower",
@@ -939,24 +925,24 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
         { category: categoryData._id },
       ],
     }).lean();
-   
-
-// // Modify manpowerUsers to replace category IDs with category names
-// for (const user of manpowerUsers) {
-//   if (user.category === categoryData._id) {
-//     user.category = categoryData.name;
-//   }
-// }
 
 
-   // Modify manpowerUsers to replace category IDs with category names
-for (const user of manpowerUsers) {
-  if (typeof user.category === 'string' && new RegExp(category, 'i').test(user.category)) { // Check if category is a string (name)
-    user.category = user.category; // Keep it as it is (name)
-  } else if (user.category === categoryData._id.toString()) { // Check if category is an ObjectId
-    user.category = categoryData.name; // Replace with category name
-  }
-}
+    // // Modify manpowerUsers to replace category IDs with category names
+    // for (const user of manpowerUsers) {
+    //   if (user.category === categoryData._id) {
+    //     user.category = categoryData.name;
+    //   }
+    // }
+
+
+    // Modify manpowerUsers to replace category IDs with category names
+    for (const user of manpowerUsers) {
+      if (typeof user.category === 'string' && new RegExp(category, 'i').test(user.category)) { // Check if category is a string (name)
+        user.category = user.category; // Keep it as it is (name)
+      } else if (user.category === categoryData._id.toString()) { // Check if category is an ObjectId
+        user.category = categoryData.name; // Replace with category name
+      }
+    }
 
 
     // Calculate distances and add them to each manpower user
@@ -973,9 +959,9 @@ for (const user of manpowerUsers) {
         user.distance = null;
       }
     });
-  
 
-    
+
+
     // Sort manpower users by distance in ascending order
     manpowerUsers.sort((a, b) => {
       if (a.distance < b.distance) {
@@ -986,7 +972,7 @@ for (const user of manpowerUsers) {
       }
       return 0;
     });
-   
+
     return res.status(200).send({ message: "Manpower users fetched and sorted successfully", data: manpowerUsers });
   } catch (err) {
     console.error(err);
