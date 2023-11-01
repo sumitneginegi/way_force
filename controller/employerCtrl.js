@@ -210,7 +210,6 @@ exports.verifyOtpEmployer = async (req, res) => {
 exports.updateEmployer = async (req, res) => {
   console.log("hi");
   const employerId = req.params.id;
-
   try {
 
     // let front = req.files["aadhar"];
@@ -270,7 +269,6 @@ exports.updateEmployer = async (req, res) => {
     };
 
     return res.status(200).json(responseEmployer);
-
 
     // return res.status(200).json({ updatedEmployer });
   } catch (err) {
@@ -1693,6 +1691,20 @@ exports.getStatusOfOrderId = async (req, res) => {
   try {
     const orderId = req.query.orderId;
 
+
+//     // Try to find the category by name first
+//  let categoryData = await Category.findOne({ name: { $regex: new RegExp(category, 'i') } });
+
+//  // If categoryData is not found, try finding by ID
+//  if (!categoryData) {
+//    categoryData = await Category.findById(category);
+//    console.log(categoryData.price);
+//  }
+
+//  if (!categoryData) {
+//    return { error: 'Category not found' };
+//  }
+
     // Aggregate pipeline to extract desired fields from the 'obj' array
     const aggregationPipeline = [
       { $unwind: "$obj" },
@@ -1710,6 +1722,7 @@ exports.getStatusOfOrderId = async (req, res) => {
           _id: 1, // Include the fields you need from the employer outside the obj array
           employerName: 1,
           job_desc: "$obj.job_desc",
+          category: "$obj.category",
           siteLocation: "$obj.siteLocation",
           no_Of_opening: "$obj.no_Of_opening",
           fullTime: "$obj.fullTime",
@@ -1727,7 +1740,31 @@ exports.getStatusOfOrderId = async (req, res) => {
           manpower: "$obj.manpower", // Include the manpower array
           statusOfApply: "$obj.statusOfApply",
           lati: "$obj.lati",
-          longi: "$obj.longi"
+          longi: "$obj.longi",
+          statusOfCompletion: "$obj.statusOfCompletion",
+          paymentStatus: "$obj.paymentStatus",
+          totalPayment: "$obj.totalPayment",
+        }
+      },
+      // Lookup additional data from the Category model
+      {
+        $lookup: {
+          from: "categories", // Replace with the actual collection name
+          localField: "category", // Field in your current collection
+          foreignField: "_id", // Field in the Category model
+          as: "categoryData" // Name of the output field
+        }
+      },
+      // Unwind the result of the lookup (in case there are multiple matches)
+      {
+        $unwind: "$categoryData"
+      },
+      // Project the fields you need from the Category model
+      {
+        $project: {
+          // ...otherFieldsFromPreviousProjection,
+          name: "$categoryData.name",
+          price: "$categoryData.price"
         }
       }
     ];
