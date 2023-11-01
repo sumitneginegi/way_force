@@ -1,84 +1,5 @@
 const BookingByEmployer = require('../models/bookingByEmployer');
 const User = require("../models/user")
-// exports.createBookingByEmployer = async (req, res) => {
-//   try {
-//     const {
-//       EmployerId,
-//       manpowerId,
-//       // amount_per_hour,
-//       payment,
-//       workDetails,
-//       workDurationInYear,
-//       date,
-//       workLocation,
-//       startDate,
-//     } = req.body
-
-//     // const existingBooking = await BookingByEmployer.findOne({ EmployerId, manpowerId });
-//     const existingBooking = await BookingByEmployer.findOne({
-//             $and: [
-//               { EmployerId: EmployerId },
-//               { manpowerId: manpowerId }
-//             ]
-//           })
-
-//     if (existingBooking) {
-//       // Check if work duration in years has been completed from the start date
-//       const today = new Date();
-//       const startDateObj = new Date(startDate);
-//       const diffInYears = Math.floor((today - startDateObj) / (365 * 24 * 60 * 60 * 1000));
-
-//       if (diffInYears >= workDurationInYear) {
-//         // If work duration in years has been completed, delete the existing data
-//         // await BookingByEmployer.deleteOne({ EmployerId, manpowerId });
-//         await BookingByEmployer.deleteOne({
-//           $and: [
-//             { EmployerId: EmployerId },
-//             { manpowerId: manpowerId }
-//           ]
-//         })
-
-//         // Create a new booking with the updated details
-//         const newBooking = new BookingByEmployer({
-//           EmployerId,
-//           manpowerId,
-//           amount_per_hour,
-//           payment,
-//           workDetails,
-//           workDurationInYear,
-//           date,
-//           workLocation,
-//           startDate,
-//         });
-
-//         const savedBooking = await newBooking.save()
-//         return res.status(201).json({ message: 'Booking updated successfully', data: savedBooking });
-//       } else {
-//         return res.status(409).json({ error: 'Work duration not completed yet' });
-//       }
-//     }
-
-//     const newBooking = new BookingByEmployer({
-//       EmployerId,
-//       manpowerId,
-//       amount_per_hour,
-//       payment,
-//       workDetails,
-//       workDurationInYear,
-//       date,
-//       workLocation,
-//       startDate,
-//     })
-
-//     const savedBooking = await newBooking.save()
-
-//    return res.status(201).json({ message: 'Booking created successfully', data: savedBooking });
-//   } catch (error) {
-//     console.error(error);
-//    return res.status(500).json({ error: 'Something went wrong' });
-//   }
-// }
-
 
 
 exports.getBookingByEmployer = async (req, res) => {
@@ -90,14 +11,12 @@ exports.getBookingByEmployer = async (req, res) => {
       return res.status(404).json({ error: 'No bookings found for this employer.' });
     }
 
-    res.status(200).json({ data: bookings });
+   return res.status(200).json({ data: bookings });
   } catch (error) {
     console.error(error);
   return  res.status(500).json({ error: 'Something went wrong' });
   }
 };
-
-
 
 
 exports.getBookingByManpower = async (req, res) => {
@@ -113,38 +32,6 @@ exports.getBookingByManpower = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong' });
   }
 }
-
-
-// exports.calculateTimeDifference = (startTime, endTime) => {
-//   // const start = new Date(startTime);
-//   // const end = new Date(endTime);
-//   console.log(start);
-//   const timeDifferenceInMs = endTime - startTime;
-//   const hours = Math.floor(timeDifferenceInMs / (1000 * 60 * 60));
-//   const minutes = Math.floor((timeDifferenceInMs % (1000 * 60 * 60)) / (1000 * 60));
-
-//   return { hours, minutes };
-// }
-
-
-
-// exports.calculateTimeDifferenceController = async (req, res) => {
-//   try {
-//     const { startTime, endTime } = req.body;
-
-//     if (!startTime || !endTime) {
-//       return res.status(400).json({ error: "Both startTime and endTime are required" });
-//     }
-
-//     const timeDifference = exports.calculateTimeDifference(startTime, endTime);
-
-//     return res.status(200).json({ timeDifference });
-//   } catch (err) {
-//     console.error(err);
-//     return res.status(500).json({ error: "Internal server error" });
-//   }
-// }
-
 
 
 exports.updateBookingByEmployer = async (req, res) => {
@@ -274,22 +161,10 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
   try {
     const manpowerUserId = req.params.manpowerUserId;
 
-    // Find all bookings for the specified manpower user
-    const bookings = await BookingByEmployer.find({ userId: manpowerUserId });
-
-    // Initialize an array to store employer data
-    // const employers = [];
-
-    // for (const booking of bookings) {
-    //   // Retrieve employer details for each booking
-    //   const employer = await User.findById(booking.employerId);
-
-    //   if (employer) {
-    //     // Exclude the 'obj' field from the employer data
-    //     employer.obj = undefined;
-    //     employers.push(employer);
-    //   }
-    // }
+     // Find all bookings for the specified manpower user without 'acceptOrDecline'
+    const bookings = await BookingByEmployer.find({ userId: manpowerUserId,
+     acceptOrDecline: { $exists: false }, // Exclude bookings with 'acceptOrDecline' field
+  });
 
     return res.status(200).json({
       bookings: bookings,
@@ -299,5 +174,35 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
     return res.status(500).json({ error: "Something went wrong" });
   }
 };
+
+
+
+
+exports.updateBookingAcceptOrDecline = async (req, res) => {
+    try {
+      const bookingId = req.body.bookingId;
+      const newStatus = req.body.status; // 'accept' or 'reject'
+  
+      if (/^accept$/i.test(newStatus)) {
+        // Update the 'acceptOrDecline' field to 'accept'
+        await BookingByEmployer.findByIdAndUpdate(bookingId, {
+          $set: { acceptOrDecline: 'accept' },
+        });
+  
+        return res.status(200).json({ message: 'Booking accepted' });
+      } else if (/^reject$/i.test(newStatus)) {
+        // Delete the booking with 'reject' status
+        await BookingByEmployer.findByIdAndDelete(bookingId);
+  
+        return res.status(200).json({ message: 'Booking rejected and deleted' });
+      } else {
+        return res.status(400).json({ error: 'Invalid status value' });
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({ error: 'Something went wrong' });
+    }
+  };
+  
 
 

@@ -59,6 +59,7 @@ const bookingSchema = mongoose.Schema(
     lati:{type:String},
     longi:{type:String},
     instantOrdirect: String,
+    acceptOrDecline: String,
   },
   {
     timestamps: true,
