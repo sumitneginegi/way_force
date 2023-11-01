@@ -7,14 +7,14 @@ exports.getBookingByEmployer = async (req, res) => {
     // Find bookings by EmployerId
     const bookings = await BookingByEmployer.find({ employerId: req.params.employerId });
 
-    if (!bookings || bookings.length==0) {
+    if (!bookings || bookings.length == 0) {
       return res.status(404).json({ error: 'No bookings found for this employer.' });
     }
 
-   return res.status(200).json({ data: bookings });
+    return res.status(200).json({ data: bookings });
   } catch (error) {
     console.error(error);
-  return  res.status(500).json({ error: 'Something went wrong' });
+    return res.status(500).json({ error: 'Something went wrong' });
   }
 };
 
@@ -46,7 +46,7 @@ exports.updateBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
-    } = req.body 
+    } = req.body
 
     const existingBooking = await BookingByEmployer.findOne({
       $and: [
@@ -118,7 +118,7 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
-      
+
     } = req.body;
 
     console.log(req.body);
@@ -137,7 +137,7 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
-      instantOrdirect:"Direct"  //{ $regex: new RegExp(category, 'i') }
+      instantOrdirect: "Direct"  //{ $regex: new RegExp(category, 'i') }
       // lati: req.body.lati, // Use lati from work location
       // longi: req.body.longi, // Use longi from work location
     });
@@ -161,10 +161,12 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
   try {
     const manpowerUserId = req.params.manpowerUserId;
 
-     // Find all bookings for the specified manpower user without 'acceptOrDecline'
-    const bookings = await BookingByEmployer.find({ userId: manpowerUserId,
-     acceptOrDecline: { $exists: false }, // Exclude bookings with 'acceptOrDecline' field
-  });
+    // Find all bookings for the specified manpower user without 'acceptOrDecline'
+    const bookings = await BookingByEmployer.find({
+      userId: manpowerUserId,
+      acceptOrDecline: { $exists: false }, // Exclude bookings with 'acceptOrDecline' field
+    }).populate('employerId', 'employerName'); // Populate the 'employerId' field from the User model and select the 'name' field
+
 
     return res.status(200).json({
       bookings: bookings,
@@ -176,33 +178,31 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
 };
 
 
-
-
 exports.updateBookingAcceptOrDecline = async (req, res) => {
-    try {
-      const bookingId = req.body.bookingId;
-      const newStatus = req.body.status; // 'accept' or 'reject'
-  
-      if (/^accept$/i.test(newStatus)) {
-        // Update the 'acceptOrDecline' field to 'accept'
-        await BookingByEmployer.findByIdAndUpdate(bookingId, {
-          $set: { acceptOrDecline: 'accept' },
-        });
-  
-        return res.status(200).json({ message: 'Booking accepted' });
-      } else if (/^reject$/i.test(newStatus)) {
-        // Delete the booking with 'reject' status
-        await BookingByEmployer.findByIdAndDelete(bookingId);
-  
-        return res.status(200).json({ message: 'Booking rejected and deleted' });
-      } else {
-        return res.status(400).json({ error: 'Invalid status value' });
-      }
-    } catch (error) {
-      console.error(error);
-      return res.status(500).json({ error: 'Something went wrong' });
+  try {
+    const bookingId = req.body.bookingId;
+    const newStatus = req.body.status; // 'accept' or 'reject'
+
+    if (/^accept$/i.test(newStatus)) {
+      // Update the 'acceptOrDecline' field to 'accept'
+      await BookingByEmployer.findByIdAndUpdate(bookingId, {
+        $set: { acceptOrDecline: 'accept' },
+      });
+
+      return res.status(200).json({ message: 'Booking accepted' });
+    } else if (/^reject$/i.test(newStatus)) {
+      // Delete the booking with 'reject' status
+      await BookingByEmployer.findByIdAndDelete(bookingId);
+
+      return res.status(200).json({ message: 'Booking rejected and deleted' });
+    } else {
+      return res.status(400).json({ error: 'Invalid status value' });
     }
-  };
-  
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
 
 
