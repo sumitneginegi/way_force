@@ -206,3 +206,24 @@ exports.updateBookingAcceptOrDecline = async (req, res) => {
 
 
 
+exports.scheduleBooking = async (req, res) => {
+  try {
+    // Get the current date
+    const currentDate = new Date();
+
+     // Extract the date part of currentDate
+     const currentDateString = currentDate.toISOString().split('T')[0];
+
+    // Find all bookings with 'startDate' greater than or equal to the current date
+    const bookings = await BookingByEmployer.find({
+      startDate: { $gte: currentDateString },
+    })
+
+    return res.status(200).json({
+      bookings: bookings,
+    });
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
+
