@@ -190,7 +190,6 @@ exports.registrationEmployer = async (req, res) => {
 
 
 exports.sendotpEmployer = async (req, res) => {
-  console.log("hi");
   try {
     const { phoneNumber } = req.body
     // Generate a random 4-digit OTP
