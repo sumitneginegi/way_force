@@ -168,7 +168,7 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
     }).populate('employerId', 'employerName'); // Populate the 'employerId' field from the User model and select the 'name' field
 
 
-    return res.status(200).json({
+    return res.status(200).json({msg:bookings.length,
       bookings: bookings,
     });
   } catch (error) {
@@ -217,6 +217,7 @@ exports.scheduleBooking = async (req, res) => {
     // Find all bookings with 'startDate' greater than or equal to the current date
     const bookings = await BookingByEmployer.find({
       startDate: { $gte: currentDateString },
+      acceptOrDecline: "accept",
     })
 
     return res.status(200).json({
