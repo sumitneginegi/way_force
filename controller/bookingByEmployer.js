@@ -216,9 +216,11 @@ exports.scheduleBooking = async (req, res) => {
 
     // Find all bookings with 'startDate' greater than or equal to the current date
     const bookings = await BookingByEmployer.find({
-      startDate: { $gte: currentDateString },
-      acceptOrDecline: "accept",
-    })
+      $and: [
+        { startDate: { $gte: currentDateString } },
+        { acceptOrDecline: "accept" },
+      ],
+    });
 
     return res.status(200).json({
       bookings: bookings,
