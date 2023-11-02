@@ -138,16 +138,16 @@ exports.registrationEmployer = async (req, res) => {
     var user = await User.findOne({ mobile: data.mobile, userType: "employer" });
 
     if (!user) {
-      // Create a new employer based on the data object
-      const newEmployer = new User({
+
+      const newEmployerData = {
         ...data,
         userType: "employer",
         wallet: 100,
-      });
-
-      // Save the new employer to the database
-      const registeredEmployer = await newEmployer.save();
-
+      };
+      
+      // Create a new employer using the User model's create method
+      const registeredEmployer = await User.create(newEmployerData);
+      
         const obj = {
         id: registeredEmployer._id,
         otp: registeredEmployer.otp,
@@ -173,7 +173,7 @@ exports.registrationEmployer = async (req, res) => {
         uploadPanCard: registeredEmployer.uploadPanCard,
       };
 
-      res.status(201).json({
+     return res.status(201).json({
         status: 200,
         message: "Registered successfully",
         data: obj,
@@ -183,7 +183,7 @@ exports.registrationEmployer = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Server error" });
+   return res.status(500).json({ message: "Server error" });
   }
 };
 
