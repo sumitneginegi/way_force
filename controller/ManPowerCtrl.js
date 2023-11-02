@@ -334,9 +334,9 @@ exports.sendotpManpower = async (req, res) => {
 
     if (!existingUser) {
       return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
+    } else {
+      return res.status(404).json({ error: "data already exists" });
     }
-    return res.status(404).json({ error: "data already exists" });
-
   }
   catch (err) {
     console.error(err);
