@@ -11,7 +11,7 @@ bookingRouter.get('/get/getEmployersWhoBookedManpower/:manpowerUserId', /*Auth*/
 bookingRouter.get('/get/BookingByManpower/:manpowerId', /*Auth*/  getBookingByManpower)
 bookingRouter.delete('/delete/deleteBooking/:Bookingg', /*Auth*/  deleteBooking)
 bookingRouter.put('/update/updateBookingAcceptOrDecline', /*Auth*/  updateBookingAcceptOrDecline)
-bookingRouter.get('/get/scheduleBooking', /*Auth*/  scheduleBooking)
+bookingRouter.get('/get/scheduleBooking/:id', /*Auth*/  scheduleBooking)
 //  bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)
 // bookingRouter.get('/getbookingsbyId/:id', /*Auth*/  getbookingsbyId)
 // // bookingRouter.get('/timer', /*Auth*/  timer)

@@ -214,9 +214,10 @@ exports.scheduleBooking = async (req, res) => {
      // Extract the date part of currentDate
      const currentDateString = currentDate.toISOString().split('T')[0];
 
-    // Find all bookings with 'startDate' greater than or equal to the current date
-    const bookings = await BookingByEmployer.find({
+     // Find bookings that meet all three conditions
+     const bookings = await BookingByEmployer.find({
       $and: [
+        { userId: req.params.id },
         { startDate: { $gte: currentDateString } },
         { acceptOrDecline: "accept" },
       ],
@@ -227,6 +228,7 @@ exports.scheduleBooking = async (req, res) => {
     });
   } catch (error) {
     console.error('Error:', error);
+    return res.status(500).json({ error: "Something went wrong" });
   }
 }
 
