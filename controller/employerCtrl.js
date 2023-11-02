@@ -107,80 +107,109 @@ exports.registrationthroughAdmin = async (req, res) => {
 
 
 
+
 exports.registrationEmployer = async (req, res) => {
   try {
+    const data = {
+      mobile: req.body.mobile,
+      otp: req.body.otp,
+      employerName: req.body.employerName,
+      active: req.body.active,
+      gender: req.body.gender,
+      email: req.body.email,
+      createdAt: req.body.createdAt,
+      state: req.body.state,
+      city: req.body.city,
+      GST_Number: req.body.GST_Number,
+      registration_Number: req.body.registration_Number,
+      aadharCard: req.body.aadharCard,
+      panCard: req.body.panCard,
+      current_lati: req.body.current_lati,
+      current_longi: req.body.current_longi,
+      current_location: req.body.current_location,
+      main_Address: req.body.main_Address,
+      about: req.body.about,
+      pinCode: req.body.pinCode,
+      uploadaadhar: req.body.uploadaadhar,
+      uploadPanCard: req.body.uploadPanCard,
+      // Add other properties you want to include
+    };
 
-    const { mobile, otp } = req.body;
-
-    // res.status(200).json({ message: "OTP sent successfully" });
-
-    var user = await User.findOne({ mobile: mobile, userType: "employer" })
+    var user = await User.findOne({ mobile: data.mobile, userType: "employer" });
 
     if (!user) {
+      // Create a new employer based on the data object
+      const newEmployer = new User({
+        ...data,
+        userType: "employer",
+        wallet: 100,
+      });
 
-      // const otp = Math.floor(1000 + Math.random() * 9000);
+      // Save the new employer to the database
+      const registeredEmployer = await newEmployer.save();
 
-      // Create and send the SMS with the OTP
-      // await client.messages.create({
-      //   to: mobile,
-      //   from: twilioPhoneNumber,
-      //   body: `Your OTP is: ${otp}`,
-      // });
-
-      // req.body.otp = OTP.generateOTP()
-      // req.body.otpExpiration = new Date(Date.now() + 5 * 60 * 1000)
-      // req.body.accountVerification = false
-      req.body.userType = "employer",
-        req.body.wallet = 100;
-
-      // let referalUser = null;
-
-      const userCreate = await User.create({
-        mobile,
-        otp,
-        // referalCodeUnique,
-        ...req.body
-      })
-
-      let obj = {
-        id: userCreate._id,
-        otp: userCreate.otp,
-        mobile: userCreate.mobile,
+        const obj = {
+        id: registeredEmployer._id,
+        otp: registeredEmployer.otp,
+        mobile: registeredEmployer.mobile,
+        employerName: registeredEmployer.employerName,
+        active: registeredEmployer.active,
+        gender: registeredEmployer.gender,
+        email: registeredEmployer.email,
+        createdAt: registeredEmployer.createdAt,
+        state: registeredEmployer.state,
+        city: registeredEmployer.city,
+        GST_Number: registeredEmployer.GST_Number,
+        registration_Number: registeredEmployer.registration_Number,
+        aadharCard: registeredEmployer.aadharCard,
+        panCard: registeredEmployer.panCard,
+        current_lati: registeredEmployer.current_lati,
+        current_longi: registeredEmployer.current_longi,
+        current_location: registeredEmployer.current_location,
+        main_Address: registeredEmployer.main_Address,
+        about: registeredEmployer.about,
+        pinCode: registeredEmployer.pinCode,
+        uploadaadhar: registeredEmployer.uploadaadhar,
+        uploadPanCard: registeredEmployer.uploadPanCard,
       };
 
-      res.status(201).send({
+      res.status(201).json({
         status: 200,
-        message: "Registered successfully ",
-        data: obj
+        message: "Registered successfully",
+        data: obj,
       });
     } else {
-      return res.json({ status: 409, message: "Already Exit" });
+      return res.json({ status: 409, message: "Already Exists" });
     }
-
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
 
 
 
 exports.sendotpEmployer = async (req, res) => {
   console.log("hi");
   try {
-    const { phoneNumber } = req.body;
+    const { phoneNumber } = req.body
     // Generate a random 4-digit OTP
     const otp = Math.floor(1000 + Math.random() * 9000);
-    return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
+
+    // Check if a user with the provided mobile number and userType "manpower" already exists
+    const existingUser = await User.findOne({ mobile: phoneNumber, userType: "employer" });
+
+    if (!existingUser) {
+      return res.status(200).json({ message: "OTP sent successfully", mobile: phoneNumber, otp: otp });
+    } else {
+      return res.status(404).json({ error: "data already exists" });
+    }
   }
   catch (err) {
     console.error(err);
     res.status(500).json({ error: "Failed to send OTP" });
   }
 }
-
-
 
 
 exports.verifyOtpEmployer = async (req, res) => {
@@ -232,9 +261,9 @@ exports.updateEmployer = async (req, res) => {
       current_lati: req.body.current_lati,
       current_longi: req.body.current_longi,
       current_location: req.body.current_location,
-      main_Address:req.body.main_Address,
-      about:req.body.about,
-      pinCode:req.body.pinCode,
+      main_Address: req.body.main_Address,
+      about: req.body.about,
+      pinCode: req.body.pinCode,
       uploadaadhar: req.body.aadhar,
       uploadPanCard: req.body.pc,
     };
@@ -657,17 +686,17 @@ exports.getAllEmployer = async (req, res) => {
 }
 
 
-  exports.getAllEmployerById = async (req, res) => {
-    const employerId = req.params.id;
-  
-    try {
-      const employer = await User.findById(employerId).lean();
-  
-      if (!employer) {
-        return res.status(404).json({ message: "Employer not found" });
-      }
-  
-      // Iterate through the 'obj' array and fetch the associated 'Category' data for each object
+exports.getAllEmployerById = async (req, res) => {
+  const employerId = req.params.id;
+
+  try {
+    const employer = await User.findById(employerId).lean();
+
+    if (!employer) {
+      return res.status(404).json({ message: "Employer not found" });
+    }
+
+    // Iterate through the 'obj' array and fetch the associated 'Category' data for each object
     for (const obj of employer.obj) {
       const categoryId = obj.category;
 
@@ -680,14 +709,14 @@ exports.getAllEmployer = async (req, res) => {
         // obj.category = null; // You can set it to null or any other value to indicate it's not a valid category
       }
     }
-  
-      res.status(200).json({ success: true, data: employer });
-    } catch (err) {
-      console.error(err);
-      res.status(500).json({ error: err.message });
-    }
+
+    res.status(200).json({ success: true, data: employer });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
   }
-  
+}
+
 
 
 
@@ -708,9 +737,9 @@ exports.getPostsByEmployerId = async (req, res) => {
     const posts = employer.obj;
 
     // Respond with the extracted posts
-   return res.status(200).json({ success: true, data: posts });
+    return res.status(200).json({ success: true, data: posts });
   } catch (err) {
-   return res.status(500).json({ message: err.message });
+    return res.status(500).json({ message: err.message });
   }
 }
 
@@ -1096,14 +1125,14 @@ exports.scheduled_Jobs = async (req, res) => {
   }
 }
 
-,
+  ,
 
 
-exports.upadtePostByStatusOfCompletion = async (req, res) => {
+  exports.upadtePostByStatusOfCompletion = async (req, res) => {
     try {
       const orderId = req.params.orderId;
       const { startTime, endTime, statusOfCompletion } = req.body;
-  
+
       // Find the employer based on userType and update the post
       const updatedUser = await User.findOneAndUpdate(
         { userType: 'employer', 'obj.orderId': orderId },
@@ -1116,28 +1145,28 @@ exports.upadtePostByStatusOfCompletion = async (req, res) => {
         },
         { new: true }
       );
-  
+
       if (!updatedUser) {
         return res.status(404).json({ msg: 'Post not found for the given orderId' });
       }
-  
+
       // Extract the updated object from the obj array
       const updatedObj = updatedUser.obj.find((post) => post.orderId === orderId);
-  
+
       if (!updatedObj) {
         return res.status(404).json({ msg: 'Updated post not found for the given orderId' });
       }
-  
+
       const employerMobile = updatedUser.mobile;
       const id = updatedUser._id;
 
-      res.status(200).json({ msg: 'Post updated successfully', data: updatedObj, employerMobile,id });
+      res.status(200).json({ msg: 'Post updated successfully', data: updatedObj, employerMobile, id });
     } catch (error) {
       console.error(error);
       res.status(500).json({ msg: 'An error occurred', error: error.message });
     }
   }
-  
+
 
 
 
@@ -1175,10 +1204,10 @@ exports.getCompletedPosts = async (req, res) => {
       return res.status(404).json({ msg: 'No completed posts found' });
     }
 
-   return res.status(200).json({ msg: 'Completed posts retrieved successfully', data: completedPosts });
+    return res.status(200).json({ msg: 'Completed posts retrieved successfully', data: completedPosts });
   } catch (error) {
     console.error(error);
-   return res.status(500).json({ msg: 'An error occurred', error: error.message });
+    return res.status(500).json({ msg: 'An error occurred', error: error.message });
   }
 }
 
@@ -1368,7 +1397,7 @@ exports.findManpowerthroughRadius = async (req, res) => {
     const { lati, longi } = post;
 
 
-    
+
     // Find the category with the provided name
     const categoryData = await Category.findOne({ name: category });
 
@@ -1376,16 +1405,16 @@ exports.findManpowerthroughRadius = async (req, res) => {
       return res.status(400).json({ message: "Category not found" });
     }
 
-// Find manpower within the specified radius
-const manpowerWithinRadius = await User.find({
-  "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
-  "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
-  userType: 'manpower', // Add this condition to filter by userType
-  $or: [
-    { category: categoryData ? categoryData._id : null }, // Check by category name and get ID
-    { category: categoryData ? { $regex: new RegExp(categoryData.name, 'i') } : { $regex: new RegExp(category, 'i') } }, // Check by category name
-  ],
-}).lean();
+    // Find manpower within the specified radius
+    const manpowerWithinRadius = await User.find({
+      "serviceLocation.lati": { $exists: true }, // Ensure serviceLocation exists
+      "serviceLocation.longi": { $exists: true }, // Ensure serviceLocation exists
+      userType: 'manpower', // Add this condition to filter by userType
+      $or: [
+        { category: categoryData ? categoryData._id : null }, // Check by category name and get ID
+        { category: categoryData ? { $regex: new RegExp(categoryData.name, 'i') } : { $regex: new RegExp(category, 'i') } }, // Check by category name
+      ],
+    }).lean();
 
     console.log(manpowerWithinRadius);
     console.log("-------------------");
@@ -1478,7 +1507,7 @@ function deg2rad(deg) {
 
 exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
   try {
-    const { senderId, receiverId, body, title, category, job_desc, siteLocation, explainYourWork, date,orderId } = req.body;
+    const { senderId, receiverId, body, title, category, job_desc, siteLocation, explainYourWork, date, orderId } = req.body;
 
     // Find the sender and receiver users by their IDs
     const senderUser = await User.findById(senderId);
@@ -1497,14 +1526,14 @@ exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
 
     if (senderRole === 'manpower') {
       // Manpower
-     
+
       notificationMessage = {
         data: {
           senderId: senderUser._id ? senderUser._id.toString() : "",
           receiverId: receiverUser._id ? receiverUser._id.toString() : "",
           payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},siteLocation:${siteLocation}`,
           // manpowerDetails: `Manpower-specific details here`,
-          
+
         },
         notification: {
           title: title,
@@ -1513,17 +1542,17 @@ exports.sendNotificationToParticularManpowerOrEmployer = async (req, res) => {
         token: receiverUser.token,
       };
     } else if (senderRole === 'employer') {
-      
-  // Find the specific object in the 'obj' array with the matching 'orderId'
-  const obj = senderUser.obj.find((item) => item.orderId === orderId);
-  console.log(obj);
-  if (!obj) {
-    return res.status(400).json({ message: "No matching 'orderId' found in the 'obj' array" });
-  }
 
-  // Extract the relevant fields from the found 'obj' object
-  const { siteLocation, job_desc, explainYourWork, date,lati,longi } = obj;
-  // const { lati,longi } = obj;
+      // Find the specific object in the 'obj' array with the matching 'orderId'
+      const obj = senderUser.obj.find((item) => item.orderId === orderId);
+      console.log(obj);
+      if (!obj) {
+        return res.status(400).json({ message: "No matching 'orderId' found in the 'obj' array" });
+      }
+
+      // Extract the relevant fields from the found 'obj' object
+      const { siteLocation, job_desc, explainYourWork, date, lati, longi } = obj;
+      // const { lati,longi } = obj;
 
       //employer 
       notificationMessage = {
@@ -1732,30 +1761,30 @@ exports.getStatusOfOrderId = async (req, res) => {
           totalPayment: "$obj.totalPayment",
         }
       },
-      
+
     ];
 
-// Execute the aggregation pipeline to extract the 'category' field
-const pipelineResult = await User.aggregate(aggregationPipeline).exec();
+    // Execute the aggregation pipeline to extract the 'category' field
+    const pipelineResult = await User.aggregate(aggregationPipeline).exec();
 
-if (pipelineResult.length === 0) {
-  return res.status(400).json({ error: 'No documents found' });
-}
+    if (pipelineResult.length === 0) {
+      return res.status(400).json({ error: 'No documents found' });
+    }
 
-// Extract the 'category' field from the pipeline result
-const categoryValue = pipelineResult[0].category;
+    // Extract the 'category' field from the pipeline result
+    const categoryValue = pipelineResult[0].category;
 
-// Use the 'category' field to construct the query for Category.findOne
-let categoryData = await Category.findOne({ name: { $regex: new RegExp(categoryValue, 'i') } });
+    // Use the 'category' field to construct the query for Category.findOne
+    let categoryData = await Category.findOne({ name: { $regex: new RegExp(categoryValue, 'i') } });
 
-// If categoryData is not found, try finding by ID
-if (!categoryData) {
-  categoryData = await Category.findById(categoryValue);
-}
+    // If categoryData is not found, try finding by ID
+    if (!categoryData) {
+      categoryData = await Category.findById(categoryValue);
+    }
 
-// Continue with the aggregation pipeline
-const result = await User.aggregate(aggregationPipeline).exec();
-return res.status(200).json({ data: result, categoryData });
+    // Continue with the aggregation pipeline
+    const result = await User.aggregate(aggregationPipeline).exec();
+    return res.status(200).json({ data: result, categoryData });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
