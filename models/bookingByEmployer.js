@@ -60,6 +60,7 @@ const bookingSchema = mongoose.Schema(
     longi:{type:String},
     instantOrdirect: String,
     acceptOrDecline: String,
+    otp:String
   },
   {
     timestamps: true,

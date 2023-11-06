@@ -94,7 +94,7 @@ router.post("/sendotpEmployerLogin", sendotpEmployerLogin);
 router.post("/verify/otp/:id", verifyOtpEmployer);
 router.get("/getAll", getAllEmployer);
 router.get("/:id", getAllEmployerById);
-router.post("/update/Employer/:id",cpUpload,updateEmployer);
+router.put("/update/Employer/:id",cpUpload,updateEmployer);
 router.put("/update/fillEmployerDetails/:id", fillEmployerDetails);
 router.put("/direct/detail/:id", detailDirectEmployer);
 router.put("/updatebyManpoweridEmployer", updatebyManpoweridEmployer);

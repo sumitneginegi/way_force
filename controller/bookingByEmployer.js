@@ -424,8 +424,6 @@ async function sendNotification(token, data, title, body) {
 }
 
 
-
-
 // exports.sendNotificationOfBookingToParticularEmployer = async (req, res) => {
 //   try {
 //     const { senderId, receiverId, body, title } = req.body;
@@ -457,7 +455,7 @@ async function sendNotification(token, data, title, body) {
 //       },
 //       token: receiverUser.token,
 //     };
-  
+
 
 // try {
 //   const response = await admin.messaging().send(notificationMessage);
@@ -475,7 +473,7 @@ async function sendNotification(token, data, title, body) {
 // }
 
 
-  exports.getbookings = async (req, res) => {
+exports.getbookings = async (req, res) => {
   const bookingId = req.params.bookingId;
 
   try {
@@ -493,6 +491,68 @@ async function sendNotification(token, data, title, body) {
     }
     return res.status(200).json(booking);
   } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+}
+
+
+// Define a route to generate and save a random OTP for a booking
+
+exports.generate_otp = async (req, res) => {
+  const bookingId = req.params.bookingId;
+
+  // Generate a random OTP (6-digit numeric OTP)
+  const otp = Math.floor(1000 + Math.random() * 9000);
+
+  try {
+    const booking = await BookingByEmployer.findByIdAndUpdate(
+      bookingId,
+      { otp: otp },
+      { new: true }
+    );
+    console.log(booking);
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    return res.status(200).json({ message: 'OTP generated and saved successfully', booking: booking });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+}
+
+
+
+
+// Define a function to verify OTP for a specific employer
+exports.verifyOTP = async (req, res) => {
+  const employerId = req.params.employerId;
+  const providedOTP = req.body.otp; // Assuming the OTP is sent in the request body
+
+  try {
+
+    // First, find all bookings for the specific employer
+    const bookings = await BookingByEmployer.find({ employerId: employerId });
+
+    if (!bookings || bookings.length === 0) {
+      return res.status(404).json({ message: 'Employer not found or no bookings exist for this employer' });
+    }
+
+    // Check if the provided OTP matches any booking's OTP
+    const validBooking = bookings.find(booking => booking.otp === providedOTP);
+
+    if (!validBooking) {
+      return res.status(400).json({ message: 'Invalid OTP' });
+    }
+
+    // If the OTP is valid and matches a booking's OTP, you can handle it here
+    // You can also clear the OTP in the database or mark the booking as verified
+
+    return res.status(200).json({ message: 'OTP verified successfully',booking:validBooking});
+  }
+  catch (error) {
     console.error('Error:', error);
     return res.status(500).json({ message: 'Something went wrong' });
   }
