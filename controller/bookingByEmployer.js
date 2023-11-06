@@ -1,3 +1,12 @@
+var admin = require("firebase-admin");
+var serviceAccount = require("../firebasee.json");
+// Check if the app has already been initialized
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    // Other Firebase configuration options
+  });
+}
 const BookingByEmployer = require('../models/bookingByEmployer');
 const User = require("../models/user")
 
@@ -168,7 +177,8 @@ exports.getEmployersWhoBookedManpower = async (req, res) => {
     }).populate('employerId', 'employerName'); // Populate the 'employerId' field from the User model and select the 'name' field
 
 
-    return res.status(200).json({msg:bookings.length,
+    return res.status(200).json({
+      msg: bookings.length,
       bookings: bookings,
     });
   } catch (error) {
@@ -211,11 +221,11 @@ exports.scheduleBooking = async (req, res) => {
     // Get the current date
     const currentDate = new Date();
 
-     // Extract the date part of currentDate
-     const currentDateString = currentDate.toISOString().split('T')[0];
+    // Extract the date part of currentDate
+    const currentDateString = currentDate.toISOString().split('T')[0];
 
-     // Find bookings that meet all three conditions
-     const bookings = await BookingByEmployer.find({
+    // Find bookings that meet all three conditions
+    const bookings = await BookingByEmployer.find({
       $and: [
         { userId: req.params.id },
         { startDate: { $gte: currentDateString } },
@@ -232,3 +242,258 @@ exports.scheduleBooking = async (req, res) => {
   }
 }
 
+
+exports.sendNotificationForTodayDate = async (req, res) => {
+  try {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Extract the date part of currentDate
+    const currentDateString = currentDate.toISOString().split('T')[0];
+
+    // Find bookings that meet all three conditions
+    const bookings = await BookingByEmployer.find({
+      $and: [
+        { startDate: { $gte: currentDateString } },
+        { acceptOrDecline: "accept" },
+      ],
+    });
+
+    // Filter the bookings that have startDate equal to today's date
+    const todayBookings = bookings.filter(booking => booking.startDate === currentDateString);
+
+    // Create an array to collect the results of sending notifications
+    const notificationPromises = [];
+
+    // Loop through the filtered bookings
+    for (const booking of todayBookings) {
+      const employerId = booking.employerId;
+      const userId = booking.userId;
+      const bookingid = booking._id;
+
+      // Find the employer and manpower users by their IDs
+      const employerUserPromise = User.findById(employerId);
+      const manpowerUserPromise = User.findById(userId);
+      const bookingDetailsPromise = BookingByEmployer.findById(bookingid);
+
+      // Create data objects for employer and manpower data
+      const employerData = {};
+      const manpowerData = {};
+
+      // Use Promise.all to wait for all promises to resolve
+      const [employerUser, manpowerUser, bookingDetails] = await Promise.all([
+        employerUserPromise,
+        manpowerUserPromise,
+        // bookingDetailsPromise,
+      ]);
+
+
+      if (employerUser) {
+        // Extract and include employer-specific data in the employerData object
+        employerData.employerName = employerUser.employerName;
+        // employerData.GST_Number = employerUser.GST_Number;
+        // employerData.mobile = employerUser.mobile;
+        // employerData._id = employerUser._id;
+        // employerData.workingDays = employerUser.workingDays;
+        // employerData.userType = employerUser.userType;
+        // employerData.siteLocation = employerUser.siteLocation;
+        // employerData.workingHours = employerUser.workingHours;
+        // employerData.explainYourWork = employerUser.explainYourWork;
+        // employerData.current_lati = employerUser.current_lati;
+        // employerData.current_longi = employerUser.current_longi;
+        // employerData.current_location = employerUser.current_location;
+        // employerData.employerName = employerUser.employerName;
+        // employerData.aadharCard = employerUser.aadharCard;
+        // employerData.city = employerUser.city;
+        // employerData.email = employerUser.email;
+        // employerData.gender = employerUser.gender;
+        // employerData.registration_Number = employerUser.registration_Number;
+        // employerData.state = employerUser.state;
+        // employerData.main_Address = employerUser.main_Address;
+
+        //   if (bookingdetails) {
+        //     // Include booking-specific data in the employerData object
+        //     employerData.bookingData = {
+        //       _id: bookingdetails._id,
+        //       employerId: bookingdetails.employerId,
+        //       userId: bookingdetails.userId,
+        //       workDetails: bookingdetails.workDetails,
+        //       workDurationInYear: bookingdetails.workDurationInYear,
+        //       startDate: bookingdetails.startDate,
+        //       instantOrdirect: bookingdetails.instantOrdirect,
+        //       acceptOrDecline: bookingdetails.acceptOrDecline,
+        //     };
+        //   }
+      }
+
+      if (manpowerUser) {
+        // Extract and include manpower-specific data in the manpowerData object
+        manpowerData.manpowerName = manpowerUser.manpowerName;
+        // manpowerData.aadharCard = manpowerUser.aadharCard;
+        // manpowerData.mobile = manpowerUser.mobile;
+        // manpowerData.email = manpowerUser.email;
+        // manpowerData.city = manpowerUser.city;
+        // manpowerData.siteLocation = manpowerUser.siteLocation;
+        // manpowerData.workingDays = manpowerUser.workingDays;
+        // manpowerData.workingHours = manpowerUser.workingHours;
+        // manpowerData.explainYourWork = manpowerUser.explainYourWork;
+        // manpowerData.state = manpowerUser.state;
+        // manpowerData.pinCode = manpowerUser.pinCode;
+        // manpowerData.gender = manpowerUser.gender;
+        // manpowerData.userType = manpowerUser.userType;
+        // manpowerData.main_Address = manpowerUser.main_Address;
+        // manpowerData.category = manpowerUser.category;
+        // manpowerData._id = manpowerUser._id;
+      }
+
+      //     if (employerUser && manpowerUser) {
+      //       // Send notifications to employer and manpower
+      //       const employerResult = await sendNotification(employerUser.token, manpowerData, 'Employer Notification Title', 'Employer Notification Body');
+      //       const manpowerResult = await sendNotification(manpowerUser.token, employerData, 'Manpower Notification Title', 'Manpower Notification Body');
+      //       notificationResults.push(employerResult, manpowerResult);
+      //     }
+      //   }
+      // }
+
+      //   return res.status(200).json({
+      //     message: 'Notifications sent and user tokens updated successfully',
+      //     notificationResults: notificationResults, // Include the results if needed
+      //   });
+
+
+      if (employerUser && manpowerUser) {
+        // Send notification to employer and push the promise into the array
+        notificationPromises.push(
+          sendNotification(employerUser.token, manpowerData, 'Employer Notification Title', 'Employer Notification Body')
+        );
+        // Send notification to manpower and push the promise into the array
+        notificationPromises.push(
+          sendNotification(manpowerUser.token, employerData, 'Manpower Notification Title', 'Manpower Notification Body')
+        );
+      }
+
+      // if (manpowerUser) {
+      //   // Send notification to manpower and push the promise into the array
+      //   notificationPromises.push(
+      //     sendNotification(manpowerUser.token, employerData, 'Manpower Notification Title', 'Manpower Notification Body')
+      //   );
+      // }
+      // Use Promise.all to send notifications to all users concurrently
+      const notificationResults = await Promise.all(notificationPromises);
+      // }
+
+
+
+      return res.status(200).json({
+        message: 'Notifications sent and user tokens updated successfully',
+        notificationResults: notificationResults, // Include the results if needed
+      });
+
+    }
+
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+};
+
+
+
+// Function to send FCM notifications
+async function sendNotification(token, data, title, body) {
+  const message = {
+    data: {
+      // Include the data object as 'customData'
+      customData: JSON.stringify(data),
+    },
+    notification: {
+      title: title,
+      body: body,
+    },
+    token: token,
+  };
+
+  try {
+    const response = await admin.messaging().send(message);
+    console.log('Successfully sent message:', response);
+    return 'Notification sent successfully';
+  } catch (error) {
+    console.error('Error sending message:', error);
+    return 'Failed to send notification';
+  }
+}
+
+
+
+
+// exports.sendNotificationOfBookingToParticularEmployer = async (req, res) => {
+//   try {
+//     const { senderId, receiverId, body, title } = req.body;
+
+//     // Find the sender and receiver users by their IDs
+//     const bookingDetailsPromise = BookingByEmployer.findById(bookingid);
+//     const senderUser = await User.findById(senderId).populate('additionalField1 additionalField2');
+//     const receiverUser = await User.findById(receiverId).populate('additionalField1 additionalField2');
+
+
+//     if (!senderUser || !receiverUser) {
+//       return res.status(400).json({ message: "Invalid sender or receiver ID" });
+//     }
+
+//     // Create a notification message with the desired content based on the sender's role
+//     let notificationMessage;
+
+//     notificationMessage = {
+//       data: {
+//         senderId: senderUser._id ? senderUser._id.toString() : "",
+//         receiverId: receiverUser._id ? receiverUser._id.toString() : "",
+//         payload: `senderUser:${senderUser._id},receiverId: ${receiverUser._id},Mobile: ${senderUser.mobile},category:${category},siteLocation:${siteLocation}`,
+//         // manpowerDetails: `Manpower-specific details here`,
+
+//       },
+//       notification: {
+//         title: title,
+//         body: body,
+//       },
+//       token: receiverUser.token,
+//     };
+  
+
+// try {
+//   const response = await admin.messaging().send(notificationMessage);
+//   console.log('Successfully sent message:', response);
+// } catch (error) {
+//   console.error('Error sending message:', error);
+//   return res.status(500).json({ message: "Failed to send notification" });
+// }
+
+// return res.status(200).json({ message: "Notification sent successfully" });
+//   } catch (error) {
+//   console.error(error);
+//   return res.status(500).json({ message: "Internal Server Error" });
+// }
+// }
+
+
+  exports.getbookings = async (req, res) => {
+  const bookingId = req.params.bookingId;
+
+  try {
+    const booking = await BookingByEmployer.findById(bookingId)
+      .populate({
+        path: 'userId',
+        select: '', // Exclude the fields you want from the user data
+      })
+      .populate({
+        path: 'employerId',
+        select: '-obj', // Exclude the fields you want from the employer data
+      });
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+    return res.status(200).json(booking);
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+}
