@@ -537,28 +537,52 @@ exports.getCountOfPostsByEmployerIdAndInstantOrDirect = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
-    const employerName = user.employerName; 
-    const mobile = user.mobile;
-    const aadharCard = user.aadharCard;
-    const GST_Number = user.GST_Number;
-    const email = user.email;
-    const city = user.city;
-    const current_lati = user.current_lati;
-    const current_longi = user.current_longi;
-    const gender = user.gender;
-    const panCard = user.panCard;
-    const registration_Number = user.registration_Number;
-    const state = user.state;
-    const current_location = user.current_location;
-    const pinCode = user.pinCode;
-    const main_Address = user.main_Address
+    const {
+      employerName,
+      mobile,
+      aadharCard,
+      GST_Number,
+      email,
+      city,
+      current_lati,
+      current_longi,
+      gender,
+      panCard,
+      registration_Number,
+      state,
+      current_location,
+      pinCode,
+      main_Address
+    } = user;
 
     const posts = user.obj.filter((item) => item.instantOrdirect === instantOrdirectValue);
 
     if (!posts) {
-      return res.status(404).json({ error: "posts not found." });
+      return res.status(404).json({ error: "Posts not found." });
     }
-    return res.status(200).json({ post: posts });
+
+    const response = {
+      user: {
+        employerName,
+        mobile,
+        aadharCard,
+        GST_Number,
+        email,
+        city,
+        current_lati,
+        current_longi,
+        gender,
+        panCard,
+        registration_Number,
+        state,
+        current_location,
+        pinCode,
+        main_Address
+      },
+      posts
+    };
+
+    return res.status(200).json(response);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal server error" });

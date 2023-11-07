@@ -569,3 +569,24 @@ exports.verifyOTP = async (req, res) => {
     return res.status(500).json({ message: 'Something went wrong' });
   }
 }
+
+
+exports.getOngoingBookings = async (req, res) => {
+  try {
+
+    const id = req.query.id;
+    const Status = req.query.Status;
+    // Find a booking that matches both id and Status using $and
+    const ongoingBooking = await BookingByEmployer.findOne({
+      $and: [
+        { _id: id },
+        { Status: Status }
+      ]
+    });
+    return res.status(200).json(ongoingBooking);
+
+  } catch (error) {
+    console.error('Error:', error)
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+}

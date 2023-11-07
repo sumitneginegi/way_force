@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { createBookingByEmployer,getEmployersWhoBookedManpower,getBookingByManpower,deleteBooking,updateBookingAcceptOrDecline,scheduleBooking,sendNotificationForTodayDate,sendNotificationOfBookingToParticularEmployer,generate_otp,calculateTimeDifferenceController,changeStatusbyIdBooking,getbookingbyidbycustomerbyAdmin,getbookingbyidbyHeroIdbyAdmin,getbookings,verifyOTP,changeStatusbyidByAdmin} = require('../controller/bookingByEmployer')
+const { createBookingByEmployer,getEmployersWhoBookedManpower,getBookingByManpower,deleteBooking,updateBookingAcceptOrDecline,scheduleBooking,sendNotificationForTodayDate,getOngoingBookings,sendNotificationOfBookingToParticularEmployer,generate_otp,calculateTimeDifferenceController,changeStatusbyIdBooking,getbookingbyidbycustomerbyAdmin,getbookingbyidbyHeroIdbyAdmin,getbookings,verifyOTP,changeStatusbyidByAdmin} = require('../controller/bookingByEmployer')
 
 const bookingRouter = express.Router()
 
@@ -17,7 +17,7 @@ bookingRouter.post('/get/sendNotificationForTodayDate', /*Auth*/  sendNotificati
 bookingRouter.get('/get/getbookings/:bookingId', /*Auth*/  getbookings)
 bookingRouter.put('/update/generate_otp/:bookingId', /*Auth*/  generate_otp)
 bookingRouter.post('/post/verifyOTP/:employerId', /*Auth*/  verifyOTP)
-
+bookingRouter.get('/get/OngoingBookings', /*Auth*/  getOngoingBookings)
 
 //  bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)
 // bookingRouter.get('/getbookingsbyId/:id', /*Auth*/  getbookingsbyId)
