@@ -595,7 +595,15 @@ exports.getOngoingBookings = async (req, res) => {
         { userId: id },
         { Status: Status }
       ]
+    }).populate({
+      path: 'userId',
+      select: '', // Exclude the fields you want from the user data
+    })
+    .populate({
+      path: 'employerId',
+      select: '-obj', // Exclude the fields you want from the employer data
     });
+    // .populate('userId employerId'); // Replace 'userId' and 'employerId' with the actual field names in your schema.
     if (!ongoingBooking) {
       return res.status(500).json({ message: 'no booking' });
     }
