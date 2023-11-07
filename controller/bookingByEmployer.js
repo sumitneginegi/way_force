@@ -525,7 +525,6 @@ exports.generate_otp = async (req, res) => {
 
 
 
-
 // Define a function to verify OTP for a specific employer
 exports.verifyOTP = async (req, res) => {
   const employerId = req.params.employerId;
@@ -547,10 +546,23 @@ exports.verifyOTP = async (req, res) => {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    // If the OTP is valid and matches a booking's OTP, you can handle it here
-    // You can also clear the OTP in the database or mark the booking as verified
+    console.log(validBooking);
 
-    return res.status(200).json({ message: 'OTP verified successfully',booking:validBooking});
+    // If the OTP is valid and matches a booking's OTP, update its status to 'ongoing'
+    // You can also clear the OTP in the database or mark the booking as verified
+    const updatedBooking = await BookingByEmployer.findByIdAndUpdate(
+      validBooking._id,
+      { Status: 'ongoing', verified: true },
+      { new: true } // This option returns the updated document
+    );
+
+    if (!updatedBooking) {
+      return res.status(500).json({ message: 'Failed to update booking status' });
+    }
+
+    console.log(updatedBooking);
+
+    return res.status(200).json({ message: 'OTP verified successfully', booking: updatedBooking });
   }
   catch (error) {
     console.error('Error:', error);

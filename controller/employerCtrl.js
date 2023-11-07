@@ -144,11 +144,11 @@ exports.registrationEmployer = async (req, res) => {
         userType: "employer",
         wallet: 100,
       };
-      
+
       // Create a new employer using the User model's create method
       const registeredEmployer = await User.create(newEmployerData);
-      
-        const obj = {
+
+      const obj = {
         id: registeredEmployer._id,
         otp: registeredEmployer.otp,
         mobile: registeredEmployer.mobile,
@@ -173,7 +173,7 @@ exports.registrationEmployer = async (req, res) => {
         uploadPanCard: registeredEmployer.uploadPanCard,
       };
 
-     return res.status(201).json({
+      return res.status(201).json({
         status: 200,
         message: "Registered successfully",
         data: obj,
@@ -183,7 +183,7 @@ exports.registrationEmployer = async (req, res) => {
     }
   } catch (error) {
     console.error(error);
-   return res.status(500).json({ message: "Server error" });
+    return res.status(500).json({ message: "Server error" });
   }
 };
 
@@ -537,15 +537,33 @@ exports.getCountOfPostsByEmployerIdAndInstantOrDirect = async (req, res) => {
       return res.status(404).json({ error: "User not found." });
     }
 
+    const employerName = user.employerName; 
+    const mobile = user.mobile;
+    const aadharCard = user.aadharCard;
+    const GST_Number = user.GST_Number;
+    const email = user.email;
+    const city = user.city;
+    const current_lati = user.current_lati;
+    const current_longi = user.current_longi;
+    const gender = user.gender;
+    const panCard = user.panCard;
+    const registration_Number = user.registration_Number;
+    const state = user.state;
+    const current_location = user.current_location;
+    const pinCode = user.pinCode;
+    const main_Address = user.main_Address
+
     const posts = user.obj.filter((item) => item.instantOrdirect === instantOrdirectValue);
 
+    if (!posts) {
+      return res.status(404).json({ error: "posts not found." });
+    }
     return res.status(200).json({ post: posts });
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error: "Internal server error" });
   }
 };
-
 
 
 
