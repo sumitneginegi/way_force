@@ -8,7 +8,7 @@ const bookingSchema = mongoose.Schema(
       type: String,
       default: "pending",
     },
-    amount_per_hour : { type: Number, default: 0 },
+    amount : { type: Number, default: 0 },
     startTime : {
       type: String
     },
