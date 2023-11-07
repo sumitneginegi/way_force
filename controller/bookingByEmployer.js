@@ -614,3 +614,27 @@ exports.getOngoingBookings = async (req, res) => {
     return res.status(500).json({ message: 'Something went wrong' });
   }
 }
+
+
+
+exports.updateStatusToCompleted = async (req, res) => {
+  const itemId = req.params.id;
+
+  try {
+    // Find the document by its _id and update only the 'status' field to 'completed'
+    const updatedItem = await BookingByEmployer.findOneAndUpdate(
+      { _id: itemId },
+      { $set: { Status: 'completed' } },
+      { new: true }
+    );
+
+    if (!updatedItem) {
+      return res.status(404).json({ message: 'Item not found' });
+    }
+
+    return res.status(200).json({ message: 'Status updated to completed', updatedItem });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ message: 'Something went wrong' });
+  }
+}
