@@ -587,7 +587,7 @@ exports.verifyOTP = async (req, res) => {
 exports.getOngoingBookings = async (req, res) => {
   try {
 
-    const id = req.query.id;
+    const id = req.query.id.toString(); // Convert id to a string
     const Status = req.query.Status;
     // Find a booking that matches both id and Status using $and
     const ongoingBooking = await BookingByEmployer.find({
