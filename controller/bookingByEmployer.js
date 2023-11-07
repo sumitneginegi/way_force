@@ -230,6 +230,7 @@ exports.scheduleBooking = async (req, res) => {
         { userId: req.params.id },
         { startDate: { $gte: currentDateString } },
         { acceptOrDecline: "accept" },
+        { Status: "pending" },
       ],
     });
 
@@ -577,9 +578,9 @@ exports.getOngoingBookings = async (req, res) => {
     const id = req.query.id;
     const Status = req.query.Status;
     // Find a booking that matches both id and Status using $and
-    const ongoingBooking = await BookingByEmployer.findOne({
+    const ongoingBooking = await BookingByEmployer.find({
       $and: [
-        { _id: id },
+        { userId: id },
         { Status: Status }
       ]
     });
