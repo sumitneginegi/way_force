@@ -136,6 +136,18 @@ exports.createBookingByEmployer = async (req, res) => {
       return res.status(400).json({ error: "Employers cannot book themselves." });
     }
 
+
+    // Check if a booking with the same employer, user, and startDate already exists
+    const existingBooking = await BookingByEmployer.findOne({
+      employerId,
+      userId,
+      startDate,
+    });
+
+    if (existingBooking) {
+      return res.status(400).json({ error: "A booking for the same employer and user with the same startDate already exists." });
+    }
+
     // Create a new booking
     const newBooking = new BookingByEmployer({
       employerId,
