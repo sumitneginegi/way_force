@@ -596,6 +596,9 @@ exports.getOngoingBookings = async (req, res) => {
         { Status: Status }
       ]
     });
+    if (!ongoingBooking) {
+      return res.status(500).json({ message: 'no booking' });
+    }
     return res.status(200).json({bookings:ongoingBooking});
 
   } catch (error) {
