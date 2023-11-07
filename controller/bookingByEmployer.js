@@ -584,7 +584,7 @@ exports.getOngoingBookings = async (req, res) => {
         { Status: Status }
       ]
     });
-    return res.status(200).json(ongoingBooking);
+    return res.status(200).json({bookings:ongoingBooking});
 
   } catch (error) {
     console.error('Error:', error)
