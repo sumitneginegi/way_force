@@ -729,5 +729,75 @@ exports.updateStatusToCompleted = async (req, res) => {
 
 
 
+exports.getBookingById = async (req, res) => {
+  try {
+    const bookingId = req.params.bookingId;
+
+    // Use the Mongoose model to find a booking by its ID
+    const booking = await BookingByEmployer.findById(bookingId)
+    .populate({
+      path: 'userId',
+      select: '', // Exclude the fields you want from the user data
+    })
+      .populate({
+        path: 'employerId',
+        select: '-obj', // Exclude the fields you want from the employer data
+      });
+
+    if (!booking) {
+      // If no booking with the given ID is found, return a 404 response
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+
+ // Populate the userId to get the category field
+ await booking.populate({
+  path: 'userId',
+  model: 'User', // Replace with the actual User model name
+  // select: 'category', // Include only the name and price fields
+});
+
+
+// Now check the format of the category field inside userId
+const userI = booking.userId
+console.log(userI);
+let categoryId = userI.category; // Assuming category is a string that can be either name or ID
+
+// Check if categoryId is a valid ObjectId (ID format)
+if (mongoose.Types.ObjectId.isValid(categoryId)) {
+// It's already in ID format, so populate it directly
+categoryId = categoryId
+} else {
+// It's in name format, so let's look up the ID from the Category model
+const category = await Category.findOne({ name: categoryId });
+
+if (!category) {
+ return res.status(404).json({ message: 'Category not found' });
+}
+
+categoryId = category._id;
+}
+
+// Populate the category field inside userId with the category name
+userI.category = categoryId;
+
+// Now, populate the category field inside userId
+await booking.populate({
+path: 'userId.category',
+model: 'Category', // Replace with your actual Category model name
+select: 'name price', // Include only the name and price fields
+});
+
+
+
+    // Return the booking if found
+ return   res.status(200).json({data:booking});
+  } catch (error) {
+    // Handle any errors that may occur during the database query
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
+
 
 
