@@ -9,6 +9,8 @@ if (!admin.apps.length) {
 }
 const BookingByEmployer = require('../models/bookingByEmployer');
 const User = require("../models/user")
+const Category = require("../models/categoryModel")
+const mongoose = require('mongoose');
 
 
 exports.getBookingByEmployer = async (req, res) => {
@@ -493,15 +495,52 @@ exports.getbookings = async (req, res) => {
     const booking = await BookingByEmployer.findById(bookingId)
       .populate({
         path: 'userId',
+        // populate: {
+        //   path: 'category',
+        //   model: 'Category', // Replace with your actual Category model name
+        // },
         select: '', // Exclude the fields you want from the user data
       })
       .populate({
         path: 'employerId',
         select: '-obj', // Exclude the fields you want from the employer data
       });
+  
+     
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
+
+    // Now check the format of the category field inside userId
+    const userId = booking.userId;
+
+    let categoryId = userId.category; // Assuming category is a string that can be either name or ID
+
+    // Check if categoryId is a valid ObjectId (ID format)
+    if (mongoose.Types.ObjectId.isValid(categoryId)) {
+      // It's already in ID format, so populate it directly
+      categoryId = categoryId
+    } else {
+      // It's in name format, so let's look up the ID from the Category model
+      const category = await Category.findOne({ name: categoryId });
+
+      if (!category) {
+        return res.status(404).json({ message: 'Category not found' });
+      }
+
+      categoryId = category._id;
+    }
+
+    // Populate the category field inside userId with the category name
+    userId.category = categoryId;
+
+    // Now, populate the category field with the category name
+    await booking.populate({
+      path: 'userId.category', // Assuming category is a reference field inside userId
+      model: 'Category', // Replace with your actual Category model name
+      select: 'name price', // Include only the name field
+    })
+
     return res.status(200).json(booking);
   } catch (error) {
     console.error('Error:', error);
@@ -638,3 +677,8 @@ exports.updateStatusToCompleted = async (req, res) => {
     return res.status(500).json({ message: 'Something went wrong' });
   }
 }
+
+
+
+
+
