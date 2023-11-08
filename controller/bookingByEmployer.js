@@ -129,15 +129,12 @@ exports.createBookingByEmployer = async (req, res) => {
       date,
       workLocation,
       startDate,
-
-    } = req.body;
+    } = req.body
 
     console.log(req.body);
-
     if (employerId === userId) {
       return res.status(400).json({ error: "Employers cannot book themselves." });
     }
-
 
     // Check if a booking with the same employer, user, and startDate already exists
     const existingBooking = await BookingByEmployer.findOne({
@@ -149,6 +146,7 @@ exports.createBookingByEmployer = async (req, res) => {
     if (existingBooking) {
       return res.status(400).json({ error: "A booking for the same employer and user with the same startDate already exists." });
     }
+
 
     // Create a new booking
     const newBooking = new BookingByEmployer({
@@ -165,12 +163,63 @@ exports.createBookingByEmployer = async (req, res) => {
       // longi: req.body.longi, // Use longi from work location
     });
 
-    const savedBooking = await newBooking.save();
+    var savedBooking = await newBooking.save();
 
-    return res.status(201).json({
-      message: "Booking created successfully",
-      data: savedBooking,
+     // Populate the userId to get the category field
+     await savedBooking.populate({
+      path: 'userId',
+      model: 'User', // Replace with the actual User model name
+      select: 'category', // Include only the name and price fields
     });
+
+
+ // Now check the format of the category field inside userId
+ const userI = savedBooking.userId
+console.log(userI);
+ let categoryId = userI.category; // Assuming category is a string that can be either name or ID
+
+ // Check if categoryId is a valid ObjectId (ID format)
+ if (mongoose.Types.ObjectId.isValid(categoryId)) {
+   // It's already in ID format, so populate it directly
+   categoryId = categoryId
+ } else {
+   // It's in name format, so let's look up the ID from the Category model
+   const category = await Category.findOne({ name: categoryId });
+
+   if (!category) {
+     return res.status(404).json({ message: 'Category not found' });
+   }
+
+   categoryId = category._id;
+ }
+
+ // Populate the category field inside userId with the category name
+ userI.category = categoryId;
+
+ // Now, populate the category field inside userId
+ await savedBooking.populate({
+   path: 'userId.category',
+   model: 'Category', // Replace with your actual Category model name
+   select: 'name price', // Include only the name and price fields
+ });
+
+
+
+ // Extract the price from the populated user category
+ const price = userI.category.price;
+
+ // Update the amount in the booking to the extracted price
+ savedBooking.amount = price;
+
+ await savedBooking.save(); // Save the changes to the amount field
+
+//  // Update the amount in the booking to the category's price
+//  savedBooking.amount = categoryId.price;
+
+ return res.status(201).json({
+  message: "Booking created successfully",
+  data: savedBooking,
+});
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Something went wrong" });
@@ -505,8 +554,8 @@ exports.getbookings = async (req, res) => {
         path: 'employerId',
         select: '-obj', // Exclude the fields you want from the employer data
       });
-  
-     
+
+
     if (!booking) {
       return res.status(404).json({ message: 'Booking not found' });
     }
@@ -638,15 +687,15 @@ exports.getOngoingBookings = async (req, res) => {
       path: 'userId',
       select: '', // Exclude the fields you want from the user data
     })
-    .populate({
-      path: 'employerId',
-      select: '-obj', // Exclude the fields you want from the employer data
-    });
+      .populate({
+        path: 'employerId',
+        select: '-obj', // Exclude the fields you want from the employer data
+      });
     // .populate('userId employerId'); // Replace 'userId' and 'employerId' with the actual field names in your schema.
     if (!ongoingBooking) {
       return res.status(500).json({ message: 'no booking' });
     }
-    return res.status(200).json({bookings:ongoingBooking});
+    return res.status(200).json({ bookings: ongoingBooking });
 
   } catch (error) {
     console.error('Error:', error)
