@@ -18,7 +18,8 @@ const { createBookingByEmployer,
     changeStatusbyidByAdmin,
     updateStatusToCompleted,
     getBookingById,
-    updatePaymentStatus} = require('../controller/bookingByEmployer')
+    updatePaymentStatus,
+    scheduleBookingOfEmployer} = require('../controller/bookingByEmployer')
 
 const bookingRouter = express.Router()
 
@@ -39,6 +40,10 @@ bookingRouter.get('/get/OngoingBookings', /*Auth*/  getOngoingBookings)
 bookingRouter.put('/update/StatusToCompleted/:id', /*Auth*/  updateStatusToCompleted)
 bookingRouter.get('/get/getBookingById/:bookingId', /*Auth*/  getBookingById)
 bookingRouter.put('/update/updatePaymentStatus/:bookingId', /*Auth*/  updatePaymentStatus)
+
+
+bookingRouter.get('/get/scheduleBookingOfEmployer/:id', /*Auth*/  scheduleBookingOfEmployer)
+
 
 
 //  bookingRouter.post('/calculateTimeDifferenceController', /*Auth*/  calculateTimeDifferenceController)

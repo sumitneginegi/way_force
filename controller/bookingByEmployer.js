@@ -829,3 +829,32 @@ exports.updatePaymentStatus = async (req, res) => {
     res.status(500).json({ error: 'Something went wrong' });
   }
 };
+
+
+
+exports.scheduleBookingOfEmployer = async (req, res) => {
+  try {
+    // Get the current date
+    const currentDate = new Date();
+
+    // Extract the date part of currentDate
+    const currentDateString = currentDate.toISOString().split('T')[0];
+
+    // Find bookings that meet all three conditions
+    const bookings = await BookingByEmployer.find({
+      $and: [
+        { employerId: req.params.id },
+        { startDate: { $gte: currentDateString } },
+        { acceptOrDecline: "accept" },
+        { Status: "pending" },
+      ],
+    });
+
+    return res.status(200).json({
+      bookings: bookings,
+    });
+  } catch (error) {
+    console.error('Error:', error);
+    return res.status(500).json({ error: "Something went wrong" });
+  }
+}
