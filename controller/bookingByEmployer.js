@@ -801,3 +801,31 @@ select: 'name price', // Include only the name and price fields
 
 
 
+
+// Define an update function to set payment status to true
+exports.updatePaymentStatus = async (req, res) => {
+  try {
+    const bookingId = req.params.bookingId;
+
+    // Use the Mongoose model to find the booking by its ID
+    const booking = await BookingByEmployer.findById(bookingId);
+
+    if (!booking) {
+      // If no booking with the given ID is found, return a 404 response
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+
+    // Update the payment status to true
+    booking.paymentStatus = "true";
+
+    // Save the updated booking
+    await booking.save();
+
+    // Return a success response
+    res.status(200).json({ message: 'Payment status updated successfully',data:booking });
+  } catch (error) {
+    // Handle any errors that may occur during the update
+    console.error(error);
+    res.status(500).json({ error: 'Something went wrong' });
+  }
+};
