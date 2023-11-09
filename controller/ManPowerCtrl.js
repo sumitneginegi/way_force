@@ -567,8 +567,8 @@ exports.detailSignup = async (req, res) => {
         address: {
           // state: state,
           // city: city,
-          state: stateData._id,
-          city: cityData._id,
+          state: stateData.state,
+          city: cityData.selectcity,
           country: country,
           pinCode: pinCode,
           landmark: landmark,
@@ -959,7 +959,6 @@ exports.getAllManpowerthroughCategory = async (req, res) => {
         user.distance = null;
       }
     });
-
 
 
     // Sort manpower users by distance in ascending order
