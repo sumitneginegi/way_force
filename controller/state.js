@@ -33,6 +33,8 @@ exports.getState = async (req, res) => {
   }
 };
 
+
+
 exports.updateState = async (req, res) => {
   try {
     const { id } = req.params;
@@ -43,6 +45,8 @@ exports.updateState = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+
 
 exports.deleteState = async (req, res) => {
   try {
