@@ -126,6 +126,7 @@ exports.createBookingByEmployer = async (req, res) => {
       payment,
       workDetails,
       workDurationInYear,
+      workDay,
       date,
       workLocation,
       startDate,
@@ -155,6 +156,7 @@ exports.createBookingByEmployer = async (req, res) => {
       payment,
       workDetails,
       workDurationInYear,
+      workDay,
       date,
       workLocation,
       startDate,
@@ -207,9 +209,9 @@ console.log(userI);
 
  // Extract the price from the populated user category
  const price = userI.category.price;
-
+// console.log(typeof price);
  // Update the amount in the booking to the extracted price
- savedBooking.amount = price;
+ savedBooking.amount = parseFloat(price) * parseFloat(workDay)
 
  await savedBooking.save(); // Save the changes to the amount field
 

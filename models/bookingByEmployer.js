@@ -26,7 +26,7 @@ const bookingSchema = mongoose.Schema(
     workDetails : {
       type: String
     },
-    workDurationInYear : {
+    workDay  : {
       type: String
     },
     date : {
@@ -63,7 +63,7 @@ const bookingSchema = mongoose.Schema(
     otp:String,
     paymentStatus:{
       type:String,
-    default:"false"
+      default:"false"
     },
   },
   {
