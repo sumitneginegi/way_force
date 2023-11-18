@@ -603,15 +603,15 @@ exports.getbookings = async (req, res) => {
 // Define a route to generate and save a random OTP for a booking
 
 exports.generate_otp = async (req, res) => {
-  const bookingId = req.params.bookingId;
+  const manpowerId = req.params.manpowerId;
 
   // Generate a random OTP (6-digit numeric OTP)
   const otp = Math.floor(1000 + Math.random() * 9000);
 
   try {
-    const booking = await BookingByEmployer.findByIdAndUpdate(
-      bookingId,
-      { otp: otp },
+    const booking = await BookingByEmployer.updateMany(
+      { userId: manpowerId },
+      { $set: { otp: otp } },
       { new: true }
     );
     console.log(booking);
